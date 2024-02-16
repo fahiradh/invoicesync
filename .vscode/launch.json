@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-InvoicesyncApplication<invoicesync>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.megapro.invoicesync.InvoicesyncApplication",
+            "projectName": "invoicesync",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
