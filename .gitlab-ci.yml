@@ -48,7 +48,7 @@ Publish:
  dependencies:
    - Build
  before_script:
-   - echo $DOCKER_PASSWORD| docker login -u $REGISTRY_USER --password-stdin docker.io
+   - docker login -u $REGISTRY_USER -p $DOCKER_HUB_TOKEN
  script:
    - ls
    - docker build --build-arg PRODUCTION=$PRODUCTION --build-arg JDBC_DATABASE_PASSWORD=$JDBC_DATABASE_PASSWORD --build-arg JDBC_DATABASE_URL=$JDBC_DATABASE_URL --build-arg JDBC_DATABASE_USERNAME=$JDBC_DATABASE_USERNAME -t $REGISTRY_USER/$IMAGE_NAME:$IMAGE_TAG .
