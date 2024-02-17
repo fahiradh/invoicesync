@@ -17,7 +17,7 @@ variables:
 
 stages:
   - build
-  # - test
+  - test
   - publish
   - deploy
 
@@ -26,8 +26,11 @@ Build:
  image: gradle:jdk17-alpine
  before_script:
    - echo `pwd`
+   - ls
+   - cd invoicesync
    - export GRADLE_USER_HOME=`pwd`/.gradle
  script:
+   - ls
    - gradle wrapper
    - ./gradlew assemble
    - ls
