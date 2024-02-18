@@ -42,7 +42,7 @@ Build:
 
 Publish:
  stage: publish
- image: docker:20.10.16
+ image: docker:20-dind
  services:
    - docker:dind
  dependencies:
