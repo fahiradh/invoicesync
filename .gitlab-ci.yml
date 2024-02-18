@@ -46,7 +46,6 @@ Publish:
  dependencies:
    - Build
  before_script:
-   - sudo apt install docker.io
    - docker login -u $REGISTRY_USER -p $DOCKER_HUB_TOKEN
  script:
    - ls
