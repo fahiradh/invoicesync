@@ -66,6 +66,7 @@ Deploy:
    - apk update && apk add openssh-client
    - export COMPOSE_HTTP_TIMEOUT=120
  script:
+   - echo "$SSH_KEY"
    - ssh -o StrictHostKeyChecking=no -i "$SSH_KEY" $AWS_USERNAME@$AWS_IP "
      docker container rm -f $CONTAINER_NAME || true &&
      docker image rm -f $REGISTRY_USER/$IMAGE_NAME:$IMAGE_TAG || true &&
