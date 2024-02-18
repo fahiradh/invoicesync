@@ -21,42 +21,42 @@ stages:
   - publish
   - deploy
 
-Build:
- stage: build
- image: gradle:jdk17-alpine
- before_script:
-   - echo `pwd`
-   - ls
-   - cd invoicesync
-   - export GRADLE_USER_HOME=`pwd`/.gradle
- script:
-   - ls
-   - gradle wrapper
-   - ./gradlew assemble
-   - ls
- artifacts:
-   when: always
-   paths:
-     - invoicesync/build/libs/*.jar
-   expire_in: 1 week
+# Build:
+#  stage: build
+#  image: gradle:jdk17-alpine
+#  before_script:
+#    - echo `pwd`
+#    - ls
+#    - cd invoicesync
+#    - export GRADLE_USER_HOME=`pwd`/.gradle
+#  script:
+#    - ls
+#    - gradle wrapper
+#    - ./gradlew assemble
+#    - ls
+#  artifacts:
+#    when: always
+#    paths:
+#      - invoicesync/build/libs/*.jar
+#    expire_in: 1 week
 
-Publish:
- stage: publish
- image: docker:24.0.5
- services:
-  - docker:dind
- dependencies:
-   - Build
- before_script:
-   - docker login -u $REGISTRY_USER -p $DOCKER_HUB_TOKEN
- script:
-   - ls
-   - docker build --build-arg PRODUCTION=$PRODUCTION --build-arg JDBC_DATABASE_URL=$JDBC_DATABASE_URL -t $REGISTRY_USER/$IMAGE_NAME:$IMAGE_TAG .
-   - docker push $REGISTRY_USER/$IMAGE_NAME:$IMAGE_TAG
- tags:
-   - dind
- only:
-   - main
+# Publish:
+#  stage: publish
+#  image: docker:24.0.5
+#  services:
+#   - docker:dind
+#  dependencies:
+#    - Build
+#  before_script:
+#    - docker login -u $REGISTRY_USER -p $DOCKER_HUB_TOKEN
+#  script:
+#    - ls
+#    - docker build --build-arg PRODUCTION=$PRODUCTION --build-arg JDBC_DATABASE_URL=$JDBC_DATABASE_URL -t $REGISTRY_USER/$IMAGE_NAME:$IMAGE_TAG .
+#    - docker push $REGISTRY_USER/$IMAGE_NAME:$IMAGE_TAG
+#  tags:
+#    - dind
+#  only:
+#    - main
 
 Deploy:
  stage: deploy
@@ -66,7 +66,7 @@ Deploy:
    - apk update && apk add openssh-client
    - export COMPOSE_HTTP_TIMEOUT=120
  script:
-   - echo "$SSH_KEY"
+   - cat "$SSH_KEY"
    - ssh -o StrictHostKeyChecking=no -i "$SSH_KEY" $AWS_USERNAME@$AWS_IP "
      docker container rm -f $CONTAINER_NAME || true &&
      docker image rm -f $REGISTRY_USER/$IMAGE_NAME:$IMAGE_TAG || true &&
