@@ -73,6 +73,7 @@ default:
 #  only:
 #    - main
 
+# deployment vercel
 deploy_preview:
   stage: deploy
   except:
