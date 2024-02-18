@@ -43,6 +43,8 @@ Build:
 Publish:
  stage: publish
  image: docker:20.10.16
+ services:
+  - docker:dind
  dependencies:
    - Build
  before_script:
@@ -54,39 +56,39 @@ Publish:
  only:
    - main
 
-Deploy:
- stage: deploy
- image: alpine:latest
- before_script:
-   - chmod 400 $SSH_KEY
-   - apk update && apk add openssh-client
- script:
-   - ssh -o StrictHostKeyChecking=no -i $SSH_KEY $AWS_USERNAME@$AWS_IP "
-     docker container rm -f $CONTAINER_NAME || true &&
-     docker image rm -f $REGISTRY_USER/$IMAGE_NAME:$IMAGE_TAG || true &&
-     docker run --name $CONTAINER_NAME -d -p 80:8080 $REGISTRY_USER/$IMAGE_NAME:$IMAGE_TAG"
- only:
-   - main
+# Deploy:
+#  stage: deploy
+#  image: alpine:latest
+#  before_script:
+#    - chmod 400 $SSH_KEY
+#    - apk update && apk add openssh-client
+#  script:
+#    - ssh -o StrictHostKeyChecking=no -i $SSH_KEY $AWS_USERNAME@$AWS_IP "
+#      docker container rm -f $CONTAINER_NAME || true &&
+#      docker image rm -f $REGISTRY_USER/$IMAGE_NAME:$IMAGE_TAG || true &&
+#      docker run --name $CONTAINER_NAME -d -p 80:8080 $REGISTRY_USER/$IMAGE_NAME:$IMAGE_TAG"
+#  only:
+#    - main
 
-# Deployment Vercel
-deploy_preview:
-  stage: deploy
-  except:
-    - main
-  script:
-    - cd invoicesync-frontend
-    - npm install --global vercel
-    - vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
-    - vercel build --token=$VERCEL_TOKEN
-    - vercel deploy --prebuilt  --token=$VERCEL_TOKEN
+# # Deployment Vercel
+# deploy_preview:
+#   stage: deploy
+#   except:
+#     - main
+#   script:
+#     - cd invoicesync-frontend
+#     - npm install --global vercel
+#     - vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
+#     - vercel build --token=$VERCEL_TOKEN
+#     - vercel deploy --prebuilt  --token=$VERCEL_TOKEN
 
-deploy_production:
-  stage: deploy
-  only:
-    - main
-  script:
-    - cd invoicesync-frontend
-    - npm install --global vercel
-    - vercel pull --yes --environment=production --token=$VERCEL_TOKEN
-    - vercel build --prod --token=$VERCEL_TOKEN
-    - vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN
+# deploy_production:
+#   stage: deploy
+#   only:
+#     - main
+#   script:
+#     - cd invoicesync-frontend
+#     - npm install --global vercel
+#     - vercel pull --yes --environment=production --token=$VERCEL_TOKEN
+#     - vercel build --prod --token=$VERCEL_TOKEN
+#     - vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN
