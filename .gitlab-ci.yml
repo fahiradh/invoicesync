@@ -21,42 +21,42 @@ stages:
   - publish
   - deploy
 
-# Build:
-#  stage: build
-#  image: gradle:jdk17-alpine
-#  before_script:
-#    - echo `pwd`
-#    - ls
-#    - cd invoicesync
-#    - export GRADLE_USER_HOME=`pwd`/.gradle
-#  script:
-#    - ls
-#    - gradle wrapper
-#    - ./gradlew assemble
-#    - ls
-#  artifacts:
-#    when: always
-#    paths:
-#      - invoicesync/build/libs/*.jar
-#    expire_in: 1 week
+Build:
+ stage: build
+ image: gradle:jdk17-alpine
+ before_script:
+   - echo `pwd`
+   - ls
+   - cd invoicesync
+   - export GRADLE_USER_HOME=`pwd`/.gradle
+ script:
+   - ls
+   - gradle wrapper
+   - ./gradlew assemble
+   - ls
+ artifacts:
+   when: always
+   paths:
+     - invoicesync/build/libs/*.jar
+   expire_in: 1 week
 
-# Publish:
-#  stage: publish
-#  image: docker:24.0.5
-#  services:
-#   - docker:dind
-#  dependencies:
-#    - Build
-#  before_script:
-#    - docker login -u $REGISTRY_USER -p $DOCKER_HUB_TOKEN
-#  script:
-#    - ls
-#    - docker build --build-arg PRODUCTION=$PRODUCTION --build-arg JDBC_DATABASE_URL=$JDBC_DATABASE_URL -t $REGISTRY_USER/$IMAGE_NAME:$IMAGE_TAG .
-#    - docker push $REGISTRY_USER/$IMAGE_NAME:$IMAGE_TAG
-#  tags:
-#    - dind
-#  only:
-#    - main
+Publish:
+ stage: publish
+ image: docker:24.0.5
+ services:
+  - docker:dind
+ dependencies:
+   - Build
+ before_script:
+   - docker login -u $REGISTRY_USER -p $DOCKER_HUB_TOKEN
+ script:
+   - ls
+   - docker build --build-arg PRODUCTION=$PRODUCTION --build-arg JDBC_DATABASE_URL=$JDBC_DATABASE_URL -t $REGISTRY_USER/$IMAGE_NAME:$IMAGE_TAG .
+   - docker push $REGISTRY_USER/$IMAGE_NAME:$IMAGE_TAG
+ tags:
+   - dind
+ only:
+   - main
 
 Deploy:
  stage: deploy
@@ -76,25 +76,25 @@ Deploy:
  only:
    - main
 
-# # Deployment Vercel
-# deploy_preview:
-#   stage: deploy
-#   except:
-#     - main
-#   script:
-#     - cd invoicesync-frontend
-#     - npm install --global vercel
-#     - vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
-#     - vercel build --token=$VERCEL_TOKEN
-#     - vercel deploy --prebuilt  --token=$VERCEL_TOKEN
+# Deployment Vercel
+deploy_preview:
+  stage: deploy
+  except:
+    - main
+  script:
+    - cd invoicesync-frontend
+    - npm install --global vercel
+    - vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
+    - vercel build --token=$VERCEL_TOKEN
+    - vercel deploy --prebuilt  --token=$VERCEL_TOKEN
 
-# deploy_production:
-#   stage: deploy
-#   only:
-#     - main
-#   script:
-#     - cd invoicesync-frontend
-#     - npm install --global vercel
-#     - vercel pull --yes --environment=production --token=$VERCEL_TOKEN
-#     - vercel build --prod --token=$VERCEL_TOKEN
-#     - vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN
+deploy_production:
+  stage: deploy
+  only:
+    - main
+  script:
+    - cd invoicesync-frontend
+    - npm install --global vercel
+    - vercel pull --yes --environment=production --token=$VERCEL_TOKEN
+    - vercel build --prod --token=$VERCEL_TOKEN
+    - vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN
