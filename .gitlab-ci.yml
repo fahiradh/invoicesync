@@ -64,6 +64,7 @@ Deploy:
  before_script:
    - chmod 400 $SSH_KEY
    - apk update && apk add openssh-client
+   - export COMPOSE_HTTP_TIMEOUT=120
  script:
    - ssh -o StrictHostKeyChecking=no -i "$SSH_KEY" $AWS_USERNAME@$AWS_IP "
      docker container rm -f $CONTAINER_NAME || true &&
