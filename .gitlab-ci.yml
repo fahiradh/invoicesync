@@ -89,6 +89,7 @@ deploy_production:
   only:
     - main
   script:
+    - cd invoicesync-frontend
     - npm install --global vercel
     - vercel pull --yes --environment=production --token=$VERCEL_TOKEN
     - vercel build --prod --token=$VERCEL_TOKEN
