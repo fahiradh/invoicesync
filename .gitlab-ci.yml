@@ -54,8 +54,6 @@ Publish:
    - cd invoicesync
    - docker build --build-arg PRODUCTION=$PRODUCTION --build-arg JDBC_DATABASE_URL=$JDBC_DATABASE_URL -t $REGISTRY_USER/$IMAGE_NAME:$IMAGE_TAG .
    - docker push $REGISTRY_USER/$IMAGE_NAME:$IMAGE_TAG
- tags:
-   - dind
  only:
    - main
 
