@@ -29,5 +29,4 @@ public class Customer extends UserApp implements Serializable{
 
     @OneToMany(mappedBy="invoiceId", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
     private List<Invoice> invoice;
-
 }

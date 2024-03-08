@@ -61,6 +61,12 @@ public class InvoicesyncApplication {
 
 			var userAdmin = userMapper.createUserAppRequestToUserApp(userDTO);
 			userService.createUserApp(userAdmin, userDTO);
+
+			// var userAdmin2 = userMapper.createUserAppRequestDTOToUserApp(userDTO2);
+			// userService.createUserApp(userAdmin2, userDTO2);
+
+			// var userAdmin3 = userMapper.createUserAppRequestDTOToUserApp(userDTO3);
+			// userService.createUserApp(userAdmin3, userDTO3);
 		};
 	} 
 
