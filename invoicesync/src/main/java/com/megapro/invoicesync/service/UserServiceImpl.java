@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public void createUserApp(UserApp user, CreateUserAppRequestDTO userDTO) {
-        user.setRole(roleService.getRoleByRoleName(userDTO.getRole()));
+        user.setRole(roleService.getRoleByRoleName(userDTO.getRole().getRole()));
         String hashedPass = encoder.encode(user.getPassword());
         user.setPassword(hashedPass);
         userDb.save(user);

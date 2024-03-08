@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.megapro.invoicesync.model.Invoice;
 import com.megapro.invoicesync.model.Role;
 import com.megapro.invoicesync.repository.RoleDb;
 
@@ -18,7 +19,7 @@ public class RoleServiceImpl implements RoleService{
     private RoleDb roleDb;
 
     @Override
-    public List<Role> getAllList() {
+    public List<Role> getAllRole() {
         return roleDb.findAll();
     }
 
@@ -32,6 +33,16 @@ public class RoleServiceImpl implements RoleService{
     }
 
     @Override
+    public Role getRoleByRoleId(long id) {
+        for (Role role : getAllRole()) {
+            if (role.getId().equals(id)) {
+                return role;
+            }
+        }
+
+        return null;
+    }
+    
     public void createRole(Role role) {
         roleDb.save(role);
     }

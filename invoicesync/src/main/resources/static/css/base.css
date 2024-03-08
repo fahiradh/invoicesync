@@ -1,0 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+
+html, body, .apapedia{
+    font-family: 'Open Sans', sans-serif;
+    font-size: 15px;
+    background: rgb(255, 255, 255);
+    background: linear-gradient(243deg, rgba(255, 250, 234, 1) 35%, rgba(255, 255, 255, 1) 100%);
+}
+
+.form {
+	background: FBFCFE;
+}
+
+.card-header{
+	background: rgb(255, 255, 255);
+}
