@@ -1,0 +1,19 @@
+package com.megapro.invoicesync.dto.request;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import java.time.LocalDateTime;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class CreateProductRequestDTO {
+    private String name;
+    private String description;
+    private int quantity;
+    private long price;
+    private int discount;
+    private long subtotal;
+    private LocalDateTime created = LocalDateTime.now();
+}
