@@ -33,7 +33,7 @@ public class PageController {
                 return "home/home-non-finance.html"; // home staf non finance
             }
         }
-        else if (role.contains("Manager") || role.contains("Direktur")) {
+        else if (role.contains("Manager") || role.contains("Director")) {
             if (role.contains("Finance")) {
                 return "home/home-exc-finance.html"; // home manager finance dan direktur keuangan
             }

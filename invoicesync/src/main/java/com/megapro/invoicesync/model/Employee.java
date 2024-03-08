@@ -1,7 +1,10 @@
 package com.megapro.invoicesync.model;
 
+import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -18,8 +21,8 @@ import lombok.Setter;
 public class Employee extends UserApp {
 
     @NotNull
-    @Column(name = "no_hp", nullable = false, unique = true)
-    private String no_hp;
+    @Column(name = "nomorHp", nullable = false, unique = true)
+    private String nomorHp;
 
     @Column(name = "first_name")
     private String first_name;
@@ -38,4 +41,8 @@ public class Employee extends UserApp {
 
     @Column(name = "street")
     private String street;
+
+    @Column(name = "photo")
+    private String base64Photo;
+
 }

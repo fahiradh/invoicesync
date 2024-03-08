@@ -1,6 +1,9 @@
 package com.megapro.invoicesync.dto;
 
 import org.mapstruct.Mapper;
+
+import com.megapro.invoicesync.dto.request.CreateEmployeeRequestDTO;
+import com.megapro.invoicesync.dto.request.CreateUserAppRequestDTO;
 import org.mapstruct.Mapping;
 
 import com.megapro.invoicesync.dto.request.CreateEmployeeRequestDTO;
@@ -10,10 +13,8 @@ import com.megapro.invoicesync.model.UserApp;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
-    
-    @Mapping(target = "role", ignore = true)
-    Employee createEmployeeRequestToEmployee(CreateEmployeeRequestDTO createEmployeeRequestDTO);
 
-    @Mapping(target = "role", ignore = true)
-    UserApp createUserAppRequestDTOToUserApp(CreateUserAppRequestDTO createUserRequestDTO);
+    Employee createEmployeeRequestToEmployee(CreateEmployeeRequestDTO createEmployeeRequest);
+    UserApp createUserAppRequestToUserApp(CreateUserAppRequestDTO createUserAppRequest);
+    
 }

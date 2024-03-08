@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Approval Hierarchy Management</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Include Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <!-- Custom styles -->
+  <style>
+    body {
+      font-family: 'Work Sans', sans-serif;
+      background-color: #F3F6F9;
+    }
+    .text-violet {
+      color: #3F2685;
+    }
+    h2, .flow-box strong {
+      font-weight: 600;
+      font-size: 24px;
+      letter-spacing: -0.02em;
+    }
+    .flow-box {
+      background-color: #fff;
+      border: 1px solid #E3E6EB;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      padding: 16px;
+      font-size: 16px;
+      color: #3F2685;
+      line-height: 1.4;
+      box-shadow: 0 2px 4px 0 rgba(0,0,0,.05);
+    }
+    .btn-primary {
+      background-color: #3F2685;
+      border-color: #3F2685;
+    }
+    .btn-primary:hover {
+      background-color: #3730a3;
+      border-color: #3730a3;
+    }
+    .card-custom, .input-card-custom {
+      background-color: #FFFFFF;
+      border-radius: 8px;
+      border: none;
+      box-shadow: 0 0 15px 0 rgba(0,0,0,.05);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .form-control, .form-select {
+      background-color: #ECEEF1;
+      border-color: #ECEEF1;
+      color: #4E5559;
+    }
+    .form-control::placeholder, .form-select option {
+      color: #B1B5B8;
+    }
+    .container {
+      padding-top: 50px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2 class="text-violet">Approval Hierarchy Management</h2>
+    <div class="card input-card-custom mt-4 mb-5">
+      <div class="card-body">
+        <div class="row mb-4">
+          <div class="col">
+            <input type="text" class="form-control" placeholder="Minimal Nominal">
+          </div>
+          <div class="col">
+            <select class="form-select">
+              <option>Select Approver Role</option>
+              <!-- Add other options here -->
+            </select>
+          </div>
+          <div class="col-auto">
+            <button class="btn btn-primary">ADD</button>
+          </div>
+        </div>
+      </div>
+    </div>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="flow-box text-violet">
+              <strong>Flow 1</strong><br>
+              Minimal Nominal: Rp0.00<br>
+              Approver: Division Manager
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="flow-box text-violet">
+              <strong>Flow 2</strong><br>
+              Minimal Nominal: Rp51,000,000.00<br>
+              Approver: Finance Staff
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="flow-box text-violet">
+              <strong>Flow 3</strong><br>
+              Minimal Nominal: Rp101,000,000.00<br>
+              Approver: Finance Manager
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="flow-box text-violet">
+              <strong>Flow 4</strong><br>
+              Minimal Nominal: Rp102,000,000.00<br>
+              Approver: Director
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Include Bootstrap JS and its dependencies -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.9.3/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

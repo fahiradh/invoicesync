@@ -57,9 +57,9 @@ public class InvoicesyncApplication {
 			var userDTO = new CreateUserAppRequestDTO();
 			userDTO.setEmail("admin@gmail.com");
 			userDTO.setPassword("admin123");
-			userDTO.setRole("Admin");
+			userDTO.setRole(roleAdmin);
 
-			var userAdmin = userMapper.createUserAppRequestDTOToUserApp(userDTO);
+			var userAdmin = userMapper.createUserAppRequestToUserApp(userDTO);
 			userService.createUserApp(userAdmin, userDTO);
 		};
 	} 

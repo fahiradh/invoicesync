@@ -1,17 +1,23 @@
 package com.megapro.invoicesync.controller;
 
+import java.util.Base64;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import com.megapro.invoicesync.dto.UserMapper;
 import com.megapro.invoicesync.dto.request.CreateEmployeeRequestDTO;
-import com.megapro.invoicesync.model.Employee;
-import com.megapro.invoicesync.service.UserService;
+import com.megapro.invoicesync.model.Role;
+import com.megapro.invoicesync.repository.UserAppDb;
+import com.megapro.invoicesync.service.AllUserService;
+import com.megapro.invoicesync.service.RoleService;
+import org.springframework.web.bind.annotation.RequestBody;
 
-import jakarta.validation.Valid;
 
 @Controller
 public class EmployeeController {
@@ -19,13 +25,67 @@ public class EmployeeController {
     UserMapper userMapper;
 
     @Autowired
-    UserService userService;
+    AllUserService userService;
+
+    @Autowired
+    RoleService roleService;
+
+    @Autowired
+    UserAppDb userAppDb;
+    
+
+    @GetMapping("/create-account")
+    public String formCreateEmployee(Model model){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        var user = userAppDb.findByEmail(email);
+        String role = user.getRole().getRole();
+
+        model.addAttribute("email", email);
+        model.addAttribute("role", role);
+
+        var employeeDTO = new CreateEmployeeRequestDTO();
+        var listRole = roleService.getAllRole();
+        model.addAttribute("employeeDTO", employeeDTO);
+        model.addAttribute("listRole", listRole);
+
+        return "form-create-account";
+    }
     
     @PostMapping("/create-account")
-    public ResponseEntity<Employee> createEmployeeAccount(@Valid @RequestBody CreateEmployeeRequestDTO employeeDTO){
-        var employee =  userMapper.createEmployeeRequestToEmployee(employeeDTO);
+    public String createEmployeeAccount(CreateEmployeeRequestDTO employeeDTO, Model model){
+        var employee = userMapper.createEmployeeRequestToEmployee(employeeDTO);
+
+        Long roleId = employeeDTO.getRole().getId();
+        Role role = roleService.getRoleByRoleId(roleId);
+        employee.setRole(role);
+        
+
+        employee.setNomorHp(employeeDTO.getNomorHp());
         userService.createEmployee(employee);
-        return ResponseEntity.ok(employee);
+        
+        model.addAttribute("employeeEmail", employee.getEmail());
+        model.addAttribute("employee", employeeDTO);
+
+        return "success-create-account";
+    }
+    
+    
+    @GetMapping("/employees")
+    public String viewAllEmployee(Model model){
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        var user = userAppDb.findByEmail(email);
+        String role = user.getRole().getRole();
+
+        model.addAttribute("email", email);
+        model.addAttribute("role", role);
+
+        var listEmployee = userService.getAllEmployee();
+        model.addAttribute("listEmployee", listEmployee);
+
+        return "viewall-employee";
     }
     
 }
