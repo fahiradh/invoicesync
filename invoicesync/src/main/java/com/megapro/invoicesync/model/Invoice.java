@@ -23,10 +23,10 @@ public class Invoice {
     @Column(name="invoice_id")
     private UUID invoiceId;
 
-    @Column(name="staff_email")
-    private String staffEmail;
+    // @Column(name="staf_id", nullable=false)
+    // private Employee idStaf;
 
-    @Column(name="invoice_number")
+    @Column(name="invoice_number", nullable=false)
     private String invoiceNumber;
 
     @Column(name="customer_name")
@@ -90,5 +90,8 @@ public class Invoice {
 
     @OneToMany(mappedBy = "productId", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
     private List<Product> listProduct = new ArrayList<>();
+
+    @Column(name="status")
+    private String status = "Pending Approval";
 
 }
