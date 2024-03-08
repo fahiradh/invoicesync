@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+  <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+  <style>
+    .center-text {
+        text-align: center;
+        margin-top: 100px;
+    }
+  </style>
+  <title>Home</title>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+      <a class="navbar-brand theme-color" href="#">INVOICESYNC</a>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fas fa-user"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
+              <li><a class="dropdown-item" href="#">Profile</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <!-- Form Logout -->
+              <li>
+                <form th:action="@{/logout}" method="post" class="logout-form">
+                  <button type="submit" class="dropdown-item" style="border: none; background: none; cursor: pointer;">Logout</button>
+                </form>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="row">
+        <div class="col">
+            <h1 class="center-text theme-color">Halo, <span th:text="${email}"></span></h1>
+        </div>
+    </div>
+    <div class="row column-margin">
+        <div class="col-md-6 mt-4">
+            <div class="text-center">
+                <h4>User Management</h4>
+                <a href="#" class="btn btn-primary btn-lg btn-signin">Go to User Management</a>
+            </div>
+        </div>
+        <div class="col-md-6 mt-4">
+            <div class="text-center">
+                <h4>Approval Flow Management</h4>
+                <a href="#" class="btn btn-primary btn-lg btn-signin">Go to Approval Flow Management</a>
+            </div>
+        </div>
+    </div>
+  </div>
+</body>
+</html>

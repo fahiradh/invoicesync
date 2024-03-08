@@ -1,0 +1,41 @@
+package com.megapro.invoicesync.model;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "employee")
+public class Employee extends UserApp {
+
+    @NotNull
+    @Column(name = "no_hp", nullable = false, unique = true)
+    private String no_hp;
+
+    @Column(name = "first_name")
+    private String first_name;
+
+    @Column(name = "last_name")
+    private String last_name;
+
+    @Column(name = "country")
+    private String country;
+
+    @Column(name = "city")
+    private String city;
+
+    @Column(name = "postal_code")
+    private String postCode;
+
+    @Column(name = "street")
+    private String street;
+}
