@@ -1,7 +1,5 @@
 package com.megapro.invoicesync.dto.request;
 
-import com.megapro.invoicesync.model.Role;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,9 +8,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class CreateEmployeeRequestDTO {
+
     private String email;
     private String password;
-    private Role role;
+    private String role;
     private String no_hp;
     private String first_name;
     private String last_name;

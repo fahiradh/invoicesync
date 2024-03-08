@@ -1,25 +1,18 @@
 package com.megapro.invoicesync.service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.megapro.invoicesync.dto.response.ReadInvoiceResponse;
 import com.megapro.invoicesync.model.Invoice;
 import com.megapro.invoicesync.model.Product;
-import com.megapro.invoicesync.model.UserApp;
 import com.megapro.invoicesync.repository.InvoiceDb;
 import com.megapro.invoicesync.repository.ProductDb;
-import com.megapro.invoicesync.repository.UserAppDb;
 
 import jakarta.transaction.Transactional;
 import java.time.format.DateTimeFormatter;
 import java.time.LocalDateTime;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.ArrayList;
 
 @Service
@@ -34,12 +27,8 @@ public class InvoiceServiceImpl implements InvoiceService{
     @Autowired
     ProductDb productDb;
 
-    @Autowired
-    UserAppDb userAppDb;
-
     @Override
-    public void createInvoice(Invoice invoice, String email) {
-        invoice.setStaffEmail(email);
+    public void createInvoice(Invoice invoice) {
         invoiceDb.save(invoice);
     }
 
@@ -71,42 +60,4 @@ public class InvoiceServiceImpl implements InvoiceService{
         invoice.setListProduct(newListProduct);
         invoiceDb.save(invoice);
     }
-
-    @Override
-    public List<Invoice> retrieveAllInvoice() {
-        return invoiceDb.findAll();
-    }
-
-
-    @Override
-    public Invoice getInvoiceById(UUID id){
-        for (Invoice inv : retrieveAllInvoice()) {
-            if (inv.getInvoiceId().equals(id)) {
-                return inv;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public List<Invoice> retrieveInvoicesByRole(String role) {
-        List<UserApp> usersInRole = userAppDb.findByRoleName(role);
-        List<String> emailsInRole = usersInRole.stream()
-                                               .map(UserApp::getEmail)
-                                               .collect(Collectors.toList());
-        return invoiceDb.findByStaffEmailIn(emailsInRole);
-    }
-
-    @Override
-    public List<Invoice> retrieveInvoicesByEmail(String email) {
-        // Asumsi Anda memiliki metode di InvoiceRepository untuk mengambil invoice berdasarkan email staff
-        return invoiceDb.findByStaffEmail(email);
-    }
-    
-    
 }
-
-
-    
-
-

@@ -1,11 +1,5 @@
 package com.megapro.invoicesync.repository;
 
-import java.util.List;
-import java.util.UUID;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,8 +13,4 @@ import jakarta.transaction.Transactional;
 @Transactional
 public interface UserAppDb extends JpaRepository<UserApp, UUID>{
     UserApp findByEmail(String email);
-
-    
-    @Query("SELECT u FROM UserApp u WHERE u.role.role = :roleName")
-    List<UserApp> findByRoleName(@Param("roleName") String roleName);
 }
