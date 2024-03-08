@@ -33,5 +33,9 @@ public class Tax {
     @NotNull
     @Column(name = "tax_percentage")
     private int taxPercentage;
+
+    // @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    // @JoinColumn(name = "product_id")
+    // private Product product;
     
 }

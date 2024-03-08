@@ -26,6 +26,11 @@ public class WebSecurityConfig {
                 .requestMatchers(new AntPathRequestMatcher("/css/**")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/js/**")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/login")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/create-invoice")).hasAnyAuthority("Warehouse Staff")
+                .requestMatchers(new AntPathRequestMatcher("/approval-flows")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("add-approval-flow")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/invoices")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/invoice/**")).permitAll()
                 .anyRequest().authenticated())
             
             .formLogin((form) -> form
