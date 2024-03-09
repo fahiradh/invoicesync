@@ -2,10 +2,8 @@ package com.megapro.invoicesync.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
-import org.springframework.format.annotation.DateTimeFormat;
 
 @Data
 @Getter

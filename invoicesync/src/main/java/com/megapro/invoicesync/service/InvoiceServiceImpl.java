@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.megapro.invoicesync.dto.response.ReadInvoiceResponse;
 import com.megapro.invoicesync.model.Invoice;
 import com.megapro.invoicesync.model.Product;
 import com.megapro.invoicesync.model.UserApp;
@@ -16,9 +15,7 @@ import com.megapro.invoicesync.repository.UserAppDb;
 
 import jakarta.transaction.Transactional;
 import java.time.format.DateTimeFormatter;
-import java.time.LocalDateTime;
 
-import java.util.List;
 import java.util.UUID;
 import java.util.ArrayList;
 

@@ -6,7 +6,6 @@ import com.megapro.invoicesync.model.Product;
 import java.util.List;
 import java.util.UUID;
 
-import com.megapro.invoicesync.dto.response.ReadInvoiceResponse;
 
 import com.megapro.invoicesync.dto.response.ReadInvoiceResponse;
 import com.megapro.invoicesync.model.Invoice;

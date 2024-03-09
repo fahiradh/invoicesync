@@ -101,12 +101,6 @@
                         <div class="mb-4">
                            <table class="table table-bordered-classic">
                                 <tr>
-                                    <td><p class="card-text mb-0">Subtotal</p></td>
-                                    <td>
-                                        <input class="form-control" type="number" th:field="*{subtotal}" disabled />
-                                    </td>
-                                </tr>
-                                <tr>
                                     <td><p class="card-text mb-0">Total Discount (%)</p></td>
                                     <td><input class="form-control" type="number" th:field="*{totalDiscount}" disabled /></td>
                                 </tr>
@@ -117,6 +111,12 @@
                                 <tr>
                                     <td><p class="card-text mb-0">Tax</p></td>
                                     <td><input class="form-control" type="number" th:field="*{totalTax}" disabled /></td>
+                                </tr>
+                                <tr>
+                                    <td><p class="card-text mb-0">Subtotal</p></td>
+                                    <td>
+                                        <input class="form-control" type="number" th:field="*{subtotal}" disabled />
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td><p class="card-text mb-0">Amount in Words</p></td>

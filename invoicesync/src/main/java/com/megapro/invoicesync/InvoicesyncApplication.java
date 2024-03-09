@@ -11,7 +11,6 @@ import com.megapro.invoicesync.dto.UserMapper;
 import com.megapro.invoicesync.dto.request.CreateInvoiceRequestDTO;
 import com.megapro.invoicesync.dto.request.CreateEmployeeRequestDTO;
 import com.megapro.invoicesync.dto.request.CreateUserAppRequestDTO;
-import com.megapro.invoicesync.model.Invoice;
 import com.megapro.invoicesync.model.Role;
 import com.megapro.invoicesync.service.InvoiceService;
 import com.megapro.invoicesync.service.RoleService;
