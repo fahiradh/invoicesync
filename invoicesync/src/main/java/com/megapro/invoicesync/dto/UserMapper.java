@@ -14,7 +14,7 @@ import com.megapro.invoicesync.model.UserApp;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-    Employee createEmployeeRequestToEmployee(CreateEmployeeRequestDTO createEmployeeRequest);
-    UserApp createUserAppRequestToUserApp(CreateUserAppRequestDTO createUserAppRequest);
+    Employee createEmployeeRequestDTOToEmployee(CreateEmployeeRequestDTO createEmployeeRequest);
+    UserApp createUserAppRequestDTOToUserApp(CreateUserAppRequestDTO createUserAppRequest);
     
 }

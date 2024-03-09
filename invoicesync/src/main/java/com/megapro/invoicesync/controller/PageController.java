@@ -55,4 +55,9 @@ public class PageController {
         model.addAttribute("userAppDTO", userAppDTO);
         return "auth/create-user-account.html";
     }
+
+    @GetMapping("/access-denied")
+    public String accessDenied() {
+        return "error/403.html"; 
+    }
 }

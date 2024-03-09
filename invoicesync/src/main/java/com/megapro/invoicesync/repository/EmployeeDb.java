@@ -16,5 +16,4 @@ import jakarta.transaction.Transactional;
 public interface EmployeeDb extends JpaRepository<Employee,UUID>{
     Employee findEmployeeByUserId(UUID id);   
     Employee findByEmail(String email); 
-    //List<Employee> findAll();
 }

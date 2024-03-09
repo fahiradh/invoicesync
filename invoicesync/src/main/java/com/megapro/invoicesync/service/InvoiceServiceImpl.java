@@ -102,6 +102,11 @@ public class InvoiceServiceImpl implements InvoiceService{
         // Asumsi Anda memiliki metode di InvoiceRepository untuk mengambil invoice berdasarkan email staff
         return invoiceDb.findByStaffEmail(email);
     }
+
+    @Override
+    public List<Invoice> retrieveInvoicesByEmailAndStatus(String email, String status) {
+        return invoiceDb.findByStaffEmailAndStatus(email, status);
+    }
     
     
 }

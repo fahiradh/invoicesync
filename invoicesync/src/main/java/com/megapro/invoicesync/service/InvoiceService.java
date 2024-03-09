@@ -15,5 +15,6 @@ public interface InvoiceService {
     List<Invoice> retrieveAllInvoice();
     List<Invoice> retrieveInvoicesByRole(String role);
     List<Invoice> retrieveInvoicesByEmail(String email);
+    List<Invoice> retrieveInvoicesByEmailAndStatus(String email, String status);
     
 }

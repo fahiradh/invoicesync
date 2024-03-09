@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 
 import com.megapro.invoicesync.dto.UserMapper;
+import com.megapro.invoicesync.dto.request.CreateEmployeeRequestDTO;
 import com.megapro.invoicesync.dto.request.CreateUserAppRequestDTO;
 import com.megapro.invoicesync.model.Role;
 import com.megapro.invoicesync.service.RoleService;
@@ -59,14 +60,38 @@ public class InvoicesyncApplication {
 			userDTO.setPassword("admin123");
 			userDTO.setRole(roleAdmin);
 
-			var userAdmin = userMapper.createUserAppRequestToUserApp(userDTO);
+			var userAdmin = userMapper.createUserAppRequestDTOToUserApp(userDTO);
 			userService.createUserApp(userAdmin, userDTO);
 
-			// var userAdmin2 = userMapper.createUserAppRequestDTOToUserApp(userDTO2);
-			// userService.createUserApp(userAdmin2, userDTO2);
+			var warehouseStaff = new CreateEmployeeRequestDTO();
+			warehouseStaff.setEmail("warehouse_staff@gmail.com");
+			warehouseStaff.setPassword("warehouse");
+			warehouseStaff.setRole(roleStafWarehouse);
+			userService.createEmployee(userMapper.createEmployeeRequestDTOToEmployee(warehouseStaff));
 
-			// var userAdmin3 = userMapper.createUserAppRequestDTOToUserApp(userDTO3);
-			// userService.createUserApp(userAdmin3, userDTO3);
+			var financeStaff = new CreateEmployeeRequestDTO();
+			financeStaff.setEmail("finance_staff@gmail.com");
+			financeStaff.setPassword("finance");
+			financeStaff.setRole(roleStafFinance);
+			userService.createEmployee(userMapper.createEmployeeRequestDTOToEmployee(financeStaff));
+
+			var warehouseManager = new CreateEmployeeRequestDTO();
+			warehouseManager.setEmail("warehouse_manager@gmail.com");
+			warehouseManager.setPassword("warehouse");
+			warehouseManager.setRole(roleManagerWarehouse);
+			userService.createEmployee(userMapper.createEmployeeRequestDTOToEmployee(warehouseManager));
+
+			var financeManager = new CreateEmployeeRequestDTO();
+			financeManager.setEmail("finance_manager@gmail.com");
+			financeManager.setPassword("finance");
+			financeManager.setRole(roleManagerFinance);
+			userService.createEmployee(userMapper.createEmployeeRequestDTOToEmployee(financeManager));
+
+			var financeDirector = new CreateEmployeeRequestDTO();
+			financeDirector.setEmail("finance_director@gmail.com");
+			financeDirector.setPassword("finance");
+			financeDirector.setRole(roleDirectorFinance);
+			userService.createEmployee(userMapper.createEmployeeRequestDTOToEmployee(financeDirector));
 		};
 	} 
 

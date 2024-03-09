@@ -20,8 +20,8 @@ import lombok.Setter;
 @Table(name = "employee")
 public class Employee extends UserApp {
 
-    @NotNull
-    @Column(name = "nomorHp", nullable = false, unique = true)
+    // @NotNull
+    @Column(name = "nomorHp", unique = true)
     private String nomorHp;
 
     @Column(name = "first_name")

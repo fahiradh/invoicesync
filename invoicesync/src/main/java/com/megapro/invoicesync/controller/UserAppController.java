@@ -22,7 +22,7 @@ public class UserAppController {
 
     @PostMapping("/create-user-account")
     public ResponseEntity<String> createUserAccount(@Valid @ModelAttribute CreateUserAppRequestDTO userAppDTO){
-        var userApp =  userMapper.createUserAppRequestToUserApp(userAppDTO);
+        var userApp =  userMapper.createUserAppRequestDTOToUserApp(userAppDTO);
         userService.createUserApp(userApp, userAppDTO);
         return ResponseEntity.ok(userApp.getEmail());
     }
