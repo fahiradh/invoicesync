@@ -1,0 +1,30 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8" />
+  <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+  <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+  <title>InvoiceSync</title>
+</head>
+
+<body>
+    <nav th:replace="~{fragments/navbar-non-finance :: navbar-non-finance}"></nav>
+  <div class="container">
+    <div class="card m-4 p-4">
+        <div class="card-body">
+            <div class="text-center">
+                <img th:src="@{/assets/checked.png}" class="card-img-top cropped-image" style="width: 50%; height: 50%;">
+                <h4 th:text="'Successfully create invoice!'"></h4>
+            </div>
+            <div class="text-center m-3">
+                <a type="button" class="btn btn-md btn-primary" href="/home">Home</a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+</html>
+</body>

@@ -6,6 +6,7 @@ import com.megapro.invoicesync.dto.ProductMapper;
 import com.megapro.invoicesync.dto.request.CreateProductRequestDTO;
 import com.megapro.invoicesync.model.Invoice;
 import com.megapro.invoicesync.model.Product;
+import com.megapro.invoicesync.service.InvoiceService;
 import com.megapro.invoicesync.service.ProductService;
 
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,15 +24,22 @@ public class ProductController {
     @Autowired
     ProductMapper productMapper;
 
+    @Autowired
+    InvoiceService invoiceService;
+
     @PostMapping("/create-product")
-    public ResponseEntity<Product> createProduct(@RequestBody CreateProductRequestDTO productDTO) {
-        System.out.println("PRODUCT DTO");
-        System.out.println(productDTO.getName());
-        System.out.println(productDTO.getDescription());
-        System.out.println(productDTO.getSubtotal());
+    public ResponseEntity<String> createProduct(@RequestBody CreateProductRequestDTO productDTO) {
         var product = productMapper.createProductRequestToProduct(productDTO);
+        var dummyInvoice = invoiceService.getInvoiceByStaffEmail("dummy");
+        System.out.println("dummy invoice "+ dummyInvoice.size());
+        for (Invoice inv : dummyInvoice){
+            product.setInvoice(inv);
+        }
+        var totalPrice = productDTO.getTotalPrice().replace(".", "");
+        long number = Long.parseLong(totalPrice);
+        product.setTotalPrice(number/100);
         productService.createProduct(product);
-        return ResponseEntity.ok(product);
+        return ResponseEntity.ok("Ok");
     }
     
 }

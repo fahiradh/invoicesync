@@ -3,12 +3,13 @@ package com.megapro.invoicesync.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.megapro.invoicesync.model.Invoice;
 import com.megapro.invoicesync.model.Product;
 import com.megapro.invoicesync.repository.ProductDb;
 
 import jakarta.transaction.Transactional;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -28,9 +29,15 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public List<Product> findByCreatedBefore(LocalDateTime time) {
-        LocalDateTime oneMinuteAgo = LocalDateTime.now().minusMinutes(1);
-        List<Product> products = productDb.findByCreatedBefore(oneMinuteAgo);
-        return products;
+    public List<Product> getAllProductDummyInvoice(Invoice dummy) {
+        List<Product> listProduct = getAllProduct();
+        System.out.println("lp servicec" + listProduct.size());
+        List<Product> listDummy = new ArrayList<>();
+        for (Product p : listProduct){
+            if (p.getInvoice().getInvoiceId().equals(dummy.getInvoiceId())){
+                listDummy.add(p);
+            }
+        }
+        return listDummy;
     }
 }

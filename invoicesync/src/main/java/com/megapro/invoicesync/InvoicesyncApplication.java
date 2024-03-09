@@ -6,10 +6,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 
+import com.megapro.invoicesync.dto.InvoiceMapper;
 import com.megapro.invoicesync.dto.UserMapper;
+import com.megapro.invoicesync.dto.request.CreateInvoiceRequestDTO;
 import com.megapro.invoicesync.dto.request.CreateEmployeeRequestDTO;
 import com.megapro.invoicesync.dto.request.CreateUserAppRequestDTO;
+import com.megapro.invoicesync.model.Invoice;
 import com.megapro.invoicesync.model.Role;
+import com.megapro.invoicesync.service.InvoiceService;
 import com.megapro.invoicesync.service.RoleService;
 import com.megapro.invoicesync.service.UserService;
 
@@ -22,7 +26,11 @@ public class InvoicesyncApplication {
 
 	@Bean
 	@ConditionalOnProperty(name = "spring.jpa.hibernate.ddl-auto", havingValue = "create")
-	public CommandLineRunner initAdministrator(UserMapper userMapper, UserService userService, RoleService roleService) {
+	public CommandLineRunner initAdministrator(UserMapper userMapper, 
+							UserService userService, 
+							RoleService roleService, 
+							InvoiceService invoiceService,
+							InvoiceMapper invoiceMapper) {
 		return args -> {
 
 			var roleAdmin = new Role();
@@ -60,6 +68,11 @@ public class InvoicesyncApplication {
 			userDTO.setPassword("admin123");
 			userDTO.setRole(roleAdmin);
 
+			var dummyInvoiceDTO = new CreateInvoiceRequestDTO();
+			var dummyInvoice = invoiceMapper.createInvoiceRequestToInvoice(dummyInvoiceDTO);
+			invoiceService.createInvoice(dummyInvoice, "dummy");
+
+			
 			var userAdmin = userMapper.createUserAppRequestDTOToUserApp(userDTO);
 			userService.createUserApp(userAdmin, userDTO);
 
@@ -68,6 +81,7 @@ public class InvoicesyncApplication {
 			warehouseStaff.setPassword("warehouse");
 			warehouseStaff.setRole(roleStafWarehouse);
 			userService.createEmployee(userMapper.createEmployeeRequestDTOToEmployee(warehouseStaff));
+
 
 			var financeStaff = new CreateEmployeeRequestDTO();
 			financeStaff.setEmail("finance_staff@gmail.com");

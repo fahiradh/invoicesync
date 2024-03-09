@@ -14,6 +14,5 @@ public class CreateProductRequestDTO {
     private int quantity;
     private long price;
     private int discount;
-    private long subtotal;
-    private LocalDateTime created = LocalDateTime.now();
+    private String totalPrice;
 }
