@@ -1,5 +1,8 @@
 package com.megapro.invoicesync.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +22,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import com.megapro.invoicesync.dto.InvoiceMapper;
+import com.megapro.invoicesync.dto.request.CreateInvoiceRequestDTO;
+import com.megapro.invoicesync.repository.UserAppDb;
+import com.megapro.invoicesync.service.InvoiceService;
+
+import java.util.UUID;
+import org.springframework.web.bind.annotation.RequestBody;
+import com.megapro.invoicesync.dto.InvoiceMapper;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -52,10 +63,11 @@ public class InvoiceController {
     InvoiceService invoiceService;
 
     @Autowired
-    InvoiceDb invoiceDb;
+    UserAppDb userAppDb;
 
     @Autowired
-    UserAppDb userAppDb;
+    InvoiceDb invoiceDb;
+
 
     @GetMapping(value="/create-invoice")
     public String getCreateInvoice(Model model){
@@ -73,19 +85,36 @@ public class InvoiceController {
     public String createInvoice(@ModelAttribute CreateInvoiceRequestDTO invoiceDTO, Model model){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
+        var user = userAppDb.findByEmail(email);
+        String role = user.getRole().getRole();
         var invoice = invoiceMapper.createInvoiceRequestToInvoice(invoiceDTO);
         invoiceService.attributeInvoce(invoice);
         invoiceService.createInvoice(invoice, email);
+
+        model.addAttribute("role", role);
         model.addAttribute("invoice", invoice);
         return "invoice/success-create-invoice";
     }
 
-    @GetMapping("/invoice/{invoiceId}")
-    public String getDetailInvoice(@PathVariable("invoiceId") UUID invoiceId, Model model) {
+    @GetMapping("/invoice/{id}")
+    public String getDetailInvoice(@PathVariable("id") UUID invoiceId, Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        var user = userAppDb.findByEmail(email);
+        String role = user.getRole().getRole();
         var invoice = invoiceService.getInvoiceById(invoiceId);
-        var invoiceDTO = invoiceMapper.readInvoiceToInvoiceResponse(invoice);
-        model.addAttribute("invoice", invoiceDTO);
+        List<Product> listProduct = invoiceService.getListProductInvoice(invoice);
+        model.addAttribute("role", role);
+        model.addAttribute("listProduct", listProduct);
+        model.addAttribute("invoice", invoice);
         return "invoice/view-detail-invoice";
+    }
+    
+    @GetMapping("/status/{status}")
+    public String getInvoicesByStatus(@PathVariable String status, Model model) {
+        List<Invoice> filteredInvoices = invoiceDb.findByStatus(status);
+        model.addAttribute("invoices", filteredInvoices);
+        return ""; // isi halaman view all invoice
     }
 
     @GetMapping("/invoices")

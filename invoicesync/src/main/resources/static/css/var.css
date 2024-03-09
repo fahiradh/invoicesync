@@ -1,0 +1,175 @@
+@property --gradient-angle {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+  }
+  
+  @keyframes rotation {
+    0% {
+      --gradient-angle: 0deg;
+    }
+    100% {
+      --gradient-angle: 360deg;
+    }
+  }
+  
+  :root {
+    --primary-default: #3F2685;
+    --primary-hover:  #4421a3;
+    --primary-active: #3F2685;
+  
+    --typography-primary: #252627;
+    --typography-secondary: rgba(37, 38, 39, 0.8);
+    --typography-tertiary: rgba(37, 38, 39, 0.7);
+    --typography-light: #fdfdfd;
+    --typography-link: #3F2685;
+    --typography-link-hover: #4421a3;
+    --typography-link-active: #2573c9;
+    --typography-info: #2573c9;
+    --typography-error: #db1436;
+    --typography-code: #e2445e;
+  
+    --border-default: #dddddd;
+    --border-hover: #bcbcbc;
+    --border-active:  #3F2685;
+    --border-disabled: #f0f0f0;
+    --border-info: #7dbbff;
+  
+    --background-1: #fdfdfd;
+    --background-2: rgba(253, 253, 253, 0.3);
+    --background-3: #fafafa;
+    --background-4: #eeeeee;
+    --background-info: #e0eefe;
+  
+    /* new variables */
+    --white-900: #ffffff;
+    --white-alpha-10: rgba(255, 255, 255, 0.1);
+    --white-alpha-20: rgba(255, 255, 255, 0.2);
+    --white-alpha-30: rgba(255, 255, 255, 0.3);
+    --white-alpha-40: rgba(255, 255, 255, 0.4);
+    --white-alpha-50: rgba(255, 255, 255, 0.5);
+    --white-alpha-60: rgba(255, 255, 255, 0.6);
+    --white-alpha-70: rgba(255, 255, 255, 0.7);
+    --white-alpha-80: rgba(255, 255, 255, 0.8);
+    --white-alpha-90: rgba(255, 255, 255, 0.9);
+  
+    --black-900: #060606;
+    --black-alpha-10: rgba(6, 6, 6, 0.1);
+    --black-alpha-20: rgba(6, 6, 6, 0.2);
+    --black-alpha-30: rgba(6, 6, 6, 0.3);
+    --black-alpha-40: rgba(6, 6, 6, 0.4);
+    --black-alpha-50: rgba(6, 6, 6, 0.5);
+    --black-alpha-60: rgba(6, 6, 6, 0.6);
+    --black-alpha-70: rgba(6, 6, 6, 0.7);
+    --black-alpha-80: rgba(6, 6, 6, 0.8);
+    --black-alpha-90: rgba(6, 6, 6, 0.9);
+  
+    --neutral-100: #f5f5f5;
+    --neutral-200: #dfdfdf;
+    --neutral-300: #b2b2b2;
+    --neutral-400: #969696;
+    --neutral-50: #fafafa;
+    --neutral-500: #797979;
+    --neutral-600: #5b5b5b;
+    --neutral-700: #3f3f3f;
+    --neutral-800: #212121;
+    --neutral-900: #060606;
+  
+    --primary-100: #bbd5ff;
+    --primary-200: #9ac0ff;
+    --primary-300: #6ca4ff;
+    --primary-400: #5092ff;
+    --primary-50: #e9f1ff;
+    --primary-500: #2477ff;
+    --primary-600: #216ce8;
+    --primary-700: #1a54b5;
+    --primary-800: #14418c;
+    --primary-900: #0f326b;
+  
+    --error-100: #f6c2bf;
+    --error-200: #f2a5a1;
+    --error-300: #ec7c76;
+    --error-400: #e9625b;
+    --error-50: #fcebeb;
+    --error-500: #e33b32;
+    --error-600: #cf362e;
+    --error-700: #a12a24;
+    --error-800: #7d201c;
+    --error-900: #5f1915;
+  
+    --warning-100: #fae2c3;
+    --warning-200: #f7d4a7;
+    --warning-300: #f4c17e;
+    --warning-400: #f1b565;
+    --warning-50: #fdf6ec;
+    --warning-500: #eea23f;
+    --warning-600: #d99339;
+    --warning-700: #a9732d;
+    --warning-800: #835923;
+    --warning-900: #64441a;
+  
+    --success-100: #beebc5;
+    --success-200: #9fe2a9;
+    --success-300: #73d481;
+    --success-400: #58cc69;
+    --success-50: #eaf9ec;
+    --success-500: #2ebf43;
+    --success-600: #2aae3d;
+    --success-700: #218830;
+    --success-800: #196925;
+    --success-900: #13501c;
+  
+    --focus-primary: 0px 0px 0px 3px rgba(36, 119, 255, 0.4);
+    --focus-error: 0px 0px 0px 3px rgba(227, 59, 50, 0.4);
+    --focus-warning: 0px 0px 0px 3px rgba(238, 162, 63, 0.4);
+    --focus-success: 0px 0px 0px 3px rgba(46, 191, 67, 0.4);
+  
+    --spacing-0: 0px;
+    --spacing-1: 2px;
+    --spacing-2: 4px;
+    --spacing-3: 6px;
+    --spacing-4: 8px;
+    --spacing-5: 10px;
+    --spacing-6: 12px;
+    --spacing-7: 14px;
+    --spacing-8: 16px;
+    --spacing-9: 20px;
+    --spacing-10: 24px;
+    --spacing-11: 28px;
+    --spacing-12: 32px;
+    --spacing-13: 36px;
+    --spacing-14: 40px;
+    --spacing-15: 44px;
+    --spacing-16: 48px;
+    --spacing-17: 56px;
+    --spacing-18: 64px;
+    --spacing-20: 80px;
+    --spacing-24: 96px;
+    --spacing-28: 112px;
+    --spacing-32: 128px;
+    --spacing-36: 144px;
+    --spacing-40: 160px;
+    --spacing-44: 176px;
+    --spacing-48: 192px;
+    --spacing-52: 208px;
+    --spacing-56: 224px;
+    --spacing-60: 240px;
+    --spacing-64: 256px;
+    --spacing-72: 288px;
+    --spacing-80: 320px;
+    --spacing-96: 384px;
+  
+    --rounded: 4px;
+    --rounded-md: 6px;
+    --rounded-lg: 8px;
+    --rounded-xl: 12px;
+    --rounded-2xl: 16px;
+    --rounded-3xl: 24px;
+    --rounded-full: 9999px;
+  
+    --transition-duration-1: 100ms;
+    --transition-duration-2: 200ms;
+    --transition-duration-3: 300ms;
+    --transition-duration-4: 400ms;
+    --transition-duration-5: 500ms;
+  }

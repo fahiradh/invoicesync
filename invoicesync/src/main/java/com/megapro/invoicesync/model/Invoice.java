@@ -44,9 +44,6 @@ public class Invoice {
     @Column(name="due_date")
     private LocalDate dueDate;
 
-    @Column(name="grand_total")
-    private long grandTotal;
-
     @Column(name="total_words")
     private String totalWords;
 
@@ -84,12 +81,12 @@ public class Invoice {
     // @OneToMany(mappedBy="asApprover", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
     // private List<Employee> asApprover;
 
+    @OneToMany(mappedBy = "productId", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+    private List<Product> listProduct;
+
     // @ElementCollection
     // @CollectionTable(name = "product_item", joinColumns = @JoinColumn(name = "invoice_id"))
     // @Column(name = "product_id")
-
-    @OneToMany(mappedBy = "productId", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
-    private List<Product> listProduct = new ArrayList<>();
 
     @Column(name="status")
     private String status = "Pending Approval";

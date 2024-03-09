@@ -3,6 +3,7 @@ package com.megapro.invoicesync.model;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -15,9 +16,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Table(name = "product")
 public class Product {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="product_id")
-    private Long productId;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID productId;
 
     @Column(name="name", nullable=false)
     private String name;
@@ -34,8 +34,8 @@ public class Product {
     @Column(name="discount")
     private int discount;
 
-    @Column(name="subtotal")
-    private long subtotal;
+    @Column(name="total_price")
+    private long totalPrice;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "invoice_id")
@@ -43,12 +43,5 @@ public class Product {
 
     @Column(name="tax")
     private int tax;
-
-    @Column(name="created")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime created;
-
-    // @OneToMany(mappedBy="product", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
-    // private List<Tax> tax;
 }
 

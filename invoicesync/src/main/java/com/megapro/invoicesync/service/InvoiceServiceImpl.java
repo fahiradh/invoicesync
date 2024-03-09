@@ -50,26 +50,45 @@ public class InvoiceServiceImpl implements InvoiceService{
 
     @Override
     public void attributeInvoce(Invoice invoice) {
-        var count = countInvoice()+1;
-        
+        long count = countInvoice() + 1;
+        String countStr = String.format("%03d", count);
         if (invoice.getInvoiceNumber() == null || invoice.getInvoiceNumber().length() == 0){
             var invoiceDate = invoice.getInvoiceDate();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyy");
-            String formattedDate = invoiceDate.format(formatter);
-            String invoiceNumber = String.format("INV-%s/KRIDA/%s", count,formattedDate);
+            DateTimeFormatter dayMonth = DateTimeFormatter.ofPattern("ddMM");
+            DateTimeFormatter year = DateTimeFormatter.ofPattern("yyyy");
+            String formattedDate = invoiceDate.format(dayMonth);
+            String formattedYear = invoiceDate.format(year);
+            String invoiceNumber = String.format("INV/%s/KRD/%s/%s", formattedYear,formattedDate,countStr);
             invoice.setInvoiceNumber(invoiceNumber);
         }
-        List<Product> listProduct = productService.getAllProduct();
+        var listDummy = invoiceDb.findByStaffEmail("dummy");
         List<Product> newListProduct = new ArrayList<>();
+        Invoice dummy = null;
+        for (Invoice inv : listDummy){
+            System.out.println("aman take in");
+            System.out.println(inv.getInvoiceId());
+            dummy = inv;
+        }
+        System.out.println("summy id "+dummy.getInvoiceId());
+
+        List<Product> listProduct = productService.getAllProductDummyInvoice(dummy);
+        System.out.println("prod length "+listProduct.size());
         for (Product p : listProduct) {
-            if (p.getCreated().isEqual(invoice.getCreated())) {
-                p.setInvoice(invoice);
-                productDb.save(p);
-                newListProduct.add(p);
-            }
+            System.out.println("AMAN");
+            System.out.println(p.getProductId());
+            p.setInvoice(invoice);
+            newListProduct.add(p);
         }
         invoice.setListProduct(newListProduct);
-        invoiceDb.save(invoice);
+        calculateSubtotal(invoice);
+    }
+
+    private void calculateSubtotal(Invoice invoice){
+        long subtotal = 0;
+        for (Product p : invoice.getListProduct()){
+            subtotal += p.getTotalPrice();
+        }
+        invoice.setSubtotal(subtotal);
     }
 
     @Override
@@ -89,6 +108,22 @@ public class InvoiceServiceImpl implements InvoiceService{
     }
 
     @Override
+    public List<Invoice> getInvoiceByStaffEmail(String email) {
+        return invoiceDb.findByStaffEmail(email);
+    }
+
+    @Override
+    public List<Product> getListProductInvoice(Invoice invoice) {
+        List<Product> listProduct = productService.getAllProduct();
+        List<Product> listProductInInvoice = new ArrayList<>();
+        for (Product p: listProduct){
+            if (p.getInvoice().getInvoiceId().equals(invoice.getInvoiceId())){
+                listProductInInvoice.add(p);
+            }
+        }
+        return listProductInInvoice;
+    }
+
     public List<Invoice> retrieveInvoicesByRole(String role) {
         List<UserApp> usersInRole = userAppDb.findByRoleName(role);
         List<String> emailsInRole = usersInRole.stream()

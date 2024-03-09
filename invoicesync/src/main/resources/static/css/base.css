@@ -1,16 +1,109 @@
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
-
-html, body, .apapedia{
-    font-family: 'Open Sans', sans-serif;
+/* Reset default styles */
+html, body {
+    font-family: 'Poppins', sans-serif;
     font-size: 15px;
-    background: rgb(255, 255, 255);
-    background: linear-gradient(243deg, rgba(255, 250, 234, 1) 35%, rgba(255, 255, 255, 1) 100%);
+    font-weight: 400;
+    background: #FFF;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
+h2{
+  font-weight:bold;
+  color:#3F2685;
+  font-size:xx-large;
+}
+
+/* Container */
+.container {
+    width: 80%;
+    margin: 0 auto;
+    margin-left: 10%;
+    margin-right: 10%;
+}
+
+/* Navbar */
+.navbar {
+    background: #EEF2F5;
+}
+
+.nav-profile, .nav-profile:hover {
+    background: #3F2685;
+    border-radius: 0.5rem;
+    color: #fff; 
+}
+
+.theme-color {
+    color: #3F2685; 
+}
+
+/* Sign-in Button */
+.btn-signin {
+    width: 100%;
+    background-color: #3F2685;
+    border-color: #3F2685;
+}
+
+/* Cards */
+.card {
+    --bs-card-border-width: 4px;
+    --bs-card-border-color: #EEF2F5;
+    --bs-card-border-radius: 0.7rem;
+    --bs-card-inner-border-radius: 0.7rem;
+    color: #3F2685;
+    margin-left: 50%;
+    margin-right: 10%;
+}
+
+.card-text {
+    color: #3F2685;
+}
+
+.card-info {
+    background-color: #9CB0C9;
+    background-color: #9CB0C9;
+    display: inline-block;
+    padding: 8px;
+    border-radius: 0.7rem;
+}
+
+.card small-card-title {
+  background: #3F2685;
+  color: #FFF;
+}
+
+
+/* Forms */
 .form {
-	background: FBFCFE;
+    background: #FBFCFE;
 }
 
-.card-header{
-	background: rgb(255, 255, 255);
+.form-control {
+    border-radius: 0.7rem;
+    background-color: #EEF2F5;
+}
+
+.card-header {
+    background: rgb(255, 255, 255);
+}
+
+/* Tables */
+.table td{
+  vertical-align: middle;
+}
+
+.table th {
+  vertical-align: middle;
+  border-bottom: 2px solid rgb(222, 226, 230);
+  background-color: #3F2685;
+  text-align: center;
+  color:#fff;
+}
+
+.table-bordered-classic th,
+.table-bordered-classic td {
+    border: 1px solid #3F2685;
+    text-align: left;
+    vertical-align: middle;
 }
