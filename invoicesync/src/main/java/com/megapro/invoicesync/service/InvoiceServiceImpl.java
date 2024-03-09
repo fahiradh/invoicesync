@@ -139,6 +139,23 @@ public class InvoiceServiceImpl implements InvoiceService{
     }
 
     @Override
+    public List<Invoice> retrieveInvoicesByDivision(String division) {
+        // Ambil semua user dari divisi tertentu
+        List<UserApp> usersInDivision = userAppDb.findAll().stream()
+                                                  .filter(user -> user.getRole().getRole().contains(division))
+                                                  .collect(Collectors.toList());
+        
+        // Ambil email dari semua user ini
+        List<String> emailsInDivision = usersInDivision.stream()
+                                                        .map(UserApp::getEmail)
+                                                        .collect(Collectors.toList());
+        
+        // Gunakan email ini untuk menemukan semua invoice yang terkait
+        return invoiceDb.findByStaffEmailIn(emailsInDivision);
+    }
+    
+    
+    
     public List<Invoice> retrieveInvoicesByEmailAndStatus(String email, String status) {
         return invoiceDb.findByStaffEmailAndStatus(email, status);
     }

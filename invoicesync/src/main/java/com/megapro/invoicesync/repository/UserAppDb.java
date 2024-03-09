@@ -19,7 +19,6 @@ import jakarta.transaction.Transactional;
 @Transactional
 public interface UserAppDb extends JpaRepository<UserApp, UUID>{
     UserApp findByEmail(String email);
-
     @Query("SELECT u FROM UserApp u WHERE u.role.role = :roleName")
     List<UserApp> findByRoleName(@Param("roleName") String roleName);
 }

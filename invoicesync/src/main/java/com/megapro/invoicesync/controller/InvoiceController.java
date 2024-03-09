@@ -1,5 +1,16 @@
 package com.megapro.invoicesync.controller;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -67,7 +78,6 @@ public class InvoiceController {
 
     @Autowired
     InvoiceDb invoiceDb;
-
 
     @GetMapping(value="/create-invoice")
     public String getCreateInvoice(Model model){
@@ -245,5 +255,29 @@ public class InvoiceController {
         model.addAttribute("invoices", myInvoiceDTOs);
         return "my-invoices-view"; // Ganti dengan nama view Thymeleaf Anda
     }
+
+@GetMapping("/invoices/division/{division}")
+public String getInvoicesByDivision(@PathVariable("division") String requestedDivision, Model model) {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String email = authentication.getName(); // Mendapatkan email pengguna yang sedang login
+    var user = userAppDb.findByEmail(email);
+    String role = user.getRole().getRole();
+
+    model.addAttribute("email", email);
+    model.addAttribute("role", role);
+    // Logika untuk mendapatkan role dan email pengguna yang terautentikasi sama
+    
+    // Tidak perlu memeriksa apakah role sesuai karena Anda sekarang bekerja berdasarkan divisi
+    List<Invoice> invoiceList = invoiceService.retrieveInvoicesByDivision(requestedDivision);
+    List<ReadInvoiceResponse> invoiceDTOList = invoiceList.stream()
+                                                          .map(invoiceMapper::readInvoiceToInvoiceResponse)
+                                                          .collect(Collectors.toList());
+
+    model.addAttribute("invoices", invoiceDTOList);
+    model.addAttribute("division", requestedDivision); // Ganti role dengan division
+    
+    return "viewall-invoices-division";
+}
+
 
 }
