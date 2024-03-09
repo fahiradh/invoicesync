@@ -91,4 +91,6 @@ public class Invoice {
     @OneToMany(mappedBy = "productId", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
     private List<Product> listProduct = new ArrayList<>();
 
+    @Column(name="status")
+    private String status = "Pending Approval";
 }

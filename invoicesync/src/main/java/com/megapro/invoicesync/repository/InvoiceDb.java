@@ -15,5 +15,6 @@ public interface InvoiceDb extends JpaRepository<Invoice, UUID>{
     List<Invoice> findByStaffEmailIn(List<String> emails);
     List<Invoice> findByStaffEmail(String email);
     List<Invoice> findByStatus(String status);
+    List<Invoice> findByStaffEmailAndStatus(String email, String status);
 }
 

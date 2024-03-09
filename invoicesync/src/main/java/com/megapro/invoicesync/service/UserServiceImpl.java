@@ -1,5 +1,7 @@
 package com.megapro.invoicesync.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -37,12 +39,19 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public void createEmployee(Employee employee) {
+        String hashedPass = encoder.encode(employee.getPassword());
+        employee.setPassword(hashedPass);
         employeeDb.save(employee);
     }
 
     @Override
     public Employee findByEmail(String email) {
        return employeeDb.findByEmail(email);
+    }
+
+    @Override
+    public List<Employee> getAllEmployee() {
+        return employeeDb.findAll();
     }
     
 }

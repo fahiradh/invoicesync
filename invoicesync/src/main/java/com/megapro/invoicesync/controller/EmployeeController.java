@@ -14,9 +14,8 @@ import com.megapro.invoicesync.dto.UserMapper;
 import com.megapro.invoicesync.dto.request.CreateEmployeeRequestDTO;
 import com.megapro.invoicesync.model.Role;
 import com.megapro.invoicesync.repository.UserAppDb;
-import com.megapro.invoicesync.service.AllUserService;
+import com.megapro.invoicesync.service.UserService;
 import com.megapro.invoicesync.service.RoleService;
-import org.springframework.web.bind.annotation.RequestBody;
 
 
 @Controller
@@ -25,7 +24,7 @@ public class EmployeeController {
     UserMapper userMapper;
 
     @Autowired
-    AllUserService userService;
+    UserService userService;
 
     @Autowired
     RoleService roleService;
@@ -54,7 +53,7 @@ public class EmployeeController {
     
     @PostMapping("/create-account")
     public String createEmployeeAccount(CreateEmployeeRequestDTO employeeDTO, Model model){
-        var employee = userMapper.createEmployeeRequestToEmployee(employeeDTO);
+        var employee = userMapper.createEmployeeRequestDTOToEmployee(employeeDTO);
 
         Long roleId = employeeDTO.getRole().getId();
         Role role = roleService.getRoleByRoleId(roleId);

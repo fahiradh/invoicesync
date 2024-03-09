@@ -2,23 +2,19 @@ package com.megapro.invoicesync.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 @Entity
 @Table(name = "tax")
 public class Tax {
     @Id
-    @NotNull
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "tax_id")
     private int taxId;
 
@@ -33,9 +29,4 @@ public class Tax {
     @NotNull
     @Column(name = "tax_percentage")
     private int taxPercentage;
-
-    // @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    // @JoinColumn(name = "product_id")
-    // private Product product;
-    
 }
