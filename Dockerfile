@@ -7,8 +7,8 @@ ARG JDBC_DATABASE_USERNAME
 ENV PRODUCTION ${PRODUCTION}
 ENV JDBC_DATABASE_URL ${JDBC_DATABASE_URL}
 
-RUN ls
 WORKDIR /app
-COPY ./build/libs/invoicesync-0.0.1-SNAPSHOT.jar /app
+RUN ls > file_list.txt
+COPY file_list.txt /app
 EXPOSE 8080
 CMD ["java","-jar","invoicesync-0.0.1-SNAPSHOT.jar"]
