@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+</head>
+
+<body>
+    <nav th:fragment="navbar-non-finance" th:if="${role.contains('Staff')}" class="navbar navbar-expand-lg navbar-bg  p-3">
+        <div class="container-fluid theme-color">
+            <a class="navbar-brand fw-bold theme-color" href="#">INVOICESYNC</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+                aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class=" collapse navbar-collapse" id="navbarNavDropdown">
+                <ul class="navbar-nav ms-auto ">
+                    <li class="nav-item">
+                        <a class="nav-link mx-2 active" aria-current="page" href="/home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link mx-2" href="/create-invoice">Create Invoice</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link mx-2" href="/my-invoices">My Invoices</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link mx-2 dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <!-- Tampilkan nama pengguna di sini -->
+                            <span th:text="${email}"></span>
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <li><a class="dropdown-item" href="#">Profile</a></li>
+                            <li>
+                                <form th:action="@{/logout}" method="post" class="logout-form">
+                                  <button type="submit" class="dropdown-item" style="border: none; background: none; cursor: pointer;">Logout</button>
+                                </form>
+                              </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <nav th:fragment="navbar-non-finance" th:if="${role.contains('Manager')}" class="navbar navbar-expand-lg navbar-bg  p-3">
+        <div class="container-fluid theme-color">
+            <a class="navbar-brand fw-bold theme-color" href="#">INVOICESYNC</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+                aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class=" collapse navbar-collapse" id="navbarNavDropdown">
+                <ul class="navbar-nav ms-auto ">
+                    <li class="nav-item">
+                        <a class="nav-link mx-2 active" aria-current="page" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link mx-2" href="#">Approve Invoice</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link mx-2" th:href="@{/invoices/{role}(role=${role})}">Divisonal Invoice List</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link mx-2 dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <!-- Tampilkan nama pengguna di sini -->
+                            <span th:text="${email}"></span>
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <li><a class="dropdown-item" href="#">Profile</a></li>
+                            <li>
+                                <form th:action="@{/logout}" method="post" class="logout-form">
+                                  <button type="submit" class="dropdown-item" style="border: none; background: none; cursor: pointer;">Logout</button>
+                                </form>
+                              </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</body>
+
+</html>
