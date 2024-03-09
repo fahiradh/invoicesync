@@ -27,12 +27,12 @@ public class WebSecurityConfig {
                 .requestMatchers(new AntPathRequestMatcher("/js/**")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/login")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/tax")).hasAnyAuthority("Finance Staff")
+                .requestMatchers(new AntPathRequestMatcher("/create-account")).hasAnyAuthority("Admin")
                 .requestMatchers(new AntPathRequestMatcher("/create-invoice")).hasAnyAuthority("Warehouse Staff")
-                .requestMatchers(new AntPathRequestMatcher("/invoice/**")).hasAnyAuthority("Warehouse Staff")
-                .requestMatchers(new AntPathRequestMatcher("/approval-flows")).permitAll()
-                .requestMatchers(new AntPathRequestMatcher("/add-approval-flow")).permitAll()
-                .requestMatchers(new AntPathRequestMatcher("/invoices")).permitAll()
-                .requestMatchers(new AntPathRequestMatcher("/invoice/**")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/invoice/{id}")).hasAnyAuthority("*Staff*", "*Manager*", "*Director*")
+                .requestMatchers(new AntPathRequestMatcher("/approval-flows")).hasAnyAuthority("Admin")
+                .requestMatchers(new AntPathRequestMatcher("/add-approval-flow")).hasAnyAuthority("Admin")
+                .requestMatchers(new AntPathRequestMatcher("/invoices")).hasAnyAuthority("*Finance*")
                 .anyRequest().authenticated())
             
             .formLogin((form) -> form

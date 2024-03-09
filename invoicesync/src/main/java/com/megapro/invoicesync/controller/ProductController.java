@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.megapro.invoicesync.dto.ProductMapper;
 import com.megapro.invoicesync.dto.request.CreateProductRequestDTO;
 import com.megapro.invoicesync.model.Invoice;
-import com.megapro.invoicesync.model.Product;
 import com.megapro.invoicesync.service.InvoiceService;
 import com.megapro.invoicesync.service.ProductService;
 

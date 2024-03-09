@@ -1,6 +1,5 @@
 package com.megapro.invoicesync.repository;
 
-
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -16,20 +16,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,30 +28,15 @@ import com.megapro.invoicesync.repository.UserAppDb;
 import com.megapro.invoicesync.service.InvoiceService;
 
 import java.util.UUID;
-import org.springframework.web.bind.annotation.RequestBody;
-import com.megapro.invoicesync.dto.InvoiceMapper;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.megapro.invoicesync.dto.InvoiceMapper;
-// import com.megapro.invoicesync.dto.request.CreateInvoiceRequest;
 import com.megapro.invoicesync.dto.response.ReadInvoiceResponse;
 import com.megapro.invoicesync.model.Invoice;
-import com.megapro.invoicesync.dto.request.CreateInvoiceRequestDTO;
 import com.megapro.invoicesync.model.Product;
 import com.megapro.invoicesync.model.UserApp;
-import com.megapro.invoicesync.repository.UserAppDb;
-import com.megapro.invoicesync.dto.request.CreateInvoiceRequestDTO;
-import com.megapro.invoicesync.model.Invoice;
-import com.megapro.invoicesync.model.Product;
 import com.megapro.invoicesync.repository.InvoiceDb;
-import com.megapro.invoicesync.service.InvoiceService;
-
-import jakarta.validation.Valid;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Controller
@@ -171,7 +145,7 @@ public class InvoiceController {
         // You may also want to check if the current user has permissions to view invoices from other roles.
         if(!currentUserRole.equalsIgnoreCase(requestedRole)) {
             // Handle unauthorized access, perhaps by showing an error message or redirecting to another page
-            return "error/unauthorized"; // Replace with your actual error page view name
+            return "error/403.html"; // Replace with your actual error page view name
         }
 
         // If the user has permission, proceed to retrieve invoices for that role
@@ -200,7 +174,7 @@ public class InvoiceController {
         // You may also want to check if the current user has permissions to view invoices from other roles.
         if(!currentUserRole.equalsIgnoreCase(requestedRole)) {
             // Handle unauthorized access, perhaps by showing an error message or redirecting to another page
-            return "error/unauthorized"; // Replace with your actual error page view name
+            return "error/403.html"; // Replace with your actual error page view name
         }
 
         // If the user has permission, proceed to retrieve invoices for that role
