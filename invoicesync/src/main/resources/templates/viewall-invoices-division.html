@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
     <title>Invoice History</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Include Bootstrap CSS -->
@@ -58,7 +60,7 @@
 <body>
     <nav th:replace="~{fragments/navbar-non-finance :: navbar-non-finance}"></nav>
     <div class="container">
-        <div class="table-title" th:text="'Invoice History - ' + ${role}">Invoice History - Division</div>
+        <div class="table-title" th:text="'Invoice History - ' + ${division}">Invoice History - Division</div>
         <div class="ml-3">
             <form class="row g-3" th:action="@{/my-invoices}" method="GET">
                 <div class="col-auto">
