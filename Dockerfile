@@ -8,6 +8,6 @@ ENV PRODUCTION ${PRODUCTION}
 ENV JDBC_DATABASE_URL ${JDBC_DATABASE_URL}
 
 WORKDIR /app
-COPY ./invoicesync/build/libs/invoicesync-0.0.1-SNAPSHOT.jar /app
+COPY ./build/libs/invoicesync-0.0.1-SNAPSHOT.jar /app
 EXPOSE 8080
 CMD ["java","-jar","invoicesync-0.0.1-SNAPSHOT.jar"]
