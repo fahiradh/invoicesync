@@ -120,12 +120,12 @@ public class InvoiceController {
         for (Invoice invoice : invoiceList) {
             ReadInvoiceResponse invoiceDTO = invoiceMapper.readInvoiceToInvoiceResponse(invoice);
             
-            // Fetch the staff user for each invoice to get their role
             UserApp invoiceUser = userAppDb.findByEmail(invoice.getStaffEmail());
-            String staffRole = invoiceUser.getRole().getRole();
-
-            // Set the staff role into the invoice DTO
-            invoiceDTO.setStaffRole(staffRole); // Make sure ReadInvoiceResponse has a field for staffRole
+            
+            // Cek apakah invoiceUser adalah null
+            String staffRole = (invoiceUser != null) ? invoiceUser.getRole().getRole() : "Unknown Role";
+        
+            invoiceDTO.setStaffRole(staffRole);
             invoiceDTOList.add(invoiceDTO);
         }
 
