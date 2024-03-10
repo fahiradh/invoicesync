@@ -7,6 +7,13 @@
     <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
     <title>All Employees</title>
     <style>
+        .card-employee {
+            margin-bottom: 1.5rem;
+            border: 4px solid #EEF2F5;
+            border-radius: 0.7rem;
+            padding: 1rem;
+        }
+
         .text-violet {
             color: #3F2685;
         }
@@ -97,7 +104,7 @@
         </div>
         <div class="row justify-content-center">
             <div th:each="employee: ${listEmployee}" class="col-md-6">
-                <div class="card mb-4">
+                <div class="card-employee">
                     <div class="card-body d-flex align-items-center">
                         <img th:src="${employee.base64Photo}" alt="Photo of ${employee.firstName} ${employee.lastName}" class="rounded-photo default-photo">
                         <div class="employee-info">
