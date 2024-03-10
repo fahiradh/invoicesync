@@ -20,9 +20,11 @@ public interface InvoiceService {
     List<Invoice> retrieveAllInvoice();
     List<Invoice> retrieveInvoicesByRole(String role);
     List<Invoice> retrieveInvoicesByEmail(String email);
-    public List<Invoice> retrieveInvoicesByDivision(String division);
+    List<Invoice> retrieveInvoicesByDivision(String division);
     List<Invoice> getInvoiceByStaffEmail(String email);
     List<Product> getListProductInvoice(Invoice invoice);
     List<Invoice> retrieveInvoicesByEmailAndStatus(String email, String status);
+    List<Invoice> retrieveInvoicesByDivisionAndStatus(String division, String status);
+    List<Invoice> retrieveInvoicesByStatus(String status);
     
 }

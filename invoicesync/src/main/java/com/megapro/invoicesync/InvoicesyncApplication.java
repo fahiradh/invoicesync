@@ -91,7 +91,6 @@ public class InvoicesyncApplication {
 			warehouseStaff.setRole(roleStafWarehouse);
 			userService.createEmployee(userMapper.createEmployeeRequestDTOToEmployee(warehouseStaff));
 
-
 			var financeStaff = new CreateEmployeeRequestDTO();
 			financeStaff.setEmail("finance_staff@gmail.com");
 			financeStaff.setPassword("finance");

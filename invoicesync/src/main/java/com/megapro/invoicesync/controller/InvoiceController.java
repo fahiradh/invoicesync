@@ -3,22 +3,12 @@ package com.megapro.invoicesync.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import java.util.List;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -129,62 +119,33 @@ public class InvoiceController {
         return "viewall-invoices";
     }
 
-    @GetMapping("/invoices/{role}")
-    public String getInvoicesByRole(@PathVariable("role") String requestedRole, Model model) {
+    @GetMapping(value="/invoices", params = "status")
+    public String getAllInvoices(@RequestParam(value = "status") String status, Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
-        UserApp currentUser = userAppDb.findByEmail(email);
-        String currentUserRole = currentUser.getRole().getRole();
-        var user = userAppDb.findByEmail(email);
-        String role = user.getRole().getRole();
-
-        model.addAttribute("email", email);
+        UserApp user = userAppDb.findByEmail(email); // Assuming userAppDb is a service/repository for UserApp entities
+        String role = user.getRole().getRole(); // Fetch the role of the user
         model.addAttribute("role", role);
-        
-        // Check if the current user's role matches the requested role.
-        // You may also want to check if the current user has permissions to view invoices from other roles.
-        if(!currentUserRole.equalsIgnoreCase(requestedRole)) {
-            // Handle unauthorized access, perhaps by showing an error message or redirecting to another page
-            return "error/403.html"; // Replace with your actual error page view name
+        model.addAttribute("email", email);
+        model.addAttribute("status", status);
+
+        List<Invoice> invoiceList = invoiceService.retrieveInvoicesByStatus(status);
+        List<ReadInvoiceResponse> invoiceDTOList = new ArrayList<>();
+
+        for (Invoice invoice : invoiceList) {
+            ReadInvoiceResponse invoiceDTO = invoiceMapper.readInvoiceToInvoiceResponse(invoice);
+            
+            // Fetch the staff user for each invoice to get their role
+            UserApp invoiceUser = userAppDb.findByEmail(invoice.getStaffEmail());
+            String staffRole = invoiceUser.getRole().getRole();
+
+            // Set the staff role into the invoice DTO
+            invoiceDTO.setStaffRole(staffRole); // Make sure ReadInvoiceResponse has a field for staffRole
+            invoiceDTOList.add(invoiceDTO);
         }
 
-        // If the user has permission, proceed to retrieve invoices for that role
-        List<Invoice> invoiceList = invoiceService.retrieveInvoicesByRole(requestedRole);
-        List<ReadInvoiceResponse> invoiceDTOList = invoiceList.stream()
-                                                            .map(invoiceMapper::readInvoiceToInvoiceResponse)
-                                                            .collect(Collectors.toList());
         model.addAttribute("invoices", invoiceDTOList);
-        model.addAttribute("role", requestedRole); // Add the role to the model if you need to display it in the view
-        return "viewall-invoices-division"; // Replace with the actual view name for the invoices list
-    }
-
-    @GetMapping(value="/invoices/{role}", params = {"status"})
-    public String getInvoicesByRole(@PathVariable("role") String requestedRole, @RequestParam(value = "status") String status, Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        UserApp currentUser = userAppDb.findByEmail(email);
-        String currentUserRole = currentUser.getRole().getRole();
-        var user = userAppDb.findByEmail(email);
-        String role = user.getRole().getRole();
-
-        model.addAttribute("email", email);
-        model.addAttribute("role", role);
-        
-        // Check if the current user's role matches the requested role.
-        // You may also want to check if the current user has permissions to view invoices from other roles.
-        if(!currentUserRole.equalsIgnoreCase(requestedRole)) {
-            // Handle unauthorized access, perhaps by showing an error message or redirecting to another page
-            return "error/403.html"; // Replace with your actual error page view name
-        }
-
-        // If the user has permission, proceed to retrieve invoices for that role
-        List<Invoice> invoiceList = invoiceService.retrieveInvoicesByRole(requestedRole);
-        List<ReadInvoiceResponse> invoiceDTOList = invoiceList.stream()
-                                                            .map(invoiceMapper::readInvoiceToInvoiceResponse)
-                                                            .collect(Collectors.toList());
-        model.addAttribute("invoices", invoiceDTOList);
-        model.addAttribute("role", requestedRole); // Add the role to the model if you need to display it in the view
-        return "viewall-invoices-division"; // Replace with the actual view name for the invoices list
+        return "viewall-invoices";
     }
 
     @GetMapping("/my-invoices")
@@ -253,5 +214,29 @@ public String getInvoicesByDivision(@PathVariable("division") String requestedDi
     return "viewall-invoices-division";
 }
 
+@GetMapping(value="/invoices/division/{division}", params = "status")
+public String getInvoicesByDivision(
+        @PathVariable("division") String requestedDivision, 
+        @RequestParam(value = "status") String status,
+        Model model) {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String email = authentication.getName(); // Mendapatkan email pengguna yang sedang login
+    var user = userAppDb.findByEmail(email);
+    String role = user.getRole().getRole();
+
+    model.addAttribute("email", email);
+    model.addAttribute("role", role);
+    model.addAttribute("status", status);
+
+    List<Invoice> invoiceList = invoiceService.retrieveInvoicesByDivisionAndStatus(requestedDivision, status);
+    List<ReadInvoiceResponse> invoiceDTOList = invoiceList.stream()
+                                                          .map(invoiceMapper::readInvoiceToInvoiceResponse)
+                                                          .collect(Collectors.toList());
+
+    model.addAttribute("invoices", invoiceDTOList);
+    model.addAttribute("division", requestedDivision);
+    
+    return "viewall-invoices-division";
+}
 
 }
