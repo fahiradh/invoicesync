@@ -3,20 +3,8 @@ package com.megapro.invoicesync.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -134,8 +122,8 @@ public class InvoiceController {
     public String getAllInvoices(@RequestParam(value = "status") String status, Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
-        UserApp user = userAppDb.findByEmail(email); // Assuming userAppDb is a service/repository for UserApp entities
-        String role = user.getRole().getRole(); // Fetch the role of the user
+        UserApp user = userAppDb.findByEmail(email);
+        String role = user.getRole().getRole();
         model.addAttribute("role", role);
         model.addAttribute("email", email);
         model.addAttribute("status", status);
@@ -148,10 +136,11 @@ public class InvoiceController {
             
             // Fetch the staff user for each invoice to get their role
             UserApp invoiceUser = userAppDb.findByEmail(invoice.getStaffEmail());
-            String staffRole = invoiceUser.getRole().getRole();
+
+            String staffRole = (invoiceUser != null) ? invoiceUser.getRole().getRole() : "Unknown Role";
 
             // Set the staff role into the invoice DTO
-            invoiceDTO.setStaffRole(staffRole); // Make sure ReadInvoiceResponse has a field for staffRole
+            invoiceDTO.setStaffRole(staffRole);
             invoiceDTOList.add(invoiceDTO);
         }
 
@@ -202,56 +191,52 @@ public class InvoiceController {
         return "my-invoices-view"; // Ganti dengan nama view Thymeleaf Anda
     }
 
-@GetMapping("/invoices/division/{division}")
-public String getInvoicesByDivision(@PathVariable("division") String requestedDivision, Model model) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    String email = authentication.getName(); // Mendapatkan email pengguna yang sedang login
-    var user = userAppDb.findByEmail(email);
-    String role = user.getRole().getRole();
+    @GetMapping("/invoices/division/{division}")
+    public String getInvoicesByDivision(@PathVariable("division") String requestedDivision, Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName(); // Mendapatkan email pengguna yang sedang login
+        var user = userAppDb.findByEmail(email);
+        String role = user.getRole().getRole();
 
-    model.addAttribute("email", email);
-    model.addAttribute("role", role);
-    // Logika untuk mendapatkan role dan email pengguna yang terautentikasi sama
-    
-    // Tidak perlu memeriksa apakah role sesuai karena Anda sekarang bekerja berdasarkan divisi
-    List<Invoice> invoiceList = invoiceService.retrieveInvoicesByDivision(requestedDivision);
-    List<ReadInvoiceResponse> invoiceDTOList = invoiceList.stream()
-                                                          .map(invoiceMapper::readInvoiceToInvoiceResponse)
-                                                          .collect(Collectors.toList());
+        model.addAttribute("email", email);
+        model.addAttribute("role", role);
+        // Logika untuk mendapatkan role dan email pengguna yang terautentikasi sama
+        
+        // Tidak perlu memeriksa apakah role sesuai karena Anda sekarang bekerja berdasarkan divisi
+        List<Invoice> invoiceList = invoiceService.retrieveInvoicesByDivision(requestedDivision);
+        List<ReadInvoiceResponse> invoiceDTOList = invoiceList.stream()
+                                                            .map(invoiceMapper::readInvoiceToInvoiceResponse)
+                                                            .collect(Collectors.toList());
 
-    model.addAttribute("invoices", invoiceDTOList);
-    model.addAttribute("division", requestedDivision); // Ganti role dengan division
-    
-    return "viewall-invoices-division";
-}
+        model.addAttribute("invoices", invoiceDTOList);
+        model.addAttribute("division", requestedDivision); // Ganti role dengan division
+        
+        return "viewall-invoices-division";
+    }
 
+    @GetMapping(value="/invoices/division/{division}", params = "status")
+    public String getInvoicesByDivision(
+            @PathVariable("division") String requestedDivision, 
+            @RequestParam(value = "status") String status,
+            Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName(); // Mendapatkan email pengguna yang sedang login
+        var user = userAppDb.findByEmail(email);
+        String role = user.getRole().getRole();
 
-@GetMapping(value="/invoices/division/{division}", params = "status")
-public String getInvoicesByDivision(
-        @PathVariable("division") String requestedDivision, 
-        @RequestParam(value = "status") String status,
-        Model model) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    String email = authentication.getName(); // Mendapatkan email pengguna yang sedang login
-    var user = userAppDb.findByEmail(email);
-    String role = user.getRole().getRole();
+        model.addAttribute("email", email);
+        model.addAttribute("role", role);
+        model.addAttribute("status", status);
 
-    model.addAttribute("email", email);
-    model.addAttribute("role", role);
-    model.addAttribute("status", status);
+        List<Invoice> invoiceList = invoiceService.retrieveInvoicesByDivisionAndStatus(requestedDivision, status);
+        List<ReadInvoiceResponse> invoiceDTOList = invoiceList.stream()
+                                                            .map(invoiceMapper::readInvoiceToInvoiceResponse)
+                                                            .collect(Collectors.toList());
 
-    List<Invoice> invoiceList = invoiceService.retrieveInvoicesByDivisionAndStatus(requestedDivision, status);
-    List<ReadInvoiceResponse> invoiceDTOList = invoiceList.stream()
-                                                          .map(invoiceMapper::readInvoiceToInvoiceResponse)
-                                                          .collect(Collectors.toList());
-
-    model.addAttribute("invoices", invoiceDTOList);
-    model.addAttribute("division", requestedDivision);
-    
-    return "viewall-invoices-division";
-}
-
-
-
+        model.addAttribute("invoices", invoiceDTOList);
+        model.addAttribute("division", requestedDivision);
+        
+        return "viewall-invoices-division";
+    }
 
 }
