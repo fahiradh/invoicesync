@@ -15,7 +15,6 @@ import com.megapro.invoicesync.repository.UserAppDb;
 
 import jakarta.transaction.Transactional;
 import java.time.format.DateTimeFormatter;
-
 import java.util.UUID;
 import java.util.ArrayList;
 

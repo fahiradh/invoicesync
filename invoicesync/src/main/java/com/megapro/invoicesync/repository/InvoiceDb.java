@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 import com.megapro.invoicesync.model.Invoice;
 import jakarta.transaction.Transactional;
 
-
 @Repository
 @Transactional
 public interface InvoiceDb extends JpaRepository<Invoice, UUID>{
