@@ -11,4 +11,6 @@ public interface UserService {
     void createEmployee(Employee employee);
     Employee findByEmail(String email);
     List<Employee> getAllEmployee();
+    boolean existsByEmail(String email);
+    boolean existsByNomorHp(String phoneNumber);
 }

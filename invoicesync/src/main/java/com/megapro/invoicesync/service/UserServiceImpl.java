@@ -53,5 +53,16 @@ public class UserServiceImpl implements UserService{
     public List<Employee> getAllEmployee() {
         return employeeDb.findAll();
     }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return userDb.existsByEmail(email);
+    }
+
+    @Override
+    public boolean existsByNomorHp(String phoneNumber) {
+        return employeeDb.existsByNomorHp(phoneNumber);
+    }
+
     
 }
