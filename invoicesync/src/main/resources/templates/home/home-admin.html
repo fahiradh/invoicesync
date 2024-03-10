@@ -14,30 +14,37 @@
   <title>Home</title>
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-      <a class="navbar-brand theme-color" href="#">INVOICESYNC</a>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              <i class="fas fa-user"></i>
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
-              <li><a class="dropdown-item" href="#">Profile</a></li>
-              <li><hr class="dropdown-divider"></li>
-              <!-- Form Logout -->
-              <li>
-                <form th:action="@{/logout}" method="post" class="logout-form">
-                  <button type="submit" class="dropdown-item" style="border: none; background: none; cursor: pointer;">Logout</button>
-                </form>
-              </li>
+  <nav class="navbar navbar-expand-lg navbar-bg  p-3">
+    <div class="container-fluid theme-color">
+        <a class="navbar-brand" th:href="@{/}">
+            <img th:src="@{/assets/nav-logo.png}" alt="INVOICESYNC Logo" style="width: 240px;" />
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+            aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class=" collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav ms-auto ">
+                <li class="nav-item dropdown">
+                    <a class="nav-link mx-2 dropdown-toggle nav-profile" href="#" id="navbarDropdownMenuLink" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user"></i>
+                        <span th:text="${email}"></span>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <li><a class="dropdown-item" href="#">Profile</a></li>
+                        <li>
+                            <form th:action="@{/logout}" method="post" class="logout-form">
+                              <button type="submit" class="dropdown-item" style="border: none; background: none; cursor: pointer;">Logout</button>
+                            </form>
+                          </li>
+                    </ul>
+                </li>
             </ul>
-          </li>
-        </ul>
-      </div>
+        </div>
     </div>
-  </nav>
+</nav>
 
   <div class="container">
     <div class="row">
