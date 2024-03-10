@@ -156,6 +156,16 @@ public class InvoiceServiceImpl implements InvoiceService{
     public List<Invoice> retrieveInvoicesByEmailAndStatus(String email, String status) {
         return invoiceDb.findByStaffEmailAndStatus(email, status);
     }
+
+    @Override
+    public List<Invoice> retrieveInvoicesByDivisionAndStatus(String division, String status) {
+        return invoiceDb.findByEmployeeRoleNameAndStatus(division, status);
+    }
+
+    @Override
+    public List<Invoice> retrieveInvoicesByStatus(String status) {
+        return invoiceDb.findByStatus(status);
+    }
     
     
 }

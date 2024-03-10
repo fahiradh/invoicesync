@@ -21,9 +21,12 @@ public class PageController {
         String email = authentication.getName();
         var user = userAppDb.findByEmail(email);
         String role = user.getRole().getRole();
+        String[] parts = role.split(" ");
+        String division = parts[0];
 
         model.addAttribute("email", email);
         model.addAttribute("role", role);
+        model.addAttribute("division", division);
 
         if (role.contains("Staf")) {
             if (role.contains("Finance")) {

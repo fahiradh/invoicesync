@@ -29,10 +29,13 @@ public class WebSecurityConfig {
                 .requestMatchers(new AntPathRequestMatcher("/tax")).hasAnyAuthority("Finance Staff")
                 .requestMatchers(new AntPathRequestMatcher("/create-account")).hasAnyAuthority("Admin")
                 .requestMatchers(new AntPathRequestMatcher("/create-invoice")).hasAnyAuthority("Warehouse Staff")
-                .requestMatchers(new AntPathRequestMatcher("/invoice/{id}")).hasAnyAuthority("*Staff*", "*Manager*", "*Director*")
+                .requestMatchers(new AntPathRequestMatcher("/invoice/{id}")).hasAnyAuthority(
+                    "Warehouse Staff", "Warehouse Manager",
+                    "Finance Staff", "Finance Manager",
+                    "Finance Director")
                 .requestMatchers(new AntPathRequestMatcher("/approval-flows")).hasAnyAuthority("Admin")
                 .requestMatchers(new AntPathRequestMatcher("/add-approval-flow")).hasAnyAuthority("Admin")
-                .requestMatchers(new AntPathRequestMatcher("/invoices")).hasAnyAuthority("*Finance*")
+                .requestMatchers(new AntPathRequestMatcher("/invoices")).hasAnyAuthority("Finance Director")
                 .anyRequest().authenticated())
             
             .formLogin((form) -> form
