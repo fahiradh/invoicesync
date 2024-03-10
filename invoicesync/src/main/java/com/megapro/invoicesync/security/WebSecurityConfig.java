@@ -42,6 +42,7 @@ public class WebSecurityConfig {
                 .loginPage("/login")
                 .permitAll()
                 .defaultSuccessUrl("/home", true)
+                .failureUrl("/login?error=true")
             )
             .logout((logout) -> logout.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                 .logoutSuccessUrl("/login"))

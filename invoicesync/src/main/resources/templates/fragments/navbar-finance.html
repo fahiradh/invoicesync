@@ -11,7 +11,9 @@
 <body>
     <nav th:fragment="navbar-finance" th:if="${role.contains('Staff')}" class="navbar navbar-expand-lg navbar-bg  p-3">
         <div class="container-fluid theme-color">
-            <a class="navbar-brand fw-bold theme-color" href="#">INVOICESYNC</a>
+            <a class="navbar-brand" th:href="@{/}">
+                <img th:src="@{/assets/nav-logo.png}" alt="INVOICESYNC Logo" style="width: 240px;" />
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
                 aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -32,9 +34,9 @@
                         <a class="nav-link mx-2" href="/tax">Tax Management</a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link mx-2 dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+                        <a class="nav-link mx-2 dropdown-toggle nav-profile" href="#" id="navbarDropdownMenuLink" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">
-                            <!-- Tampilkan nama pengguna di sini -->
+                            <i class="fas fa-user"></i>
                             <span th:text="${email}"></span>
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
@@ -53,7 +55,9 @@
 
     <nav th:fragment="navbar-finance" th:if="${role.contains('Manager') or role.contains('Director')}" class="navbar navbar-expand-lg navbar-bg  p-3">
         <div class="container-fluid theme-color">
-            <a class="navbar-brand fw-bold theme-color" href="#">INVOICESYNC</a>
+            <a class="navbar-brand" th:href="@{/}">
+                <img th:src="@{/assets/nav-logo.png}" alt="INVOICESYNC Logo" style="width: 240px;" />
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
                 aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -62,7 +66,7 @@
             <div class=" collapse navbar-collapse" id="navbarNavDropdown">
                 <ul class="navbar-nav ms-auto ">
                     <li class="nav-item">
-                        <a class="nav-link mx-2 active" aria-current="page" href="#">Home</a>
+                        <a class="nav-link mx-2 active" aria-current="page" href="/home">Home</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link mx-2" href="#">Approve Invoice</a>
@@ -71,11 +75,11 @@
                         <a class="nav-link mx-2" href="/invoices">All Invoices List</a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link mx-2 dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            <!-- Tampilkan nama pengguna di sini -->
-                            <span th:text="${email}"></span>
-                        </a>
+                        <a class="nav-link mx-2 dropdown-toggle nav-profile" href="#" id="navbarDropdownMenuLink" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user"></i>
+                        <span th:text="${email}"></span>
+                    </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                             <li><a class="dropdown-item" href="#">Profile</a></li>
                             <li>
