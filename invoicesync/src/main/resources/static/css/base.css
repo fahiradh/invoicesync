@@ -2,25 +2,34 @@
 html, body {
     font-family: 'Poppins', sans-serif;
     font-size: 15px;
-    font-weight: 400;
     background: #FFF;
-    margin: 0;
-    padding: 0;
     box-sizing: border-box;
 }
 
-h2{
-  font-weight:bold;
+h2, .flow-box strong{
   color:#3F2685;
   font-size:xx-large;
+  font-weight: 600;
+}
+
+h3{
+    color:#3F2685;
+    font-weight: 400px;
+    font-size: x-large;
 }
 
 /* Container */
 .container {
-    width: 80%;
-    margin: 0 auto;
-    margin-left: 10%;
-    margin-right: 10%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: auto;
+    max-width: 1240px;
+}
+
+.container .title{
+    text-align: left;
+    padding-top:5%;
 }
 
 /* Navbar */
@@ -28,7 +37,10 @@ h2{
     background: #EEF2F5;
 }
 
-.nav-profile, .nav-profile:hover {
+.nav-profile, 
+.nav-profile:hover, 
+.nav-profile:active,
+.nav-profile:focus{
     background: #3F2685;
     border-radius: 0.5rem;
     color: #fff; 
@@ -39,10 +51,14 @@ h2{
 }
 
 /* Sign-in Button */
-.btn-signin {
-    width: 100%;
-    background-color: #3F2685;
-    border-color: #3F2685;
+.btn-signin, .btn-primary {
+    background-color: #3F2685; 
+    border-color: #3F2685; 
+}
+
+.btn-signin:hover, .btn-signin:active, .btn-primary:hover, .btn-primary:active{
+    background-color: #5d3ca4; 
+    border-color: #5d3ca4; 
 }
 
 /* Cards */
@@ -51,9 +67,18 @@ h2{
     --bs-card-border-color: #EEF2F5;
     --bs-card-border-radius: 0.7rem;
     --bs-card-inner-border-radius: 0.7rem;
-    color: #3F2685;
-    margin-left: 50%;
+    margin-left: 10%;
     margin-right: 10%;
+}
+
+.card-borderless{
+    margin-left: 10%;
+    margin-right: 10%;
+}
+
+.card-title{
+    text-align: center;
+    padding-top:5%;
 }
 
 .card-text {
@@ -106,4 +131,177 @@ h2{
     border: 1px solid #3F2685;
     text-align: left;
     vertical-align: middle;
+}
+
+.text-violet {
+    color: #3F2685;
+}
+
+.theme-color {
+    color: #3F2685; 
+}
+
+.table-custom {
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 20px;
+}
+.table-custom thead {
+    background-color: #3F2685;
+    color: white;
+}
+.table-custom th, .table-custom td {
+    border: none;
+}
+.table-custom tbody tr {
+    background-color: #E3E6F0;
+}
+.table-custom tbody tr:nth-of-type(even) {
+    background-color: #fff;
+}
+.status-approved {
+    color: green;
+}
+.status-rejected {
+    color: red;
+}
+.table-title {
+    font-size: 24px;
+    color: #3F2685;
+    margin-bottom: 16px;
+    font-weight: bold;
+}
+.btn-primary {
+    background-color: #3f2685; /* Purple color */
+    border-color: #3f2685; /* Border color same as background */
+    color: white; /* White text color */
+}
+
+.card-employee {
+    margin-bottom: 1.5rem;
+    border: 4px solid #EEF2F5;
+    border-radius: 0.7rem;
+    padding: 1rem;
+}
+
+
+.theme-color {
+    color: #3F2685;
+}
+
+.btn-purple {
+    background-color: #3F2685;
+    border-color: #3F2685;
+}
+
+.btn-purple:hover {
+    background-color: #5d3ca4;
+    border-color: #5d3ca4;
+}
+
+/* Added CSS for button text color */
+.btn-delete {
+    color: white;
+}
+
+/* Added CSS for rounded photo */
+.rounded-photo {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+/* Added CSS for employee info container */
+.employee-info {
+    flex-grow: 1;
+}
+
+.employee-info h5,
+.employee-info p {
+    margin-bottom: 2px; /* Adjust the margin as needed */
+    padding-left: 20px; /* Adjust the padding as needed */
+}
+
+
+/* Added CSS for default black photo */
+.default-photo {
+    background-color: #000;
+}
+
+.stepper-wrapper {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.stepper-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+
+    @media (max-width: 768px) {
+        font-size: 12px;
+    }
+}
+  
+.stepper-item::before {
+    position: absolute;
+    content: "";
+    border-bottom: 2px solid #ccc;
+    width: 100%;
+    top: 20px;
+    left: -50%;
+    z-index: 2;
+}
+  
+.stepper-item::after {
+    position: absolute;
+    content: "";
+    border-bottom: 2px solid #ccc;
+    width: 100%;
+    top: 20px;
+    left: 50%;
+    z-index: 2;
+}
+  
+.stepper-item .step-counter {
+    position: relative;
+    z-index: 5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #ccc;
+    margin-bottom: 6px;
+}
+  
+.stepper-item.active {
+    font-weight: bold;
+}
+  
+.stepper-item.completed .step-counter {
+    background-color: #3B9C8F;
+}
+  
+.stepper-item.completed::after {
+    position: absolute;
+    content: "";
+    border-bottom: 2px solid #3B9C8F;
+    width: 100%;
+    top: 20px;
+    left: 50%;
+    z-index: 3;
+}
+  
+.stepper-item:first-child::before {
+    content: none;
+}
+.stepper-item:last-child::after {
+    content: none;
 }

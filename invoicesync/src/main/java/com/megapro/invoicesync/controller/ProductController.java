@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.megapro.invoicesync.dto.ProductMapper;
 import com.megapro.invoicesync.dto.request.CreateProductRequestDTO;
-import com.megapro.invoicesync.model.Invoice;
+import com.megapro.invoicesync.model.Product;
 import com.megapro.invoicesync.service.InvoiceService;
 import com.megapro.invoicesync.service.ProductService;
 
@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+
+import java.math.BigDecimal;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -27,18 +29,17 @@ public class ProductController {
     InvoiceService invoiceService;
 
     @PostMapping("/create-product")
-    public ResponseEntity<String> createProduct(@RequestBody CreateProductRequestDTO productDTO) {
+    public ResponseEntity<Product> createProduct(@RequestBody CreateProductRequestDTO productDTO) {
+        var invoiceId = invoiceService.getDummyInvoice();
         var product = productMapper.createProductRequestToProduct(productDTO);
-        var dummyInvoice = invoiceService.getInvoiceByStaffEmail("dummy");
-        System.out.println("dummy invoice "+ dummyInvoice.size());
-        for (Invoice inv : dummyInvoice){
-            product.setInvoice(inv);
-        }
-        var totalPrice = productDTO.getTotalPrice().replace(".", "");
-        long number = Long.parseLong(totalPrice);
-        product.setTotalPrice(number/100);
+        var invoice = invoiceService.getInvoiceById(invoiceId.getInvoiceId());
+        product.setInvoice(invoice);
+        double totalPrice = Double.parseDouble(productDTO.getTotalPrice());
+        double calcDisc = totalPrice/100.0;
+        BigDecimal fixedPrice = BigDecimal.valueOf(calcDisc);
+        product.setTotalPrice(fixedPrice);
         productService.createProduct(product);
-        return ResponseEntity.ok("Ok");
+        return ResponseEntity.ok(product);
     }
     
 }

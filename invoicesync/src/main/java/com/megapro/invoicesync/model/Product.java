@@ -2,8 +2,9 @@ package com.megapro.invoicesync.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.util.UUID;
 
+import java.math.BigDecimal;
+import java.util.UUID;
 
 @Data
 @Getter
@@ -27,19 +28,16 @@ public class Product {
     private int quantity;
 
     @Column(name="price")
-    private long price;
+    private BigDecimal price;
 
     @Column(name="discount")
     private int discount;
 
     @Column(name="total_price")
-    private long totalPrice;
+    private BigDecimal totalPrice;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "invoice_id")
     private Invoice invoice;
-
-    @Column(name="tax")
-    private int tax;
 }
 

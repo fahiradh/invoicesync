@@ -9,10 +9,13 @@ import org.springframework.stereotype.Repository;
 import com.megapro.invoicesync.model.Invoice;
 import jakarta.transaction.Transactional;
 
+
 @Repository
 @Transactional
 public interface InvoiceDb extends JpaRepository<Invoice, UUID>{
     Invoice getInvoiceByInvoiceNumber(String id);
+    @Query("SELECT i FROM Invoice i WHERE i.staffEmail LIKE 'dummy'")
+    Invoice findDummyInvoice();
     List<Invoice> findByStaffEmailIn(List<String> emails);
     List<Invoice> findByStaffEmail(String email);
     List<Invoice> findByStatus(String status);

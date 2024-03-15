@@ -3,6 +3,8 @@ package com.megapro.invoicesync.dto.request;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -13,7 +15,7 @@ public class CreateInvoiceRequestDTO {
     private LocalDate invoiceDate;
     private LocalDate dueDate;
     private int totalDiscount;
-    private long subtotal;
+    private BigDecimal subtotal;
     private long totalTax;
     private String totalWords;
     private String signatureBg;
@@ -26,5 +28,5 @@ public class CreateInvoiceRequestDTO {
     private String tnc;
     private int additionalDiscount;
     private LocalDateTime created = LocalDateTime.now();
-    private String status = "Pending Approval";
+    private String status = "Draft";
 }

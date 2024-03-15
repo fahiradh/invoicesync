@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 
 import com.megapro.invoicesync.model.Invoice;
@@ -14,6 +15,8 @@ import com.megapro.invoicesync.repository.ProductDb;
 import com.megapro.invoicesync.repository.UserAppDb;
 
 import jakarta.transaction.Transactional;
+
+import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 import java.util.ArrayList;
@@ -45,33 +48,23 @@ public class InvoiceServiceImpl implements InvoiceService{
     }
 
     @Override
-    public void attributeInvoce(Invoice invoice) {
-        long count = countInvoice() + 1;
-        String countStr = String.format("%03d", count);
+    public void attributeInvoice(Invoice invoice) {
+        long count = countInvoice()+1;
+        String countStr = String.format("%04d", count);
         if (invoice.getInvoiceNumber() == null || invoice.getInvoiceNumber().length() == 0){
             var invoiceDate = invoice.getInvoiceDate();
-            DateTimeFormatter dayMonth = DateTimeFormatter.ofPattern("ddMM");
-            DateTimeFormatter year = DateTimeFormatter.ofPattern("yyyy");
-            String formattedDate = invoiceDate.format(dayMonth);
-            String formattedYear = invoiceDate.format(year);
-            String invoiceNumber = String.format("INV/%s/KRD/%s/%s", formattedYear,formattedDate,countStr);
+            int month = invoiceDate.getMonthValue();
+            String monthInRoman = convertToRoman(month);
+            // DateTimeFormatter year = DateTimeFormatter.ofPattern("yyyy");
+            String year = String.valueOf(invoiceDate.getYear());
+            // String formattedYear = invoiceDate.format(year);
+            String invoiceNumber = String.format("INV-%s/Krida/%s/%s", countStr,monthInRoman,year);
             invoice.setInvoiceNumber(invoiceNumber);
         }
-        var listDummy = invoiceDb.findByStaffEmail("dummy");
+        var dummy = getDummyInvoice();
         List<Product> newListProduct = new ArrayList<>();
-        Invoice dummy = null;
-        for (Invoice inv : listDummy){
-            System.out.println("aman take in");
-            System.out.println(inv.getInvoiceId());
-            dummy = inv;
-        }
-        System.out.println("summy id "+dummy.getInvoiceId());
-
         List<Product> listProduct = productService.getAllProductDummyInvoice(dummy);
-        System.out.println("prod length "+listProduct.size());
         for (Product p : listProduct) {
-            System.out.println("AMAN");
-            System.out.println(p.getProductId());
             p.setInvoice(invoice);
             newListProduct.add(p);
         }
@@ -79,12 +72,39 @@ public class InvoiceServiceImpl implements InvoiceService{
         calculateSubtotal(invoice);
     }
 
-    private void calculateSubtotal(Invoice invoice){
-        long subtotal = 0;
-        for (Product p : invoice.getListProduct()){
-            subtotal += p.getTotalPrice();
+    public static String convertToRoman(int num) {
+        int[] VALUES = { 1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1 };
+        String[] NUMERALS = { "M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I" };
+
+        StringBuilder romanNumeral = new StringBuilder();
+        int i = 0;
+        while (num > 0) {
+            if (num - VALUES[i] >= 0) {
+                romanNumeral.append(NUMERALS[i]);
+                num -= VALUES[i];
+            } else {
+                i++;
+            }
         }
-        invoice.setSubtotal(subtotal);
+        return romanNumeral.toString();
+    }
+
+
+    // private List<Product> getInvoiceListProduct(Invoice dummy){
+    //     List<Product> listProductDummyInvoice = productService.getAllProductDummyInvoice(dummy);
+    //     if (listProductDummyInvoice == null){
+    //         return null;
+    //     } else{
+    //         return listProductDummyInvoice;
+    //     }
+    // }
+
+    private void calculateSubtotal(Invoice invoice){
+        double subtotal = 0;
+        for (Product p : invoice.getListProduct()){
+            subtotal += p.getTotalPrice().doubleValue();
+        }
+        invoice.setSubtotal(BigDecimal.valueOf(subtotal));
     }
 
     @Override
@@ -120,6 +140,7 @@ public class InvoiceServiceImpl implements InvoiceService{
         return listProductInInvoice;
     }
 
+    @Override
     public List<Invoice> retrieveInvoicesByRole(String role) {
         List<UserApp> usersInRole = userAppDb.findByRoleName(role);
         List<String> emailsInRole = usersInRole.stream()
@@ -165,8 +186,12 @@ public class InvoiceServiceImpl implements InvoiceService{
     public List<Invoice> retrieveInvoicesByStatus(String status) {
         return invoiceDb.findByStatus(status);
     }
-    
-    
+
+    @Override
+    public Invoice getDummyInvoice() {
+        return invoiceDb.findDummyInvoice();
+    }
+
 }
 
 

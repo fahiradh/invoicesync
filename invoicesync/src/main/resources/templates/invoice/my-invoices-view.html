@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Invoice History</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+    <style>
+    </style>
+</head>
+<body>
+    <nav th:replace="~{fragments/navbar-non-finance :: navbar-non-finance(page='My-Invoice')}"></nav>
+    <div class="container">
+        <div class="card-title">
+            <h2>My Invoice History</h2>
+        </div>
+        <div class="card-borderless ml-5 mr-5 mt-3 mb-5">
+            <div class="card-body p-4">
+                <div class="ml-3">
+                    <form class="row g-3" th:action="@{/my-invoices}" method="GET">
+                        <div class="col-auto">
+                            <label for="filterDropdown">Filter:</label>
+                        </div>
+                        <div class="col-auto">
+                            <div class="form-group">
+                                <select class="form-control" id="filterDropdown" name="status">
+                                    <option th:selected="${status == null or status == ''}"></option>
+                                    <option th:selected="${status == 'Need Approval'}" value="Need Approval">Need Approval</option>
+                                    <option th:selected="${status == 'Pending Approval'}" value="Pending Approval">Pending Approval</option>
+                                    <option th:selected="${status == 'Approved'}" value="Approved">Approved</option>
+                                    <option th:selected="${status == 'Rejected'}" value="Rejected">Rejected</option>
+                                    <option th:selected="${status == 'Waiting for Payment'}" value="Waiting for Payment">Waiting for Payment</option>
+                                    <option th:selected="${status == 'Paid'}" value="Paid">Paid</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                        <button type="submit" class="btn btn-primary">Apply Filter</button>
+                        </div>
+                    </form>
+                </div>
+                <table class="table table-custom">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>ID</th>
+                            <th>Invoice Number</th>
+                            <th>Client Name</th>
+                            <th>Total Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="invoice, iterStat : ${invoices}">
+                            <td th:text="${iterStat.count}"></td>
+                            <td th:text="${invoice.invoiceId}">/td>
+                            <td th:text="${invoice.invoiceNumber}">4</td>
+                            <td th:text="${invoice.customerName}"></td>
+                            <td th:text="${'Rp' + #numbers.formatDecimal(invoice.grandTotal, 0, 'COMMA', 2, 'POINT')}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -11,31 +11,52 @@
 <body>
     <nav th:replace="~{fragments/navbar-non-finance :: navbar-non-finance(page = 'Create-Invoice')}"></nav>
     <div class="container">
-        <div class="row">
-            <div class="col-md-6 mt-4">
-              <h2>Draft Invoice</h2>
-              </div>
-          </div>
+        <div class="container title">
+            <h2>Draft Invoice</h2>
         </div>
         <hr>
-      <div class="card m-4 p-0">
-        <div class="card-body">
+        <div class="row">
+            <div class="stepper-wrapper">
+                <div class="stepper-item" th:classappend="${status == 'Draft' ? 'completed' : ''}">
+                    <div class="step-counter">1</div>
+                    <div class="step-name">Draft</div>
+                </div>
+                <div class="stepper-item" th:classappend="${status == 'Pending Approval' ? 'completed' : ''}">
+                    <div class="step-counter">2</div>
+                    <div class="step-name">Pending Approval</div>
+                </div>
+                <div class="stepper-item" th:classappend="${status == 'Open' ? 'completed' : ''}">
+                    <div class="step-counter">3</div>
+                    <div class="step-name">Open</div>
+                </div>
+                <div class="stepper-item" th:classappend="${status == 'Paid' ? 'completed' : ''}">
+                    <div class="step-counter">4</div>
+                    <div class="step-name">Paid</div>
+                </div>
+            </div>
+        </div>
+      <div class="card ml-5 mr-5 mt-3 mb-5">
+        <div class="card-body p-4">
             <div class="justify-content-center">
                 <form th:action="@{/create-invoice}" th:object="${invoiceDTO}" method="POST" id="invoiceForm">
                 <div class="row">
                     <div class="col-md-6">
                         <table class="table table-borderless">
                             <tr>
-                                <td><p class="card-text mb-0">Customer</p></td>
-                                <td><input class="form-control" type="text" th:field="*{customerName}" /></td>
+                                <td><a th:href="@{/create-customer}" class="btn btn-link">Add New Customer</a></td>
                             </tr>
                             <tr>
-                                <td><p class="card-text mb-0">Address</p></td>
-                                <td><input class="form-control" type="text" th:field="*{customerAddress}" /></td>
+                                <td><p class="card-text mb-0">Customer</p></td>
+                                <td>
+                                    <select class="form-control" th:field="*{customerName}" id="customerName" onchange="updateCustomerContact()">
+                                        <option disabled selected value="">Choose customer</option>
+                                        <option th:each="customer : ${listCustomer}" th:value="${customer.name}" th:text="${customer.name}" th:attr="data-contact=${customer.contact}"></option>
+                                    </select>
+                                </td>
                             </tr>
                             <tr>
                                 <td><p class="card-text mb-0">Contact</p></td>
-                                <td><input class="form-control" type="number" th:field="*{customerContact}" /></td>
+                                <td><input class="form-control" type="text" th:field="*{customerContact}" id="customerContact" readonly /></td>
                             </tr>
                         </table>
                     </div>
@@ -43,11 +64,11 @@
                         <table class="table table-borderless">
                             <tr>
                                 <td><p class="card-text mb-0">Invoice Date</p></td>
-                                <td><input class="form-control" type="date" th:field="*{invoiceDate}" /></td>
+                                <td><input class="form-control" type="date" th:field="*{invoiceDate}" required /></td>
                             </tr>
                             <tr>
                                 <td><p class="card-text mb-0">Due Date</p></td>
-                                <td><input class="form-control" type="date" th:field="*{dueDate}" /></td>
+                                <td><input class="form-control" type="date" th:field="*{dueDate}" required/></td>
                             </tr>
                             <tr>
                                 <td><p class="card-text mb-0">Currency</p></td>
@@ -58,6 +79,7 @@
                         </table>
                     </div>
                 </div>
+                
                 <hr>
                 <p class="card-info">Please attach document or input the fields below to add product list.</p>
                 <br>
@@ -76,7 +98,6 @@
                             <th>Quantity</th>
                             <th>Price/Qty</th>
                             <th>% Disc.</th>
-                            <th>Tax</th>
                             <th>Total Price</th>
                         </tr>
                       </thead> 
@@ -109,10 +130,6 @@
                                     <td><input class="form-control" type="number" th:field="*{additionalDiscount}" disabled /></td>
                                 </tr>
                                 <tr>
-                                    <td><p class="card-text mb-0">Tax</p></td>
-                                    <td><input class="form-control" type="number" th:field="*{totalTax}" disabled /></td>
-                                </tr>
-                                <tr>
                                     <td><p class="card-text mb-0">Subtotal</p></td>
                                     <td>
                                         <input class="form-control" type="number" th:field="*{subtotal}" disabled />
@@ -125,9 +142,10 @@
                             </table>
                         </div>
                     </div>
+                </div>
+                <hr>
 
-                    <hr>
-
+                <div class="row">
                     <div class="col-md-6">
                         <div class="mb-4">
                             <p class="card-info">Please attach additional documents for approval.</p>
@@ -160,6 +178,46 @@
       </div>
     </div>
 
+    <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="successModalLabel">Success!</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Invoice has been successfully created.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="emptyTableModal" tabindex="-1" role="dialog" aria-labelledby="emptyTableModalLabel" aria-hidden="true" th:fragment="emptyTableModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="emptyTableModalLabel">Empty Table</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>The table data list is empty. Please add some data to the table.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>    
+
     <script>
         function getAllTableData() {
             var tableBody = document.getElementById("invoiceTableBody");
@@ -174,8 +232,7 @@
                 rowData.quantity = row.cells[3].querySelector('input[name="productQuantity"]').value;
                 rowData.price = row.cells[4].querySelector('input[name="productPrice"]').value;
                 rowData.discount = row.cells[5].querySelector('input[name="productDiscount"]').value;
-                rowData.tax = row.cells[6].querySelector('input[name="productTaxes"]').value;
-                rowData.totalPrice = row.cells[7].querySelector('input[name="productSubtotal"]').value;
+                rowData.totalPrice = row.cells[6].querySelector('input[name="productSubtotal"]').value;
         
                 tableDataList.push(rowData);
             }
@@ -183,18 +240,15 @@
             return tableDataList;
         }
 
-    
-        function updateSubtotal(priceInput, quantityInput, discountInput, taxInput, subtotalInput) {
+        function updateSubtotal(priceInput, quantityInput, discountInput, subtotalInput) {
             var price = parseFloat(priceInput.value);
             var quantity = parseInt(quantityInput.value);
             var discount = parseInt(discountInput.value || 0);
-            var tax = parseInt(taxInput.value || 0);
             
             var total = price * quantity;
             var afterDiscount = total - parseFloat(total * discount / 100);
-            var afterTax = afterDiscount + parseFloat(afterDiscount * tax / 100);
            
-            subtotalInput.value = afterTax.toFixed(2);;
+            subtotalInput.value = afterDiscount.toFixed(2);;
 
         }
     
@@ -219,41 +273,33 @@
             var cellQuantity = newRow.insertCell(3);
             var cellPrice = newRow.insertCell(4);
             var cellDiscount = newRow.insertCell(5);
-            var cellTaxes = newRow.insertCell(6);
-            var cellTotalPrice = newRow.insertCell(7);
+            var cellTotalPrice = newRow.insertCell(6);
     
-            cellNo.innerHTML = rowCount + 1;
+            cellNo.innerHTML = rowCount+1;
             cellProduct.innerHTML = '<input class="form-control" type="text" name="productName">';
             cellDescription.innerHTML = '<input class="form-control" type="text" name="productDescription">';
             cellQuantity.innerHTML = '<input class="form-control quantity" type="number" name="productQuantity" value="1">';
             cellPrice.innerHTML = '<input class="form-control price" type="number" name="productPrice">';
             cellDiscount.innerHTML = '<input class="form-control discount" type="number" name="productDiscount" value="0">';
-            cellTaxes.innerHTML = '<input class="form-control taxes" type="number" name="productTaxes" value="0">';
             cellTotalPrice.innerHTML = '<input class="form-control subtotal" type="number" name="productSubtotal" readonly>';
     
             var quantityInput = cellQuantity.querySelector('input');
             var priceInput = cellPrice.querySelector('input');
             var discountInput = cellDiscount.querySelector('input');
-            var taxInput = cellTaxes.querySelector('input');
             var subtotalInput = cellTotalPrice.querySelector('input');
     
             quantityInput.addEventListener('change', function() {
-                updateSubtotal(priceInput, this, discountInput, taxInput, subtotalInput);
+                updateSubtotal(priceInput, this, discountInput, subtotalInput);
                 updateSubtotalInvoice();
             });
     
             priceInput.addEventListener('change', function() {
-                updateSubtotal(this, quantityInput, discountInput, taxInput, subtotalInput);
+                updateSubtotal(this, quantityInput, discountInput, subtotalInput);
                 updateSubtotalInvoice();
             });
     
             discountInput.addEventListener('change', function() {
-                updateSubtotal(priceInput, quantityInput, this, taxInput, subtotalInput);
-                updateSubtotalInvoice();
-            });
-    
-            taxInput.addEventListener('change', function() {
-                updateSubtotal(priceInput, quantityInput, discountInput, this, subtotalInput);
+                updateSubtotal(priceInput, quantityInput, this, subtotalInput);
                 updateSubtotalInvoice();
             });
     
@@ -267,8 +313,7 @@
     
         document.getElementById("submitButton").addEventListener("click", function() {
             var tableData = getAllTableData();
-            console.log(tableData)
-            
+
             tableData.forEach(function(productData) {
                 fetch('/api/v1/create-product', {
                     method: 'POST',
@@ -278,14 +323,17 @@
                     body: JSON.stringify(productData)
                 })
                 .then(response => response.json())
-                .then(data => {
-                    console.log('Product created:', data);
-                })
                 .catch(error => {
                     console.error('Error creating product:', error);
                 });
             });
         });
-    </script>    
+        
+        function updateCustomerContact() {
+            var selectedCustomerName = document.getElementById("customerName").value;
+            var selectedCustomerContact = document.querySelector('option[value="' + selectedCustomerName + '"]').getAttribute('data-contact');
+            document.getElementById("customerContact").value = selectedCustomerContact;
+        }
+    </script> 
 </body>
 </html>

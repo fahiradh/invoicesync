@@ -6,78 +6,45 @@
   <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
   <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
   <style>
-    .center-text {
-        text-align: center;
-        margin-top: 100px;
-    }
   </style>
   <title>Home</title>
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg navbar-bg  p-3">
-    <div class="container-fluid theme-color">
-        <a class="navbar-brand" th:href="@{/}">
-            <img th:src="@{/assets/nav-logo.png}" alt="INVOICESYNC Logo" style="width: 240px;" />
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
-            aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class=" collapse navbar-collapse" id="navbarNavDropdown">
-            <ul class="navbar-nav ms-auto ">
-                <li class="nav-item dropdown">
-                    <a class="nav-link mx-2 dropdown-toggle nav-profile" href="#" id="navbarDropdownMenuLink" role="button"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fas fa-user"></i>
-                        <span th:text="${email}"></span>
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <li><a class="dropdown-item" href="#">Profile</a></li>
-                        <li>
-                            <form th:action="@{/logout}" method="post" class="logout-form">
-                              <button type="submit" class="dropdown-item" style="border: none; background: none; cursor: pointer;">Logout</button>
-                            </form>
-                          </li>
-                    </ul>
-                </li>
-            </ul>
+<nav th:replace="~{fragments/navbar-admin :: navbar-admin}"></nav>
+<div class="container">
+    <div class="card-borderless mt-4">
+        <div class="card-title">
+            <h2 class="center-text theme-color">Halo, <span th:text="${email}"></span></h2>
         </div>
-    </div>
-</nav>
-
-  <div class="container">
-    <div class="row">
-        <div class="col">
-            <h1 class="center-text theme-color">Halo, <span th:text="${email}"></span></h1>
-        </div>
-    </div>
-    <div class="row column-margin">
-        <div class="col-md-6 mt-4">
-            <div class="text-center">
-                <h4>User Management</h4>
-                <a href="#" class="btn btn-primary btn-lg btn-signin">Go to User Management</a>
+        <div class="card-body p-4">
+            <div class="row">
+                <div class="col-md-6 mt-4">
+                    <div class="text-center">
+                        <h4>User Management</h4>
+                        <a href="#" class="btn btn-primary">Go to User Management</a>
+                    </div>
+                </div>
+                <div class="col-md-6 mt-4">
+                    <div class="text-center">
+                        <h4>Approval Flow Management</h4>
+                        <a href="/approval-flows" class="btn btn-primary">Go to Approval Flow Management</a>
+                    </div>
+                </div>
+                <div class="col-md-6 mt-4">
+                    <div class="text-center">
+                        <h4>List of Employees</h4>
+                        <a href="/employees" class="btn btn-primary">See Employees</a>
+                    </div>
+                </div>
+                <div class="col-md-6 mt-4">
+                    <div class="text-center">
+                        <h4>Create New Employees</h4>
+                        <a href="/create-account" class="btn btn-primary">Create Employees</a>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="col-md-6 mt-4">
-            <div class="text-center">
-                <h4>Approval Flow Management</h4>
-                <a href="/approval-flows" class="btn btn-primary btn-lg btn-signin">Go to Approval Flow Management</a>
-            </div>
-        </div>
-        <div class="col-md-6 mt-4">
-          <div class="text-center">
-              <h4>List of Employees</h4>
-              <a href="/employees" class="btn btn-primary btn-lg btn-signin">See Employees</a>
-          </div>
-      </div>
-      <div class="col-md-6 mt-4">
-        <div class="text-center">
-            <h4>Create New Employees</h4>
-            <a href="/create-account" class="btn btn-primary btn-lg btn-signin">Create Employees</a>
-        </div>
     </div>
-    </div>
-  </div>
+</div>
 </body>
 </html>

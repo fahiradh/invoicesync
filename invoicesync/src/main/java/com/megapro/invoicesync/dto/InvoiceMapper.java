@@ -1,6 +1,7 @@
 package com.megapro.invoicesync.dto;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import com.megapro.invoicesync.dto.request.CreateInvoiceRequestDTO;
 import com.megapro.invoicesync.dto.response.ReadInvoiceResponse;

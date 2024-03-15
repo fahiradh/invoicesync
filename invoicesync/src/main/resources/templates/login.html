@@ -6,33 +6,11 @@
   <title>InvoiceSync</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
   <style>
-    .theme-color {
-      color: #3F2685; 
-    }
-
-    .btn-signin {
-      background-color: #3F2685; 
-      border-color: #3F2685; 
-    }
-
-    .btn-signin:hover {
-      background-color: #5d3ca4; 
-      border-color: #5d3ca4; 
-    }
   </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand theme-color" href="#">INVOICESYNC</a>
-        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Have trouble signing in? Contact our admin now!</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-    <div class="container-fluid h-100">
+  <nav th:replace="~{fragments/navbar-login :: navbar-login}"></nav>
+  <div class="container">
       <div class="row justify-content-center align-items-center">
         <div class="col-md-9 col-lg-6 col-xl-5 mt-5">
           <div class="text-center">
@@ -43,8 +21,8 @@
         <div class="col-md-8 col-lg-6 col-xl-4">
           <div>
             <form class="login-form">
-                <h4 class="text-left theme-color">Welcome to InvoiceSync</h24>
-                <h2 class="text-left theme-color">Sign in with your account</h2>
+                <h2 class="text-left theme-color">Welcome to InvoiceSync</h2>
+                <h3 class="text-left theme-color">Sign in with your account</h3>
 
               <!-- Email input -->
               <div class="form-group">
@@ -68,6 +46,7 @@
         </div>
       </div>
     </div>
+  </div>
 </body>
 </html>
 

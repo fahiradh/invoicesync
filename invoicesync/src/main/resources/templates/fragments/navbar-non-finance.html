@@ -22,16 +22,16 @@
             <div class=" collapse navbar-collapse" id="navbarNavDropdown">
                 <ul class="navbar-nav ms-auto ">
                     <li class="nav-item">
-                        <a class="nav-link mx-2" aria-current="page" href="/home">Home</a>
+                        <a th:classappend="${page == 'Home'} ? activ : ''" class="nav-link mx-2" th:href="@{/home}">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a th:classappend="${page == 'Create-Invoice'}" class="nav-link mx-2" th:href="@{/create-invoice}">Create Invoice</a>
+                        <a th:classappend="${page == 'Create-Invoice'} ? active : ''" class="nav-link" th:href="@{/create-invoice}">Create Invoice</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link mx-2" href="/my-invoices">My Invoices</a>
+                        <a th:classappend="${page == 'My-Invoice'} ? active : ''" class="nav-link" th:href="@{/my-invoices}">My Invoices</a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link mx-2 dropdown-toggle nav-profile" href="#" id="navbarDropdownMenuLink" role="button"
+                        <a th:classappend="${page == 'Profile'} ? active : ''" class="nav-link mx-2 dropdown-toggle nav-profile" th:href="@{#}" id="navbarDropdownMenuLink" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-user"></i>
                             <span th:text="${email}"></span>
