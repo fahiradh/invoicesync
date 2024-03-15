@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8" />
+  <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+  <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+  <title>InvoiceSync</title>
+</head>
+
+<body>
+    <nav th:replace="~{fragments/navbar-non-finance :: navbar-non-finance(page = 'Create-Invoice')}"></nav>
+    <div class="container">
+        <div class="card-title">
+            <h2>Add New Customer</h2>
+        </div>
+        <div class="card ml-5 mr-5 mt-3 mb-5">
+            <div class="card-body p-4">
+                <div class="justify-content-center">
+                    <form th:action="@{/create-customer}" th:object="${customerDTO}" method="POST">
+                        <p class="card-text mb-0">Name</p>
+                        <input class="form-control" type="text" th:field="*{name}" />
+                        <p class="card-text mb-0">Address</p>
+                        <input class="form-control" type="text" th:field="*{address}" />
+                        <p class="card-text mb-0">Contact</p>
+                        <input class="form-control" type="text" th:field="*{contact}" />
+                        <div class="text-center">
+                            <a class="btn btn-danger" href="/">Cancel</a> 
+                            <button class="btn btn-primary" type="submit">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

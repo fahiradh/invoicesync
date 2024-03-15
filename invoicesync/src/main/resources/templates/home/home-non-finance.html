@@ -6,21 +6,16 @@
   <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
   <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
   <style>
-    .center-text {
-        text-align: center;
-        margin-top: 100px;
-    }
   </style>
   <title>Home</title>
 </head>
 <body>
-    <nav th:replace="~{fragments/navbar-non-finance :: navbar-non-finance}"></nav>
-
+  <nav th:replace="~{fragments/navbar-non-finance :: navbar-non-finance(page='Home')}"></nav>
   <div class="container">
-    <div class="row">
-        <div class="col">
-            <h1 class="center-text theme-color">Halo, <span th:text="${email}"></span></h1>
-        </div>
+    <div class="card-borderless mt-4">
+      <div class="card-title">
+        <h1 class="center-text theme-color" style="margin: 0;">Halo, <span>warehouse_staff@gmail.com</span></h1>
+      </div>
     </div>
   </div>
 </body>

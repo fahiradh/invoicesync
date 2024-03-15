@@ -31,7 +31,6 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public List<Product> getAllProductDummyInvoice(Invoice dummy) {
         List<Product> listProduct = getAllProduct();
-        System.out.println("lp servicec" + listProduct.size());
         List<Product> listDummy = new ArrayList<>();
         for (Product p : listProduct){
             if (p.getInvoice().getInvoiceId().equals(dummy.getInvoiceId())){

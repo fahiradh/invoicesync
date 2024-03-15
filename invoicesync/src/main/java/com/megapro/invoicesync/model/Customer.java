@@ -8,8 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @Getter
@@ -19,8 +19,15 @@ import java.util.List;
 @Builder
 @Entity
 @Table(name = "customer")
-@PrimaryKeyJoinColumn(name = "user_id")
-public class Customer extends UserApp implements Serializable{
+public class Customer {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name="customer_id")
+    private UUID customerId;
+
+    @Column(name="name")
+    private String name;
+
     @Column(name="address")
     private String address;
 

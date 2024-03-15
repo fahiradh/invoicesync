@@ -1,5 +1,6 @@
 package com.megapro.invoicesync.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -28,15 +29,6 @@ public class Invoice {
     @Column(name="invoice_number")
     private String invoiceNumber;
 
-    @Column(name="customer_name")
-    private String customerName;
-
-    @Column(name="customer_address")
-    private String customerAddress;
-
-    @Column(name="customer_contact")
-    private String customerContact;
-
     @Column(name="invoice_date")
     private LocalDate invoiceDate;
 
@@ -62,7 +54,7 @@ public class Invoice {
     private String tnc;
 
     @Column(name="subtotal")
-    private long subtotal;
+    private BigDecimal subtotal;
 
     @Column(name="total_discount")
     private int totalDiscount;
@@ -83,10 +75,10 @@ public class Invoice {
     @OneToMany(mappedBy = "productId", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
     private List<Product> listProduct;
 
-    // @ElementCollection
-    // @CollectionTable(name = "product_item", joinColumns = @JoinColumn(name = "invoice_id"))
-    // @Column(name = "product_id")
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name="customer_id")
+    private Customer customer;
 
     @Column(name="status")
-    private String status = "Pending Approval";
+    private String status;
 }

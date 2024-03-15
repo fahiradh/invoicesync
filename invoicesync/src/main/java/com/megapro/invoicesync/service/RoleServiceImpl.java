@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.megapro.invoicesync.model.Invoice;
 import com.megapro.invoicesync.model.Role;
 import com.megapro.invoicesync.repository.RoleDb;
 
@@ -48,3 +47,4 @@ public class RoleServiceImpl implements RoleService{
     }
     
 }
+
