@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class CreateTaxRequestDTO {
-    
     private String taxName;
     private String taxType;
     private int taxPercentage;

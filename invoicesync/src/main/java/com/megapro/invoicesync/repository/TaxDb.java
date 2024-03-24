@@ -4,7 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.megapro.invoicesync.model.Tax;
 
-public interface TaxDb extends JpaRepository<Tax,Integer>{
+public interface TaxDb extends JpaRepository<Tax, Integer> {
     Tax findByTaxId(int taxId);
     
 }

@@ -15,4 +15,5 @@ public class CreateCustomerRequestDTO {
     private String name;
     private String contact;
     private String address;
+    private String phone;
 }

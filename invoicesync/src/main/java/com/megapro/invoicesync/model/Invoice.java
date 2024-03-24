@@ -5,11 +5,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.format.annotation.DateTimeFormat;
-
 import jakarta.persistence.*;
 import lombok.*;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -38,20 +35,14 @@ public class Invoice {
     @Column(name="total_words")
     private String totalWords;
 
-    @Column(name="signature_bg")
-    private String signatureBg;
-
     @Column(name="signature")
     private String signature;
 
-    @Column(name="added_document")
-    private String addedDocument;
+    @Column(name="city")
+    private String city;
 
-    @Column(name="currency")
-    private String currency;
-
-    @Column(name="tnc")
-    private String tnc;
+    @Column(name="product_document")
+    private String productDocument;
 
     @Column(name="subtotal")
     private BigDecimal subtotal;
@@ -59,15 +50,20 @@ public class Invoice {
     @Column(name="total_discount")
     private int totalDiscount;
 
-    @Column(name="totalTax")
-    private long totalTax;
+    @OneToMany(mappedBy="taxId", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Tax> listTax;
 
-    @Column(name="additional_discount")
-    private int additionalDiscount;
+    @Column(name="account_number")
+    private String accountNumber;
 
-    @Column(name="created")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime created;
+    @Column(name="bank_name")
+    private String bankName;
+
+    @Column(name="account_name")
+    private String accountName;
+
+    @Column(name="additional_document")
+    private String additionalDocument;
 
     // @OneToMany(mappedBy="asApprover", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
     // private List<Employee> asApprover;

@@ -8,6 +8,7 @@ import com.megapro.invoicesync.repository.CustomerDb;
 
 import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -18,6 +19,11 @@ public class CustomerServiceImpl implements CustomerService{
     @Override
     public void createCustomer(Customer customer) {
         customerDb.save(customer);
+    }
+
+    @Override
+    public Customer getCustomerById(UUID id){
+        return customerDb.findByCustomerId(id);
     }
 
     @Override

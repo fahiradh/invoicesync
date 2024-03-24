@@ -63,6 +63,4 @@ public class UserServiceImpl implements UserService{
     public boolean existsByNomorHp(String phoneNumber) {
         return employeeDb.existsByNomorHp(phoneNumber);
     }
-
-    
 }

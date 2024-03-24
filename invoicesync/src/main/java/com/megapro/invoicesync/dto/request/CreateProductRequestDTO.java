@@ -12,6 +12,5 @@ public class CreateProductRequestDTO {
     private String description;
     private int quantity;
     private long price;
-    private int discount;
     private String totalPrice;
 }
