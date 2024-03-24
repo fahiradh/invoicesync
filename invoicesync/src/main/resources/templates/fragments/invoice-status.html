@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+</head>
+
+<body>
+    <div th:fragment="invoice-status" class="stepper-wrapper">
+        <div class="stepper-item" th:classappend="${status == 'Draft' ? 'completed' : ''}">
+            <div class="step-counter">1</div>
+            <div class="step-name">Draft</div>
+        </div>
+        <div class="stepper-item" th:classappend="${status == 'Pending Approval' ? 'completed' : ''}">
+            <div class="step-counter">2</div>
+            <div class="step-name">Pending Approval</div>
+        </div>
+        <div class="stepper-item" th:classappend="${status == 'Open' ? 'completed' : ''}">
+            <div class="step-counter">3</div>
+            <div class="step-name">Open</div>
+        </div>
+        <div class="stepper-item" th:classappend="${status == 'Paid' ? 'completed' : ''}">
+            <div class="step-counter">4</div>
+            <div class="step-name">Paid</div>
+        </div>
+    </div>
+</body>

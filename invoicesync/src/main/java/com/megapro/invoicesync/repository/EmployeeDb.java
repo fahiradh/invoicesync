@@ -9,10 +9,9 @@ import com.megapro.invoicesync.model.Employee;
 
 import jakarta.transaction.Transactional;
 
-
 @Repository
 @Transactional
-public interface EmployeeDb extends JpaRepository<Employee,UUID>{
+public interface EmployeeDb extends JpaRepository<Employee, UUID>{
     Employee findEmployeeByUserId(UUID id);   
     Employee findByEmail(String email); 
     boolean existsByNomorHp(String nomorHp);

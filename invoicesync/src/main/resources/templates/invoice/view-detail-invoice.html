@@ -9,30 +9,35 @@
 </head>
 
 <body>
-    <nav th:replace="~{fragments/navbar-non-finance :: navbar-non-finance(page = 'My-Invoice')}"></nav>
+    <nav th:replace="~{fragments/navbar-non-finance :: navbar-non-finance(page = 'Create-Invoice')}"></nav>
     <div class="container">
         <div class="container title">
             <h2 th:text="${invoice.invoiceNumber}"></h2>
         </div>
         <hr>
+        <div class="row">
+            <div th:replace="~{fragments/invoice-status :: invoice-status}"></div>
+        </div>
       <div class="card ml-5 mr-5 mt-3 mb-5">
         <div class="card-body p-4">
             <div class="justify-content-center">
-                <form>
+                <form th:action="@{/invoice/{id}(id=${invoice.invoiceId})}" th:object="${invoice}" method="GET">
                 <div class="row">
                     <div class="col-md-6">
                         <table class="table table-borderless">
                             <tr>
                                 <td><p class="card-text mb-0">Customer</p></td>
-                                <td><input class="form-control" type="text" th:field="${invoice.customerName}" disabled /></td>
-                            </tr>
-                            <tr>
-                                <td><p class="card-text mb-0">Address</p></td>
-                                <td><input class="form-control" type="text" th:field="${invoice.customerAddress}" disabled/></td>
+                                <td>
+                                    <input class="form-control" type="text" th:field="${invoice.customer.name}" readonly/>
+                                </td>
                             </tr>
                             <tr>
                                 <td><p class="card-text mb-0">Contact</p></td>
-                                <td><input class="form-control" type="tel" inputmode="numeric" pattern="[0-9]*" th:field="${invoice.customerContact}" disabled /></td>
+                                <td><input class="form-control" type="text" th:field="${invoice.customer.contact}" readonly /></td>
+                            </tr>
+                            <tr>
+                                <td><p class="card-text mb-0">Address</p></td>
+                                <td><input class="form-control" type="text" th:field="${invoice.customer.address}" readonly /></td>
                             </tr>
                         </table>
                     </div>
@@ -40,17 +45,11 @@
                         <table class="table table-borderless">
                             <tr>
                                 <td><p class="card-text mb-0">Invoice Date</p></td>
-                                <td><input class="form-control" type="date" th:field="${invoice.invoiceDate}" disabled/></td>
+                                <td><input class="form-control" type="date" th:field="${invoice.invoiceDate}" readonly /></td>
                             </tr>
                             <tr>
                                 <td><p class="card-text mb-0">Due Date</p></td>
-                                <td><input class="form-control" type="date" th:field="${invoice.dueDate}" disabled /></td>
-                            </tr>
-                            <tr>
-                                <td><p class="card-text mb-0">Currency</p></td>
-                                <td>
-                                    <option th:value="IDR" th:field="${invoice.currency}" disabled>IDR</option>
-                                </td>
+                                <td><input class="form-control" type="date" th:field="${invoice.dueDate}" readonly/></td>
                             </tr>
                         </table>
                     </div>
@@ -62,7 +61,7 @@
 
                 <p class="card-text">Attach Product List (.xlsx)</p>
                 <input type="file" class="form-control" id="file" name="file" accept=".xlsx" style="width: 35%;">
-                <input th:field="${invoice.addedDocument}" hidden/>
+                <input th:field="*{productDocument}" hidden/>
                 <br>
 
                 <table class="table table-bordered">
@@ -73,7 +72,6 @@
                             <th>Description</th>
                             <th>Quantity</th>
                             <th>Price/Qty</th>
-                            <th>% Disc.</th>
                             <th>Total Price</th>
                         </tr>
                       </thead> 
@@ -84,9 +82,8 @@
                             <td th:text="${product.description}"></td>
                             <td th:text="${product.quantity}"></td>
                             <td th:text="${product.price}"></td>
-                            <td th:text="${product.discount}"></td>
                             <td th:text="${product.totalPrice}"></td>
-                          </tr>
+                        </tr>
                     </tbody>
                 </table>
 
@@ -95,8 +92,21 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="mb-4">
-                            <p class="card-text">Terms and Condition</p>
-                            <textarea class="form-control" th:field="${invoice.tnc}" style="width: 100%; height: 150px; resize: none;"></textarea>
+                            <p class="card-text">Payment Information</p>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><p class="card-text mb-0">Bank Name</p></td>
+                                    <td><input class="form-control" type="text" th:field="${invoice.bankName}" readonly /></td>
+                                </tr>
+                                <tr>
+                                    <td><p class="card-text mb-0">Account Number</p></td>
+                                    <td><input class="form-control" type="text" th:field="${invoice.accountNumber}" readonly/></td>
+                                </tr>
+                                <tr>
+                                    <td><p class="card-text mb-0">Account Name</p></td>
+                                    <td><input class="form-control" type="text" th:field="${invoice.accountName}" readonly/></td>
+                                </tr>
+                            </table>
                         </div>
                     </div>
 
@@ -105,21 +115,21 @@
                            <table class="table table-bordered-classic">
                                 <tr>
                                     <td><p class="card-text mb-0">Total Discount (%)</p></td>
-                                    <td><input class="form-control" type="number" th:field="${invoice.totalDiscount}" disabled /></td>
+                                    <td><input class="form-control" type="number" th:field="${invoice.totalDiscount}" readonly/></td>
                                 </tr>
                                 <tr>
-                                    <td><p class="card-text mb-0">Additional Discount (%)</p></td>
-                                    <td><input class="form-control" type="number" th:field="${invoice.additionalDiscount}" disabled /></td>
+                                    <td><p class="card-text mb-0">Tax</p></td>
+                                    <td></td>
                                 </tr>
                                 <tr>
                                     <td><p class="card-text mb-0">Subtotal</p></td>
                                     <td>
-                                        <input class="form-control" type="number" th:field="${invoice.subtotal}" disabled />
+                                        <input class="form-control" type="number" th:field="${invoice.subtotal}" readonly />
                                     </td>
                                 </tr>
                                 <tr>
                                     <td><p class="card-text mb-0">Amount in Words</p></td>
-                                    <td><input class="form-control" type="text" th:field="${invoice.totalWords}" /></td>
+                                    <td><input class="form-control" type="text" th:field="${invoice.totalWords}" readonly/></td>
                                 </tr> 
                             </table>
                         </div>
@@ -133,17 +143,25 @@
                             <p class="card-info">Please attach additional documents for approval.</p>
                             <br>
                             <p class="card-text">Additional Document</p>
-                            <input type="file" class="form-control" id="file" name="file" accept=".pdf">
-                            <input type="hidden" th:field="${invoice.addedDocument}" />
+                            <input type="file" class="form-control" name="file"/>
+                            <input type="hidden" th:field="${invoice.additionalDocument}" />
                         </div>
                     </div>
 
                     <div class="col-md-6">
                         <div class="mb-4">
-                            <p class="card-text">Date and Signature</p>
-                            <input class="form-control" type="text" th:value="${invoice.invoiceDate}" placeholder="Date" disabled /><br>
-                            <input type="file" class="form-control" id="file" name="file" accept="image">
-                            <input type="hidden" th:field="${invoice.addedDocument}" hidden /><br>
+                            <p class="card-text">Signature</p>
+                            <div class="form-inline">
+                                <div class="form-group mr-2">
+                                    <input class="form-control" type="text" th:field="${invoice.city}" readonly/>
+                                </div>
+                                <div class="form-group">
+                                    <p class="card-text" th:text="', '+${invoice.invoiceDate}"></p>
+                                </div>
+                            </div>
+                            <br>
+                            <input type="file" class="form-control" name="image"/>
+                            <input type="hidden" th:field="${invoice.signature}" />
                             <br>
                         </div>
                     </div>
@@ -153,6 +171,6 @@
             </div>
         </div>
       </div>
-    </div>
+    </div>     
 </body>
 </html>

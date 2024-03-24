@@ -18,14 +18,34 @@
             <div class="card-body p-4">
                 <div class="justify-content-center">
                     <form th:action="@{/create-customer}" th:object="${customerDTO}" method="POST">
-                        <p class="card-text mb-0">Name</p>
-                        <input class="form-control" type="text" th:field="*{name}" />
-                        <p class="card-text mb-0">Address</p>
-                        <input class="form-control" type="text" th:field="*{address}" />
-                        <p class="card-text mb-0">Contact</p>
-                        <input class="form-control" type="text" th:field="*{contact}" />
+                        <div class="row">
+                            <div class="row-mr-15">
+                                <p class="card-text mb-0">Name</p>
+                                <input class="form-control" type="text" th:field="*{name}" />
+                            </div>
+                            <div class="col-md-6">
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <td><p class="card-text mb-0">Contact</p></td>
+                                        <td><input class="form-control" type="text" th:field="*{contact}" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td><p class="card-text mb-0">Phone</p></td>
+                                        <td><input class="form-control" type="text" th:field="*{phone}" /></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-md-6">
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <td><p class="card-text mb-0">Address</p></td>
+                                        <td><textarea class="form-control" type="text" th:field="*{address}" style="height:100px"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
                         <div class="text-center">
-                            <a class="btn btn-danger" href="/">Cancel</a> 
+                            <a class="btn btn-danger" href="/home">Cancel</a> 
                             <button class="btn btn-primary" type="submit">Save</button>
                         </div>
                     </form>

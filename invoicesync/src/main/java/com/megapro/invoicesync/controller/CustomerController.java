@@ -1,6 +1,5 @@
 package com.megapro.invoicesync.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,15 +11,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.megapro.invoicesync.dto.CustomerMapper;
 import com.megapro.invoicesync.dto.request.CreateCustomerRequestDTO;
-import com.megapro.invoicesync.dto.request.CreateInvoiceRequestDTO;
 import com.megapro.invoicesync.model.Customer;
-import com.megapro.invoicesync.model.Product;
 import com.megapro.invoicesync.repository.UserAppDb;
 import com.megapro.invoicesync.service.CustomerService;
 

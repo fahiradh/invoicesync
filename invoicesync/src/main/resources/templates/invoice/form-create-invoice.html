@@ -16,24 +16,7 @@
         </div>
         <hr>
         <div class="row">
-            <div class="stepper-wrapper">
-                <div class="stepper-item" th:classappend="${status == 'Draft' ? 'completed' : ''}">
-                    <div class="step-counter">1</div>
-                    <div class="step-name">Draft</div>
-                </div>
-                <div class="stepper-item" th:classappend="${status == 'Pending Approval' ? 'completed' : ''}">
-                    <div class="step-counter">2</div>
-                    <div class="step-name">Pending Approval</div>
-                </div>
-                <div class="stepper-item" th:classappend="${status == 'Open' ? 'completed' : ''}">
-                    <div class="step-counter">3</div>
-                    <div class="step-name">Open</div>
-                </div>
-                <div class="stepper-item" th:classappend="${status == 'Paid' ? 'completed' : ''}">
-                    <div class="step-counter">4</div>
-                    <div class="step-name">Paid</div>
-                </div>
-            </div>
+            <div th:replace="~{fragments/invoice-status :: invoice-status}"></div>
         </div>
       <div class="card ml-5 mr-5 mt-3 mb-5">
         <div class="card-body p-4">
@@ -41,22 +24,32 @@
                 <form th:action="@{/create-invoice}" th:object="${invoiceDTO}" method="POST" id="invoiceForm">
                 <div class="row">
                     <div class="col-md-6">
+                        <a th:href="@{/create-customer}" class="btn btn-primary">Add New Customer</a></td>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
                         <table class="table table-borderless">
-                            <tr>
-                                <td><a th:href="@{/create-customer}" class="btn btn-link">Add New Customer</a></td>
-                            </tr>
                             <tr>
                                 <td><p class="card-text mb-0">Customer</p></td>
                                 <td>
-                                    <select class="form-control" th:field="*{customerName}" id="customerName" onchange="updateCustomerContact()">
-                                        <option disabled selected value="">Choose customer</option>
-                                        <option th:each="customer : ${listCustomer}" th:value="${customer.name}" th:text="${customer.name}" th:attr="data-contact=${customer.contact}"></option>
+                                    <select class="form-control" th:field="*{customerId}" id="customerName" onchange="updateCustomerContact()" >
+                                        <option value="">Choose customer</option>
+                                        <option th:each="customer : ${listCustomer}" 
+                                                th:value="${customer.customerId}" 
+                                                th:text="${customer.name}"
+                                                th:data-contact="${customer.contact}" 
+                                                th:data-address="${customer.address}" ></option>
                                     </select>
                                 </td>
                             </tr>
                             <tr>
                                 <td><p class="card-text mb-0">Contact</p></td>
-                                <td><input class="form-control" type="text" th:field="*{customerContact}" id="customerContact" readonly /></td>
+                                <td><input class="form-control" type="text" th:text="${customerContact}" id="customerContact" readonly /></td>
+                            </tr>
+                            <tr>
+                                <td><p class="card-text mb-0">Address</p></td>
+                                <td><input class="form-control" type="text" th:text="${customerAddress}" id="customerAddress" readonly /></td>
                             </tr>
                         </table>
                     </div>
@@ -70,12 +63,6 @@
                                 <td><p class="card-text mb-0">Due Date</p></td>
                                 <td><input class="form-control" type="date" th:field="*{dueDate}" required/></td>
                             </tr>
-                            <tr>
-                                <td><p class="card-text mb-0">Currency</p></td>
-                                <td>
-                                    <option th:value="IDR" th:field="*{currency}" disabled>IDR</option>
-                                </td>
-                            </tr>
                         </table>
                     </div>
                 </div>
@@ -86,7 +73,7 @@
 
                 <p class="card-text">Attach Product List (.xlsx)</p>
                 <input type="file" class="form-control" id="file" name="file" accept=".xlsx" style="width: 35%;">
-                <input th:field="*{addedDocument}" hidden/>
+                <input th:field="*{productDocument}" hidden/>
                 <br>
 
                 <table class="table table-bordered">
@@ -97,15 +84,12 @@
                             <th>Description</th>
                             <th>Quantity</th>
                             <th>Price/Qty</th>
-                            <th>% Disc.</th>
                             <th>Total Price</th>
                         </tr>
                       </thead> 
                     <tbody id="invoiceTableBody">
                     </tbody>
-                    <div class="col-md-6 py-4">
-                        <button id="addRowInvoice" class="btn btn-primary" type="button">ADD ROW</button>
-                    </div>
+                    <button id="addRowInvoice" class="btn btn-primary" type="button">Add Row</button>
                 </table>
 
                 <hr>
@@ -113,8 +97,21 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="mb-4">
-                            <p class="card-text">Terms and Condition</p>
-                            <textarea class="form-control" th:field="*{tnc}" style="width: 100%; height: 150px; resize: none;"></textarea>
+                            <p class="card-text">Payment Information</p>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><p class="card-text mb-0">Bank Name</p></td>
+                                    <td><input class="form-control" type="text" th:field="*{bankName}" placeholder="Bank Name" required /></td>
+                                </tr>
+                                <tr>
+                                    <td><p class="card-text mb-0">Account Number</p></td>
+                                    <td><input class="form-control" type="text" th:field="*{accountNumber}" placeholder="Account Number" required/></td>
+                                </tr>
+                                <tr>
+                                    <td><p class="card-text mb-0">Account Name</p></td>
+                                    <td><input class="form-control" type="text" th:field="*{accountName}" placeholder="Account Name" required/></td>
+                                </tr>
+                            </table>
                         </div>
                     </div>
 
@@ -123,11 +120,11 @@
                            <table class="table table-bordered-classic">
                                 <tr>
                                     <td><p class="card-text mb-0">Total Discount (%)</p></td>
-                                    <td><input class="form-control" type="number" th:field="*{totalDiscount}" disabled /></td>
+                                    <td><input class="form-control" type="number" th:field="*{totalDiscount}" /></td>
                                 </tr>
                                 <tr>
-                                    <td><p class="card-text mb-0">Additional Discount (%)</p></td>
-                                    <td><input class="form-control" type="number" th:field="*{additionalDiscount}" disabled /></td>
+                                    <td><p class="card-text mb-0">Tax</p></td>
+                                    <td></td>
                                 </tr>
                                 <tr>
                                     <td><p class="card-text mb-0">Subtotal</p></td>
@@ -137,7 +134,7 @@
                                 </tr>
                                 <tr>
                                     <td><p class="card-text mb-0">Amount in Words</p></td>
-                                    <td><input class="form-control" type="text" th:field="*{totalWords}" /></td>
+                                    <td><input class="form-control" type="text" th:field="*{totalWords}" required/></td>
                                 </tr> 
                             </table>
                         </div>
@@ -151,24 +148,32 @@
                             <p class="card-info">Please attach additional documents for approval.</p>
                             <br>
                             <p class="card-text">Additional Document</p>
-                            <input type="file" class="form-control" id="file" name="file" accept=".pdf">
-                            <input type="hidden" th:field="*{addedDocument}" />
+                            <input type="file" class="form-control" name="file"/>
+                            <input type="hidden" th:field="*{additionalDocument}" />
                         </div>
                     </div>
 
                     <div class="col-md-6">
                         <div class="mb-4">
-                            <p class="card-text">Date and Signature</p>
-                            <input class="form-control" type="text" th:value="*{invoiceDate}" placeholder="Date" disabled /><br>
-                            <input type="file" class="form-control" id="file" name="file" accept="image">
-                            <input type="hidden" th:field="*{addedDocument}" hidden /><br>
+                            <p class="card-text">Signature</p>
+                            <div class="form-inline">
+                                <div class="form-group mr-2">
+                                    <input class="form-control" type="text" th:field="*{city}" placeholder="City" />
+                                </div>
+                                <div class="form-group">
+                                    <p class="card-text" th:text="', '+*{invoiceDate}"></p>
+                                </div>
+                            </div>
+                            <br>
+                            <input type="file" class="form-control" name="image"/>
+                            <input type="hidden" th:field="*{signature}" />
                             <br>
                         </div>
                     </div>
                 </div>
 
                 <div class="text-center">
-                <a class="btn btn-danger" href="/">Cancel</a> 
+                <a class="btn btn-danger" href="/home">Cancel</a> 
                 <button id="submitButton" class="btn btn-primary" type="submit">Save</button>
                 </div>
                 </form>
@@ -176,47 +181,26 @@
             </div>
         </div>
       </div>
-    </div>
+    </div>   
 
-    <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="successModalLabel">Success!</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    Invoice has been successfully created.
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
+    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalLabel">Success</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
             </div>
+            <div class="modal-body">
+              <p id="successMessage"></p>
+            </div>
+            <div class="modal-footer">
+              <a class="btn btn-signin btn-lg btn-block" href="/home">Home</a>
+            </div>
+          </div>
         </div>
     </div>
-
-    <!-- Modal -->
-    <div class="modal fade" id="emptyTableModal" tabindex="-1" role="dialog" aria-labelledby="emptyTableModalLabel" aria-hidden="true" th:fragment="emptyTableModal">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="emptyTableModalLabel">Empty Table</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p>The table data list is empty. Please add some data to the table.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>    
 
     <script>
         function getAllTableData() {
@@ -231,8 +215,7 @@
                 rowData.description = row.cells[2].querySelector('input[name="productDescription"]').value;
                 rowData.quantity = row.cells[3].querySelector('input[name="productQuantity"]').value;
                 rowData.price = row.cells[4].querySelector('input[name="productPrice"]').value;
-                rowData.discount = row.cells[5].querySelector('input[name="productDiscount"]').value;
-                rowData.totalPrice = row.cells[6].querySelector('input[name="productSubtotal"]').value;
+                rowData.totalPrice = row.cells[5].querySelector('input[name="productSubtotal"]').value;
         
                 tableDataList.push(rowData);
             }
@@ -240,16 +223,11 @@
             return tableDataList;
         }
 
-        function updateSubtotal(priceInput, quantityInput, discountInput, subtotalInput) {
+        function updateSubtotal(priceInput, quantityInput, subtotalInput) {
             var price = parseFloat(priceInput.value);
             var quantity = parseInt(quantityInput.value);
-            var discount = parseInt(discountInput.value || 0);
-            
             var total = price * quantity;
-            var afterDiscount = total - parseFloat(total * discount / 100);
-           
-            subtotalInput.value = afterDiscount.toFixed(2);;
-
+            subtotalInput.value = total.toFixed(2);
         }
     
         function updateSubtotalInvoice() {
@@ -272,34 +250,26 @@
             var cellDescription = newRow.insertCell(2);
             var cellQuantity = newRow.insertCell(3);
             var cellPrice = newRow.insertCell(4);
-            var cellDiscount = newRow.insertCell(5);
-            var cellTotalPrice = newRow.insertCell(6);
+            var cellTotalPrice = newRow.insertCell(5);
     
             cellNo.innerHTML = rowCount+1;
             cellProduct.innerHTML = '<input class="form-control" type="text" name="productName">';
             cellDescription.innerHTML = '<input class="form-control" type="text" name="productDescription">';
             cellQuantity.innerHTML = '<input class="form-control quantity" type="number" name="productQuantity" value="1">';
             cellPrice.innerHTML = '<input class="form-control price" type="number" name="productPrice">';
-            cellDiscount.innerHTML = '<input class="form-control discount" type="number" name="productDiscount" value="0">';
             cellTotalPrice.innerHTML = '<input class="form-control subtotal" type="number" name="productSubtotal" readonly>';
     
             var quantityInput = cellQuantity.querySelector('input');
             var priceInput = cellPrice.querySelector('input');
-            var discountInput = cellDiscount.querySelector('input');
             var subtotalInput = cellTotalPrice.querySelector('input');
     
             quantityInput.addEventListener('change', function() {
-                updateSubtotal(priceInput, this, discountInput, subtotalInput);
+                updateSubtotal(priceInput, this, subtotalInput);
                 updateSubtotalInvoice();
             });
     
             priceInput.addEventListener('change', function() {
-                updateSubtotal(this, quantityInput, discountInput, subtotalInput);
-                updateSubtotalInvoice();
-            });
-    
-            discountInput.addEventListener('change', function() {
-                updateSubtotal(priceInput, quantityInput, this, subtotalInput);
+                updateSubtotal(this, quantityInput, subtotalInput);
                 updateSubtotalInvoice();
             });
     
@@ -322,18 +292,33 @@
                     },
                     body: JSON.stringify(productData)
                 })
-                .then(response => response.json())
                 .catch(error => {
                     console.error('Error creating product:', error);
+                    throw error;
                 });
             });
         });
         
         function updateCustomerContact() {
             var selectedCustomerName = document.getElementById("customerName").value;
-            var selectedCustomerContact = document.querySelector('option[value="' + selectedCustomerName + '"]').getAttribute('data-contact');
-            document.getElementById("customerContact").value = selectedCustomerContact;
+            var selectedOption = document.querySelector('option[value="' + selectedCustomerName + '"]');
+            if (selectedOption) {
+                var selectedCustomerContact = selectedOption.getAttribute('data-contact');
+                var selectedCustomerAddress = selectedOption.getAttribute('data-address');
+                document.getElementById("customerContact").value = selectedCustomerContact;
+                document.getElementById("customerAddress").value = selectedCustomerAddress;
+            } else {
+                document.getElementById("customerContact").value = "";
+                document.getElementById("customerAddress").value = "";
+            }
         }
     </script> 
+    <script>
+        var successMessage = /*[[${successMessage}]]*/ null;
+        if (successMessage && successMessage.trim() !== '') {
+            document.getElementById("successMessage").innerText = successMessage;
+            $("#successModal").modal('show');
+        }
+    </script>
 </body>
 </html>

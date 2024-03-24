@@ -19,6 +19,9 @@ import com.megapro.invoicesync.dto.request.CreateInvoiceRequestDTO;
 import com.megapro.invoicesync.repository.UserAppDb;
 import com.megapro.invoicesync.service.CustomerService;
 import com.megapro.invoicesync.service.InvoiceService;
+import com.megapro.invoicesync.service.TaxService;
+
+import jakarta.validation.Valid;
 
 import jakarta.validation.Valid;
 
@@ -30,6 +33,7 @@ import com.megapro.invoicesync.dto.response.ReadInvoiceResponse;
 import com.megapro.invoicesync.model.Customer;
 import com.megapro.invoicesync.model.Invoice;
 import com.megapro.invoicesync.model.Product;
+import com.megapro.invoicesync.model.Tax;
 import com.megapro.invoicesync.model.UserApp;
 import com.megapro.invoicesync.repository.InvoiceDb;
 
@@ -56,37 +60,49 @@ public class InvoiceController {
     @Autowired
     CustomerService customerService;
 
+    @Autowired
+    TaxService taxService;
+
     @GetMapping(value="/create-invoice")
-    public String formCreateInvoice(Model model){
+    public String formCreateInvoice(Model model, @ModelAttribute("successMessage") String successMessage){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         var user = userAppDb.findByEmail(email);
         String role = user.getRole().getRole();
+
         var invoiceDTO = new CreateInvoiceRequestDTO();
         var customerDTO = new CreateCustomerRequestDTO();
         List<Customer> listCustomer = customerService.getAllCustomer();
-        model.addAttribute("status", "Draft");
-        model.addAttribute("listCustomer", listCustomer);
-        model.addAttribute("customerDTO", customerDTO);
+        // List<Tax> listTax = taxService.getTaxes();
+
         model.addAttribute("email", email);
         model.addAttribute("role", role);
+        // model.addAttribute("listTax", listTax);
+        model.addAttribute("status", invoiceDTO.getStatus());
+        model.addAttribute("listCustomer", listCustomer);
+        model.addAttribute("customerDTO", customerDTO);
         model.addAttribute("invoiceDTO", invoiceDTO);
         return "invoice/form-create-invoice";
     }
 
     @PostMapping(value = "/create-invoice")
-    public String createInvoice(@Valid CreateInvoiceRequestDTO invoiceDTO, 
-                                BindingResult result, Model model){
+    public String createInvoice(@Valid CreateInvoiceRequestDTO invoiceDTO, Model model,
+                                RedirectAttributes redirectAttributes, @ModelAttribute("successMessage") String successMessage){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         var user = userAppDb.findByEmail(email);
         String role = user.getRole().getRole();
+        var customer = customerService.getCustomerById(invoiceDTO.getCustomerId());
         var invoice = invoiceMapper.createInvoiceRequestToInvoice(invoiceDTO);
+        invoice.setCustomer(customer);
         invoiceService.attributeInvoice(invoice);
         invoiceService.createInvoice(invoice, email);
+        var newInvoiceDTO = new CreateInvoiceRequestDTO();
         model.addAttribute("email", email);
         model.addAttribute("role", role);
-        model.addAttribute("invoice", invoice);
+        model.addAttribute("invoiceDTO", newInvoiceDTO);
+        model.addAttribute("successMessage", successMessage);
+        redirectAttributes.addFlashAttribute("successMessage", "Invoice has been successfully created!");
         return "redirect:/create-invoice";
     }
 
@@ -96,12 +112,16 @@ public class InvoiceController {
         String email = authentication.getName();
         var user = userAppDb.findByEmail(email);
         String role = user.getRole().getRole();
+
         var invoice = invoiceService.getInvoiceById(invoiceId);
         List<Product> listProduct = invoiceService.getListProductInvoice(invoice);
+        var invoiceDTO = invoiceMapper.readInvoiceToInvoiceResponse(invoice);
+
+        model.addAttribute("status", invoice.getStatus());
         model.addAttribute("email", email);
         model.addAttribute("role", role);
         model.addAttribute("listProduct", listProduct);
-        model.addAttribute("invoice", invoice);
+        model.addAttribute("invoice", invoiceDTO);
         return "invoice/view-detail-invoice";
     }
     
@@ -181,13 +201,19 @@ public class InvoiceController {
         model.addAttribute("role", role);
         // Asumsi Anda memiliki metode di InvoiceService untuk mengambil invoice berdasarkan email staff
         List<Invoice> myInvoices = invoiceService.retrieveInvoicesByEmail(email);
+        List<ReadInvoiceResponse> invoices = new ArrayList<>();
+
+        for (Invoice invoice: myInvoices){
+            var invoiceDTO = invoiceMapper.readInvoiceToInvoiceResponse(invoice);
+            invoices.add(invoiceDTO);
+        }
         
         // Mapping dari Invoice ke DTO jika diperlukan
-        List<ReadInvoiceResponse> myInvoiceDTOs = myInvoices.stream()
-                                                            .map(invoice -> invoiceMapper.readInvoiceToInvoiceResponse(invoice))
-                                                            .collect(Collectors.toList());
+        // List<ReadInvoiceResponse> myInvoiceDTOs = myInvoices.stream()
+        //                                                     .map(invoice -> invoiceMapper.readInvoiceToInvoiceResponse(invoice))
+        //                                                     .collect(Collectors.toList());
 
-        model.addAttribute("invoices", myInvoiceDTOs);
+        model.addAttribute("invoices", invoices);
         return "invoice/my-invoices-view"; // Ganti dengan nama view Thymeleaf Anda
     }
 

@@ -4,11 +4,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 
 import com.megapro.invoicesync.model.Invoice;
 import com.megapro.invoicesync.model.Product;
+import com.megapro.invoicesync.model.Tax;
 import com.megapro.invoicesync.model.UserApp;
 import com.megapro.invoicesync.repository.InvoiceDb;
 import com.megapro.invoicesync.repository.ProductDb;
@@ -17,7 +17,6 @@ import com.megapro.invoicesync.repository.UserAppDb;
 import jakarta.transaction.Transactional;
 
 import java.math.BigDecimal;
-import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 import java.util.ArrayList;
 
@@ -51,16 +50,13 @@ public class InvoiceServiceImpl implements InvoiceService{
     public void attributeInvoice(Invoice invoice) {
         long count = countInvoice()+1;
         String countStr = String.format("%04d", count);
-        if (invoice.getInvoiceNumber() == null || invoice.getInvoiceNumber().length() == 0){
-            var invoiceDate = invoice.getInvoiceDate();
-            int month = invoiceDate.getMonthValue();
-            String monthInRoman = convertToRoman(month);
-            // DateTimeFormatter year = DateTimeFormatter.ofPattern("yyyy");
-            String year = String.valueOf(invoiceDate.getYear());
-            // String formattedYear = invoiceDate.format(year);
-            String invoiceNumber = String.format("INV-%s/Krida/%s/%s", countStr,monthInRoman,year);
-            invoice.setInvoiceNumber(invoiceNumber);
-        }
+        var invoiceDate = invoice.getInvoiceDate();
+        int month = invoiceDate.getMonthValue();
+        String monthInRoman = convertToRoman(month);
+        String year = String.valueOf(invoiceDate.getYear());
+        String invoiceNumber = String.format("INV-%s/Krida/%s/%s",countStr,monthInRoman,year);
+        invoice.setInvoiceNumber(invoiceNumber);
+
         var dummy = getDummyInvoice();
         List<Product> newListProduct = new ArrayList<>();
         List<Product> listProduct = productService.getAllProductDummyInvoice(dummy);
@@ -69,6 +65,7 @@ public class InvoiceServiceImpl implements InvoiceService{
             newListProduct.add(p);
         }
         invoice.setListProduct(newListProduct);
+        // parseListTax(invoice);
         calculateSubtotal(invoice);
     }
 
@@ -89,29 +86,36 @@ public class InvoiceServiceImpl implements InvoiceService{
         return romanNumeral.toString();
     }
 
-
-    // private List<Product> getInvoiceListProduct(Invoice dummy){
-    //     List<Product> listProductDummyInvoice = productService.getAllProductDummyInvoice(dummy);
-    //     if (listProductDummyInvoice == null){
-    //         return null;
-    //     } else{
-    //         return listProductDummyInvoice;
-    //     }
-    // }
-
     private void calculateSubtotal(Invoice invoice){
-        double subtotal = 0;
+        double total = 0;
+        // System.out.println("list product "+invoice.getListProduct());
         for (Product p : invoice.getListProduct()){
-            subtotal += p.getTotalPrice().doubleValue();
+            System.out.println("produk "+ p);
+            total += p.getTotalPrice().doubleValue();
         }
-        invoice.setSubtotal(BigDecimal.valueOf(subtotal));
+        double totalAftDisc = total - ((invoice.getTotalDiscount()/100.0) * total);
+        // double subtotal = 0;
+        // for (Tax tax : invoice.getListTax()){
+        //     subtotal = totalAftDisc * (tax.getTaxPercentage()/100.0);
+        // }
+        invoice.setSubtotal(BigDecimal.valueOf(totalAftDisc));
     }
+
+    // private void parseListTax(Invoice invoice){
+    //     var dummy = getDummyInvoice();
+    //     List<Tax> dummyListTax = dummy.getListTax();
+    //     List<Tax> invoiceListTax = new ArrayList<>();
+    //     for (Tax tax : dummyListTax){
+    //         invoiceListTax.add(tax);
+    //     }
+    //     invoice.setListTax(invoiceListTax);
+    //     dummy.setListTax(new ArrayList<>());
+    // }
 
     @Override
     public List<Invoice> retrieveAllInvoice() {
         return invoiceDb.findAll();
     }
-
 
     @Override
     public Invoice getInvoiceById(UUID id){

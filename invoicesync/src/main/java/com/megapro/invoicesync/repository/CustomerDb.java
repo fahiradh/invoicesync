@@ -9,8 +9,9 @@ import com.megapro.invoicesync.model.Customer;
 
 import jakarta.transaction.Transactional;
 
+
 @Repository
 @Transactional
 public interface CustomerDb extends JpaRepository<Customer, UUID>{
-  
+    Customer findByCustomerId(UUID customerId);
 }
