@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,6 +29,7 @@ public class Invoice {
     private String invoiceNumber;
 
     @Column(name="invoice_date")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate invoiceDate;
 
     @Column(name="due_date")

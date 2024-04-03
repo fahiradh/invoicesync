@@ -9,7 +9,7 @@
 </head>
 
 <body>
-    <nav th:replace="~{fragments/navbar-non-finance :: navbar-non-finance(page = 'Create-Invoice')}"></nav>
+    <nav th:replace="~{fragments/navbar-non-finance :: navbar-non-finance-staff(page = 'Create-Invoice')}"></nav>
     <div class="container">
         <div class="card-title">
             <h2>Add New Customer</h2>
@@ -19,7 +19,7 @@
                 <div class="justify-content-center">
                     <form th:action="@{/create-customer}" th:object="${customerDTO}" method="POST">
                         <div class="row">
-                            <div class="row-mr-15">
+                            <div class="row-mr-15" style="margin-bottom:8px;">
                                 <p class="card-text mb-0">Name</p>
                                 <input class="form-control" type="text" th:field="*{name}" />
                             </div>
@@ -38,7 +38,7 @@
                             <div class="col-md-6">
                                 <table class="table table-borderless">
                                     <tr>
-                                        <td><p class="card-text mb-0">Address</p></td>
+                                        <td style="vertical-align: baseline;"><p class="card-text mb-0">Address</p></td>
                                         <td><textarea class="form-control" type="text" th:field="*{address}" style="height:100px"/></td>
                                     </tr>
                                 </table>

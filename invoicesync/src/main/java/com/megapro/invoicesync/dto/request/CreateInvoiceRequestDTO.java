@@ -8,11 +8,14 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateInvoiceRequestDTO {
     private LocalDate invoiceDate = LocalDate.now();
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dueDate;
     private String totalWords;
     private String signature;

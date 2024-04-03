@@ -81,11 +81,15 @@ public class InvoiceController {
         invoiceDTO.setStaffEmail(email);
         var customerDTO = new CreateCustomerRequestDTO();
         List<Customer> listCustomer = customerService.getAllCustomer();
+
+        System.out.println("GET INVOICE DATE "+invoiceDTO.getInvoiceDate());
         // List<Tax> listTax = taxService.getTaxes();
 
         model.addAttribute("email", email);
         model.addAttribute("role", role);
         // model.addAttribute("listTax", listTax);
+        model.addAttribute("dateInvoice", invoiceService.parseDate(invoiceDTO.getInvoiceDate()));
+        model.addAttribute("date",invoiceDTO.getInvoiceDate());
         model.addAttribute("status", invoiceDTO.getStatus());
         model.addAttribute("listCustomer", listCustomer);
         model.addAttribute("customerDTO", customerDTO);
@@ -131,7 +135,6 @@ public class InvoiceController {
         String email = authentication.getName();
         var user = userAppDb.findByEmail(email);
         String role = user.getRole().getRole();
-
         var invoice = invoiceService.getInvoiceById(invoiceId);
         List<Product> listProduct = invoiceService.getListProductInvoice(invoice);
         var invoiceDTO = invoiceMapper.readInvoiceToInvoiceResponse(invoice);

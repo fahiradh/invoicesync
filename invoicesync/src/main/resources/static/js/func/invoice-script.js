@@ -141,6 +141,7 @@ document.getElementById("addRowInvoice").addEventListener("click", function() {
     var checkIcon = cellAction.querySelector('.check-icon');
     checkIcon.addEventListener('click', handleCheckClick);
 });
+
 function handleCheckClick() {
     var checkIcon = this;
     var cellAction = checkIcon.parentElement;
@@ -151,13 +152,12 @@ function handleCheckClick() {
     var cellPrice = tableRow.cells[4].querySelector('input[name="productPrice"]');
     var cellTotalPrice = tableRow.cells[5].querySelector('input[name="productSubtotal"]');
     
-
     var productData = {
-        name: cellProduct.querySelector('input').value.toString(),
-        description: cellDescription.querySelector('input').value.toString(),
-        quantity: cellQuantity.querySelector('input').value,
-        price: cellPrice.querySelector('input').value,
-        totalPrice: cellTotalPrice.querySelector('input').value
+        name: cellProduct.value,
+        description: cellDescription.value,
+        quantity: cellQuantity.value,
+        price: cellPrice.value,
+        totalPrice: cellTotalPrice.value
     };
 
     fetch('/api/v1/create-product', {
@@ -168,9 +168,9 @@ function handleCheckClick() {
         body: JSON.stringify(productData)
     })
     .then(response => {
+        checkIcon.style.display = 'none';
         if (response.ok) {
             console.error('Success');
-            checkIcon.style.display = 'none';
         } else {
             console.error('Failed');
         }

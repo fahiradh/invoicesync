@@ -62,18 +62,38 @@
     }
   </style>
 </head>
-<div class="ml-3">
   <body>
-    <nav th:replace="~{fragments/navbar-finance :: navbar-finance(page='Tax')}"></nav>
-    <!-- Page Name -->
-    <div>
-      <h1 class="mt-5 ml-10" style="color:#3f2685"><b>Perpajakan</b></h1>
+    <nav th:replace="~{fragments/navbar-finance :: navbar-finance-staff(page='Tax')}"></nav>
+    <div class="container">
+      <div class="card-borderless ml-5 mr-5 mt-3 mb-5">
+        <div class="card-body p-4">
+          <h2>Tax Management</h2>
+          <div class="row g-3">
+            <div class="col-auto">
+              <button type="button" class="btn btn-primary" style="padding-left: 0.5rem; padding-right: 0.5rem;" data-toggle="modal" data-target="#exampleModal">Add</button>
+            </div>
+          </div>
+          <!-- Table -->
+    <table class="table table-custom">
+      <thead>
+        <tr>
+          <th scope="col">Tax Name</th>
+          <th scope="col">Tax Type</th>
+          <th scope="col">Percentage</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Iterate over taxes and populate table rows -->
+        <tr th:each="tax : ${taxes}">
+          <td th:text="${tax.taxName}"></td>
+          <td th:text="${tax.taxType}"></td>
+          <td th:text="${tax.taxPercentage}"></td>
+        </tr>
+      </tbody>
+    </table>
+        </div>
+      </div>
     </div>
-    <!-- Add Button -->
-    <div class="ml-3 mt-3">
-      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Add</button>
-    </div>
-  
   <!-- Modal -->
   <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -88,19 +108,19 @@
           <!-- Form for Inputs -->
           <form th:action="@{/create-tax}" th:object="${taxDTO}" method="POST">
             <div class="form-group">
-              <label for="namaPajak">Nama Pajak</label>
-              <input required type="text" th:field="*{taxName}" class="form-control" id="namaPajak" placeholder="Enter Nama Pajak"/>
+              <label for="namaPajak">Tax Name</label>
+              <input required type="text" th:field="*{taxName}" class="form-control" id="namaPajak" placeholder="Enter tax name"/>
             </div>
             <div class="form-group">
-              <label for="tipePajak">Tipe Pajak</label>
+              <label for="tipePajak">Tax Type</label>
               <select required class="form-control" id="tipePajak" th:field="*{taxType}">
                 <option value="include">Include</option>
                 <option value="exclude">Exclude</option>
               </select>
             </div>
             <div class="form-group">
-              <label for="persentase">Persentase</label>
-              <input required type="number" th:field="*{taxPercentage}" class="form-control" id="persentase" placeholder="Enter Persentase"/>
+              <label for="persentase">Percentage</label>
+              <input required type="number" th:field="*{taxPercentage}" class="form-control" id="persentase" placeholder="Enter percentage"/>
             </div>
           </div>
           <div class="modal-footer">
@@ -111,34 +131,5 @@
       </div>
     </div>
   </div>
-  
-  <!-- Table -->
-  <div class="ml-3 mt-3">
-    <table class="table table-bordered-purple rounded-table text-center" style="width: 60%; margin: 0 auto;">
-      <thead>
-        <tr>
-          <th scope="col">Nama Pajak</th>
-          <th scope="col">Tipe Pajak</th>
-          <th scope="col">Persentase</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Iterate over taxes and populate table rows -->
-        <tr th:each="tax : ${taxes}">
-          <td th:text="${tax.taxName}"></td>
-          <td th:text="${tax.taxType}"></td>
-          <td th:text="${tax.taxPercentage}"></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-
-
-
-<!-- Bootstrap JS and jQuery -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

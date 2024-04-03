@@ -35,7 +35,8 @@ public class WebSecurityConfig {
                     "Finance Director")
                 .requestMatchers(new AntPathRequestMatcher("/approval-flows")).hasAnyAuthority("Admin")
                 .requestMatchers(new AntPathRequestMatcher("/add-approval-flow")).hasAnyAuthority("Admin")
-                .requestMatchers(new AntPathRequestMatcher("/invoices")).hasAnyAuthority("Finance Director", "Finance Staff", "Finance Manager")
+                .requestMatchers(new AntPathRequestMatcher("/invoices")).hasAnyAuthority("Finance Director", "Finance Staff", "Finance Manager", "Non-Finance Manager")
+                .requestMatchers(new AntPathRequestMatcher("/approve-invoice")).hasAnyAuthority("Finance Director", "Finance Staff", "Finance Manager", "Non-Finance Manager")
                 .anyRequest().authenticated())
             
             .formLogin((form) -> form
