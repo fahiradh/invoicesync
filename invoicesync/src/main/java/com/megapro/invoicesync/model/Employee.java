@@ -39,6 +39,8 @@ public class Employee extends UserApp {
     private String street;
 
     @Column(name = "photo")
-    private String base64Photo;
+    private String base64Photo = "https://img.freepik.com/premium-vector/new-woman-avatar-icon-flat-illustration-woman-avatar-vector-icon-any-web-design_98396-3382.jpg";
 
+    @Column(name = "is_deleted")
+    private boolean deleted = false;
 }

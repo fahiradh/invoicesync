@@ -10,174 +10,191 @@
 
 <body>
     <nav th:replace="~{fragments/navbar-non-finance :: navbar-non-finance(page = 'Create-Invoice')}"></nav>
-    <div class="container">
-        <div class="container title">
-            <h2>Draft Invoice</h2>
-        </div>
+    <div class="header">
+       <h4>Create Invoice / <span class="invoice-number">Draft</span></h4>
+    </div>
+    <form th:action="@{/create-invoice}" th:object="${invoiceDTO}" method="POST" id="invoiceForm" enctype="multipart/form-data">
+        <a class="btn btn-danger" href="/home">Cancel</a> 
+        <button id="submitButton" class="btn btn-primary" type="submit">Save</button>
+    <div class="container-invoice">
+    <div class="sidebar">
+        <h3 style="text-align:center;">Approval Log<h3>
         <hr>
-        <div class="row">
-            <div th:replace="~{fragments/invoice-status :: invoice-status}"></div>
-        </div>
-      <div class="card ml-5 mr-5 mt-3 mb-5">
-        <div class="card-body p-4">
-            <div class="justify-content-center">
-                <form th:action="@{/create-invoice}" th:object="${invoiceDTO}" method="POST" id="invoiceForm">
+    </div>
+        <div class="card ml-5 mr-5 mt-3 mb-5">
+            <div class="card-body p-4">
+            <div class="container-title">
                 <div class="row">
-                    <div class="col-md-6">
-                        <a th:href="@{/create-customer}" class="btn btn-primary">Add New Customer</a></td>
+                    <div class="col" style="text-align:left;">
+                        <h2>Draft</h2>
                     </div>
+                    <div class="col" style="text-align:right;" th:include="~{fragments/invoice-status :: invoice-status-show}"></div>
                 </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <table class="table table-borderless">
-                            <tr>
-                                <td><p class="card-text mb-0">Customer</p></td>
-                                <td>
-                                    <select class="form-control" th:field="*{customerId}" id="customerName" onchange="updateCustomerContact()" >
-                                        <option value="">Choose customer</option>
-                                        <option th:each="customer : ${listCustomer}" 
-                                                th:value="${customer.customerId}" 
-                                                th:text="${customer.name}"
-                                                th:data-contact="${customer.contact}" 
-                                                th:data-address="${customer.address}" ></option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><p class="card-text mb-0">Contact</p></td>
-                                <td><input class="form-control" type="text" th:text="${customerContact}" id="customerContact" readonly /></td>
-                            </tr>
-                            <tr>
-                                <td><p class="card-text mb-0">Address</p></td>
-                                <td><input class="form-control" type="text" th:text="${customerAddress}" id="customerAddress" readonly /></td>
-                            </tr>
-                        </table>
-                    </div>
-                    <div class="col-md-6">
-                        <table class="table table-borderless">
-                            <tr>
-                                <td><p class="card-text mb-0">Invoice Date</p></td>
-                                <td><input class="form-control" type="date" th:field="*{invoiceDate}" required /></td>
-                            </tr>
-                            <tr>
-                                <td><p class="card-text mb-0">Due Date</p></td>
-                                <td><input class="form-control" type="date" th:field="*{dueDate}" required/></td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-                
-                <hr>
-                <p class="card-info">Please attach document or input the fields below to add product list.</p>
-                <br>
-
-                <p class="card-text">Attach Product List (.xlsx)</p>
-                <input type="file" class="form-control" id="file" name="file" accept=".xlsx" style="width: 35%;">
-                <input th:field="*{productDocument}" hidden/>
-                <br>
-
-                <table class="table table-bordered">
-                    <thead class="bg-dark text-white">
-                        <tr>
-                            <th>No</th>
-                            <th>Product</th>
-                            <th>Description</th>
-                            <th>Quantity</th>
-                            <th>Price/Qty</th>
-                            <th>Total Price</th>
-                        </tr>
-                      </thead> 
-                    <tbody id="invoiceTableBody">
-                    </tbody>
-                    <button id="addRowInvoice" class="btn btn-primary" type="button">Add Row</button>
-                </table>
-
-                <hr>
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-4">
-                            <p class="card-text">Payment Information</p>
-                            <table class="table table-borderless">
-                                <tr>
-                                    <td><p class="card-text mb-0">Bank Name</p></td>
-                                    <td><input class="form-control" type="text" th:field="*{bankName}" placeholder="Bank Name" required /></td>
-                                </tr>
-                                <tr>
-                                    <td><p class="card-text mb-0">Account Number</p></td>
-                                    <td><input class="form-control" type="text" th:field="*{accountNumber}" placeholder="Account Number" required/></td>
-                                </tr>
-                                <tr>
-                                    <td><p class="card-text mb-0">Account Name</p></td>
-                                    <td><input class="form-control" type="text" th:field="*{accountName}" placeholder="Account Name" required/></td>
-                                </tr>
-                            </table>
+            </div>
+            <hr>
+            <div class="content">
+                <div class="justify-content-center">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <a th:href="@{/create-customer}" class="btn btn-primary">Add New Customer</a></td>
                         </div>
                     </div>
-
-                    <div class="col-md-6">
-                        <div class="mb-4">
-                           <table class="table table-bordered-classic">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <table class="table table-borderless">
                                 <tr>
-                                    <td><p class="card-text mb-0">Total Discount (%)</p></td>
-                                    <td><input class="form-control" type="number" th:field="*{totalDiscount}" /></td>
-                                </tr>
-                                <tr>
-                                    <td><p class="card-text mb-0">Tax</p></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td><p class="card-text mb-0">Subtotal</p></td>
+                                    <td><p class="card-text mb-0">Customer</p></td>
                                     <td>
-                                        <input class="form-control" type="number" th:field="*{subtotal}" disabled />
+                                        <select class="form-control" th:field="*{customerId}" id="customerName" onchange="updateCustomerContact()" >
+                                            <option value="">Choose customer</option>
+                                            <option th:each="customer : ${listCustomer}" 
+                                                    th:value="${customer.customerId}" 
+                                                    th:text="${customer.name}"
+                                                    th:data-contact="${customer.contact}" 
+                                                    th:data-address="${customer.address}" ></option>
+                                        </select>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td><p class="card-text mb-0">Amount in Words</p></td>
-                                    <td><input class="form-control" type="text" th:field="*{totalWords}" required/></td>
-                                </tr> 
+                                    <td><p class="card-text mb-0">Contact</p></td>
+                                    <td><input class="form-control" type="text" th:text="${customerContact}" id="customerContact" readonly /></td>
+                                </tr>
+                                <tr>
+                                    <td><p class="card-text mb-0">Address</p></td>
+                                    <td><input class="form-control" type="text" th:text="${customerAddress}" id="customerAddress" readonly /></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><p class="card-text mb-0">Invoice Date</p></td>
+                                    <td><input class="form-control" type="date" th:field="*{invoiceDate}" required /></td>
+                                </tr>
+                                <tr>
+                                    <td><p class="card-text mb-0">Due Date</p></td>
+                                    <td><input class="form-control" type="date" th:field="*{dueDate}" required/></td>
+                                </tr>
                             </table>
                         </div>
                     </div>
-                </div>
-                <hr>
+                    
+                    <hr>
+                    <p class="card-info">Please attach document or input the fields below to add product list.</p>
+                    <br>
 
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-4">
-                            <p class="card-info">Please attach additional documents for approval.</p>
-                            <br>
-                            <p class="card-text">Additional Document</p>
-                            <input type="file" class="form-control" name="file"/>
-                            <input type="hidden" th:field="*{additionalDocument}" />
-                        </div>
-                    </div>
+                    <p class="card-text">Attach Product List (.xlsx)</p>
+                    <input type="file" class="form-control" id="document" name="document" style="width: 35%;"/>
+                    <input th:field="*{productDocument}" hidden/>
+                    <br>
 
-                    <div class="col-md-6">
-                        <div class="mb-4">
-                            <p class="card-text">Signature</p>
-                            <div class="form-inline">
-                                <div class="form-group mr-2">
-                                    <input class="form-control" type="text" th:field="*{city}" placeholder="City" />
-                                </div>
-                                <div class="form-group">
-                                    <p class="card-text" th:text="', '+*{invoiceDate}"></p>
-                                </div>
+                    <table class="table table-bordered">
+                        <thead class="bg-dark text-white">
+                            <tr>
+                                <th>No</th>
+                                <th>Product</th>
+                                <th>Description</th>
+                                <th>Quantity</th>
+                                <th>Price/Qty</th>
+                                <th>Total Price</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead> 
+                        <tbody id="invoiceTableBody">
+                        </tbody>
+                        <button id="addRowInvoice" class="btn btn-primary" type="button">Add Row</button>
+                    </table>
+
+                    <hr>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-4">
+                                <p class="card-text">Payment Information</p>
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <td><p class="card-text mb-0">Bank Name</p></td>
+                                        <td><input class="form-control" type="text" th:field="*{bankName}" placeholder="Bank Name" required /></td>
+                                    </tr>
+                                    <tr>
+                                        <td><p class="card-text mb-0">Account Number</p></td>
+                                        <td><input class="form-control" type="text" th:field="*{accountNumber}" placeholder="Account Number" required/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><p class="card-text mb-0">Account Name</p></td>
+                                        <td><input class="form-control" type="text" th:field="*{accountName}" placeholder="Account Name" required/></td>
+                                    </tr>
+                                </table>
                             </div>
-                            <br>
-                            <input type="file" class="form-control" name="image"/>
-                            <input type="hidden" th:field="*{signature}" />
-                            <br>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-4">
+                            <table class="table table-bordered-classic">
+                                    <tr>
+                                        <td><p class="card-text mb-0">Total Discount (%)</p></td>
+                                        <td><input class="form-control" type="number" th:field="*{totalDiscount}" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td><p class="card-text mb-0">Tax</p></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td><p class="card-text mb-0">Subtotal</p></td>
+                                        <td>
+                                            <input class="form-control" type="number" th:field="*{subtotal}" disabled />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><p class="card-text mb-0">Amount in Words</p></td>
+                                        <td><input class="form-control" type="text" th:field="*{totalWords}" required/></td>
+                                    </tr> 
+                                </table>
+                            </div>
                         </div>
                     </div>
-                </div>
+                    <hr>
 
-                <div class="text-center">
-                <a class="btn btn-danger" href="/home">Cancel</a> 
-                <button id="submitButton" class="btn btn-primary" type="submit">Save</button>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-4">
+                                <p class="card-info">Please attach additional documents for approval.</p>
+                                <br>
+                                <p class="card-text">Additional Document</p>
+                                <input type="file" class="form-control" name="file"/>
+                                <input type="hidden" th:field="*{additionalDocument}" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-4">
+                                <p class="card-text">Signature</p>
+                                <div class="form-inline">
+                                    <div class="form-group mr-2">
+                                        <input class="form-control" type="text" th:field="*{city}" placeholder="City" />
+                                    </div>
+                                    <div class="form-group">
+                                        <p class="card-text" th:text="', '+*{invoiceDate}"></p>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="drag-area">
+                                    <div class="icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                                    <header>Drag & Drop to Upload File</header>
+                                    <span>OR</span>
+                                    <button>Browse File</button>
+                                    <input type="file" class="form-control" id="image" name="image" accept="image/*" required/>
+                                    <input th:field="*{signature}" th:value="${signature}" hidden/>
+                                </div>
+                                <br>
+                                <input class="form-control" type="text" th:field="*{staffEmail}" readonly />
+                                <br>
+                            </div>
+                        </div>
+                    </div>
+                    </form>
                 </div>
-                </form>
-              </div>
+                </div>
             </div>
         </div>
       </div>
@@ -202,117 +219,8 @@
         </div>
     </div>
 
-    <script>
-        function getAllTableData() {
-            var tableBody = document.getElementById("invoiceTableBody");
-            var tableDataList = [];
-        
-            for (var i = 0; i < tableBody.rows.length; i++) {
-                var row = tableBody.rows[i];
-                var rowData = {};
-        
-                rowData.name = row.cells[1].querySelector('input[name="productName"]').value;
-                rowData.description = row.cells[2].querySelector('input[name="productDescription"]').value;
-                rowData.quantity = row.cells[3].querySelector('input[name="productQuantity"]').value;
-                rowData.price = row.cells[4].querySelector('input[name="productPrice"]').value;
-                rowData.totalPrice = row.cells[5].querySelector('input[name="productSubtotal"]').value;
-        
-                tableDataList.push(rowData);
-            }
-        
-            return tableDataList;
-        }
+    <script src="/js/func/invoice-script.js"></script>
 
-        function updateSubtotal(priceInput, quantityInput, subtotalInput) {
-            var price = parseFloat(priceInput.value);
-            var quantity = parseInt(quantityInput.value);
-            var total = price * quantity;
-            subtotalInput.value = total.toFixed(2);
-        }
-    
-        function updateSubtotalInvoice() {
-            var subtotalElements = document.querySelectorAll('.subtotal');
-            var total = 0;
-            subtotalElements.forEach(element => {
-                total += parseFloat(element.value || 0);
-            });
-            document.querySelector('input[name="subtotal"]').value = total.toFixed(2);
-        }
-        
-        document.getElementById("addRowInvoice").addEventListener("click", function() {
-            var tableBody = document.getElementById("invoiceTableBody");
-            var rowCount = tableBody.rows.length;
-    
-            var newRow = tableBody.insertRow(rowCount);
-    
-            var cellNo = newRow.insertCell(0);
-            var cellProduct = newRow.insertCell(1);
-            var cellDescription = newRow.insertCell(2);
-            var cellQuantity = newRow.insertCell(3);
-            var cellPrice = newRow.insertCell(4);
-            var cellTotalPrice = newRow.insertCell(5);
-    
-            cellNo.innerHTML = rowCount+1;
-            cellProduct.innerHTML = '<input class="form-control" type="text" name="productName">';
-            cellDescription.innerHTML = '<input class="form-control" type="text" name="productDescription">';
-            cellQuantity.innerHTML = '<input class="form-control quantity" type="number" name="productQuantity" value="1">';
-            cellPrice.innerHTML = '<input class="form-control price" type="number" name="productPrice">';
-            cellTotalPrice.innerHTML = '<input class="form-control subtotal" type="number" name="productSubtotal" readonly>';
-    
-            var quantityInput = cellQuantity.querySelector('input');
-            var priceInput = cellPrice.querySelector('input');
-            var subtotalInput = cellTotalPrice.querySelector('input');
-    
-            quantityInput.addEventListener('change', function() {
-                updateSubtotal(priceInput, this, subtotalInput);
-                updateSubtotalInvoice();
-            });
-    
-            priceInput.addEventListener('change', function() {
-                updateSubtotal(this, quantityInput, subtotalInput);
-                updateSubtotalInvoice();
-            });
-    
-            var inputs = newRow.querySelectorAll('input');
-            inputs.forEach(input => {
-                input.addEventListener('input', function() {
-                    updateSubtotalInvoice();
-                });
-            });
-        });
-    
-        document.getElementById("submitButton").addEventListener("click", function() {
-            var tableData = getAllTableData();
-
-            tableData.forEach(function(productData) {
-                fetch('/api/v1/create-product', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(productData)
-                })
-                .catch(error => {
-                    console.error('Error creating product:', error);
-                    throw error;
-                });
-            });
-        });
-        
-        function updateCustomerContact() {
-            var selectedCustomerName = document.getElementById("customerName").value;
-            var selectedOption = document.querySelector('option[value="' + selectedCustomerName + '"]');
-            if (selectedOption) {
-                var selectedCustomerContact = selectedOption.getAttribute('data-contact');
-                var selectedCustomerAddress = selectedOption.getAttribute('data-address');
-                document.getElementById("customerContact").value = selectedCustomerContact;
-                document.getElementById("customerAddress").value = selectedCustomerAddress;
-            } else {
-                document.getElementById("customerContact").value = "";
-                document.getElementById("customerAddress").value = "";
-            }
-        }
-    </script> 
     <script>
         var successMessage = /*[[${successMessage}]]*/ null;
         if (successMessage && successMessage.trim() !== '') {

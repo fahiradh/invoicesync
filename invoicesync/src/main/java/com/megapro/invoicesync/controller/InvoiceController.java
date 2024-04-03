@@ -12,6 +12,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import com.megapro.invoicesync.dto.CustomerMapper;
 import com.megapro.invoicesync.dto.InvoiceMapper;
 import com.megapro.invoicesync.dto.ProductMapper;
 import com.megapro.invoicesync.dto.request.CreateCustomerRequestDTO;
@@ -23,10 +25,9 @@ import com.megapro.invoicesync.service.TaxService;
 
 import jakarta.validation.Valid;
 
-import jakarta.validation.Valid;
-
 import java.util.UUID;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.megapro.invoicesync.dto.response.ReadInvoiceResponse;
@@ -37,6 +38,7 @@ import com.megapro.invoicesync.model.Tax;
 import com.megapro.invoicesync.model.UserApp;
 import com.megapro.invoicesync.repository.InvoiceDb;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -61,6 +63,9 @@ public class InvoiceController {
     CustomerService customerService;
 
     @Autowired
+    CustomerMapper customerMapper;
+
+    @Autowired
     TaxService taxService;
 
     @GetMapping(value="/create-invoice")
@@ -71,6 +76,7 @@ public class InvoiceController {
         String role = user.getRole().getRole();
 
         var invoiceDTO = new CreateInvoiceRequestDTO();
+        invoiceDTO.setStaffEmail(email);
         var customerDTO = new CreateCustomerRequestDTO();
         List<Customer> listCustomer = customerService.getAllCustomer();
         // List<Tax> listTax = taxService.getTaxes();
@@ -87,7 +93,9 @@ public class InvoiceController {
 
     @PostMapping(value = "/create-invoice")
     public String createInvoice(@Valid CreateInvoiceRequestDTO invoiceDTO, Model model,
-                                RedirectAttributes redirectAttributes, @ModelAttribute("successMessage") String successMessage){
+                                RedirectAttributes redirectAttributes,
+                                @RequestParam("image") MultipartFile signature,
+                                @ModelAttribute("successMessage") String successMessage) throws IOException{
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         var user = userAppDb.findByEmail(email);
@@ -96,6 +104,11 @@ public class InvoiceController {
         var invoice = invoiceMapper.createInvoiceRequestToInvoice(invoiceDTO);
         invoice.setCustomer(customer);
         invoiceService.attributeInvoice(invoice);
+
+        byte[] imageBytes = signature.getBytes();
+        String bytesToString = invoiceService.translateByte(imageBytes);
+        invoiceDTO.setSignature(bytesToString);
+        
         invoiceService.createInvoice(invoice, email);
         var newInvoiceDTO = new CreateInvoiceRequestDTO();
         model.addAttribute("email", email);

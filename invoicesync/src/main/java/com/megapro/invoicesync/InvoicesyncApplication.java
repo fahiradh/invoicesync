@@ -37,20 +37,20 @@ public class InvoicesyncApplication {
 			roleAdmin.setRole("Admin");
 			roleService.createRole(roleAdmin);
 
-			var roleStafWarehouse = new Role();
-			roleStafWarehouse.setId(2L);
-			roleStafWarehouse.setRole("Warehouse Staff");
-			roleService.createRole(roleStafWarehouse);
+			var roleStafNonFinance = new Role();
+			roleStafNonFinance.setId(2L);
+			roleStafNonFinance.setRole("Non-Finance Staff");
+			roleService.createRole(roleStafNonFinance);
 
 			var roleStafFinance = new Role();
 			roleStafFinance.setId(3L);
 			roleStafFinance.setRole("Finance Staff");
 			roleService.createRole(roleStafFinance);
 
-			var roleManagerWarehouse = new Role();
-			roleManagerWarehouse.setId(4L);
-			roleManagerWarehouse.setRole("Warehouse Manager");
-			roleService.createRole(roleManagerWarehouse);
+			var roleManagerNonFinance = new Role();
+			roleManagerNonFinance.setId(4L);
+			roleManagerNonFinance.setRole("Non-Finance Manager");
+			roleService.createRole(roleManagerNonFinance);
 
 			var roleManagerFinance = new Role();
 			roleManagerFinance.setId(5L);
@@ -67,15 +67,6 @@ public class InvoicesyncApplication {
 			userDTO.setPassword("admin123");
 			userDTO.setRole(roleAdmin);
 			
-			var userDTO2 = new CreateUserAppRequestDTO();
-			userDTO2.setEmail("wh@gmail.com");
-			userDTO2.setPassword("wh123");
-			userDTO2.setRole(roleStafWarehouse);
-
-			var userDTO3 = new CreateUserAppRequestDTO();
-			userDTO3.setEmail("whs@gmail.com");
-			userDTO3.setPassword("whs123");
-			userDTO3.setRole(roleManagerWarehouse);
 
 			var dummyInvoiceDTO = new CreateInvoiceRequestDTO();
 			var dummyInvoice = invoiceMapper.createInvoiceRequestToInvoice(dummyInvoiceDTO);
@@ -85,11 +76,11 @@ public class InvoicesyncApplication {
 			var userAdmin = userMapper.createUserAppRequestDTOToUserApp(userDTO);
 			userService.createUserApp(userAdmin, userDTO);
 
-			var warehouseStaff = new CreateEmployeeRequestDTO();
-			warehouseStaff.setEmail("warehouse_staff@gmail.com");
-			warehouseStaff.setPassword("warehouse");
-			warehouseStaff.setRole(roleStafWarehouse);
-			userService.createEmployee(userMapper.createEmployeeRequestDTOToEmployee(warehouseStaff));
+			var nonFinanceStaff = new CreateEmployeeRequestDTO();
+			nonFinanceStaff.setEmail("warehouse_staff@gmail.com");
+			nonFinanceStaff.setPassword("warehouse");
+			nonFinanceStaff.setRole(roleStafNonFinance);
+			userService.createEmployee(userMapper.createEmployeeRequestDTOToEmployee(nonFinanceStaff));
 
 
 			var financeStaff = new CreateEmployeeRequestDTO();
@@ -98,11 +89,11 @@ public class InvoicesyncApplication {
 			financeStaff.setRole(roleStafFinance);
 			userService.createEmployee(userMapper.createEmployeeRequestDTOToEmployee(financeStaff));
 
-			var warehouseManager = new CreateEmployeeRequestDTO();
-			warehouseManager.setEmail("warehouse_manager@gmail.com");
-			warehouseManager.setPassword("warehouse");
-			warehouseManager.setRole(roleManagerWarehouse);
-			userService.createEmployee(userMapper.createEmployeeRequestDTOToEmployee(warehouseManager));
+			var nonFinanceManager = new CreateEmployeeRequestDTO();
+			nonFinanceManager.setEmail("warehouse_manager@gmail.com");
+			nonFinanceManager.setPassword("warehouse");
+			nonFinanceManager.setRole(roleManagerNonFinance);
+			userService.createEmployee(userMapper.createEmployeeRequestDTOToEmployee(nonFinanceManager));
 
 			var financeManager = new CreateEmployeeRequestDTO();
 			financeManager.setEmail("finance_manager@gmail.com");

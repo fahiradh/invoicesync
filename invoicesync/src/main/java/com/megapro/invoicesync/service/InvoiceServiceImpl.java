@@ -2,6 +2,7 @@ package com.megapro.invoicesync.service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Base64;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -67,6 +68,11 @@ public class InvoiceServiceImpl implements InvoiceService{
         invoice.setListProduct(newListProduct);
         // parseListTax(invoice);
         calculateSubtotal(invoice);
+    }
+
+    @Override
+    public String translateByte(byte[] byteFile){
+        return Base64.getEncoder().encodeToString(byteFile);
     }
 
     public static String convertToRoman(int num) {

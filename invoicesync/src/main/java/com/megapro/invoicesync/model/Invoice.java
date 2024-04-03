@@ -35,6 +35,7 @@ public class Invoice {
     @Column(name="total_words")
     private String totalWords;
 
+    @Lob
     @Column(name="signature")
     private String signature;
 

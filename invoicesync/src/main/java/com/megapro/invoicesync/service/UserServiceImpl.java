@@ -2,6 +2,7 @@ package com.megapro.invoicesync.service;
 
 import java.util.List;
 
+import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -46,12 +47,15 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public Employee findByEmail(String email) {
-       return employeeDb.findByEmail(email);
+        if (employeeDb.findByEmail(email).isDeleted() != true) {
+            return employeeDb.findByEmail(email);
+        } 
+        return null;
     }
 
     @Override
     public List<Employee> getAllEmployee() {
-        return employeeDb.findAll();
+        return employeeDb.findByDeletedFalse();
     }
 
     @Override
@@ -62,5 +66,16 @@ public class UserServiceImpl implements UserService{
     @Override
     public boolean existsByNomorHp(String phoneNumber) {
         return employeeDb.existsByNomorHp(phoneNumber);
+    }
+
+    @Override
+    public Employee getEmployeeById(UUID id) {
+        return employeeDb.findEmployeeByUserId(id);
+    }
+
+    @Override
+    public void deleteEmployee(Employee employee) {
+        employee.setDeleted(true);
+        employeeDb.save(employee);
     }
 }
