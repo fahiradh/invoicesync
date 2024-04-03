@@ -63,21 +63,13 @@
             <div class="col">
               <select class="form-select" th:field="*{approverRole}">
                 <option value="">Select Approver Role</option>
-                <option value="Admin">Admin</option>
-                <option value="Non-Finance Staff">Non-Finance (Staff)</option>
-                <option value="Non-Finance Manager">Non-Finance (Manager)</option>
-                <option value="Consulting Service">Consulting Service</option>
-                <option value="Sales & Marketing">Sales & Marketing</option>
-                <option value="Product Development">Product Development</option>
-                <option value="Operations">Operations</option>
-                <option value="Warehouse">Warehouse</option>
-                <option value="Finance Staff">Finance (Staff)</option>
-                <option value="Finance Manager">Finance (Manager)</option>
-                <option value="Finance Director">Finance Director</option>
-              </select>
+                <option th:each="role : ${roles}" th:value="${role.role}" th:text="${role.role}"></option>
+            </select>            
             </div>
             <div class="col-auto">
               <button type="submit" class="btn btn-primary">ADD</button>
+              <!-- Setelah tombol ADD -->
+              <button type="button" class="btn btn-secondary" th:onclick="'window.location.href=\'' + @{/reset-approval-flows} + '\''">Reset</button>
             </div>
           </div>
         </form>

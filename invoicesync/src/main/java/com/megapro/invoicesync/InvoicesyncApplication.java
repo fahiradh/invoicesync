@@ -68,9 +68,9 @@ public class InvoicesyncApplication {
 			userDTO.setRole(roleAdmin);
 			
 
-			// var dummyInvoiceDTO = new CreateInvoiceRequestDTO();
-			// var dummyInvoice = invoiceMapper.createInvoiceRequestToInvoice(dummyInvoiceDTO);
-			// invoiceService.createInvoice(dummyInvoice, "dummy");
+			var dummyInvoiceDTO = new CreateInvoiceRequestDTO();
+			var dummyInvoice = invoiceMapper.createInvoiceRequestToInvoice(dummyInvoiceDTO);
+			invoiceService.createInvoice(dummyInvoice, "dummy");
 
 			
 			var userAdmin = userMapper.createUserAppRequestDTOToUserApp(userDTO);

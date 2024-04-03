@@ -19,6 +19,8 @@
         }
         .table-custom th, .table-custom td {
             border: none;
+            text-align: center;        /* Teks rata tengah horizontal */
+            vertical-align: middle;  
         }
         .table-custom tbody tr {
             background-color: #E3E6F0;
@@ -78,7 +80,6 @@
                             <tr>
                                 <th>No</th>
                                 <th>ID</th>
-                                <th>Invoice Number</th>
                                 <th>Client Name</th>
                                 <th>Total Amount</th>
                                 <th>Division</th>
@@ -88,9 +89,12 @@
                         <tbody>
                             <tr th:each="invoice, iterStat : ${invoices}">
                                 <td th:text="${iterStat.count}"></td>
-                                <td th:text="${invoice.invoiceId}">/td>
-                                <td th:text="${invoice.invoiceNumber}">4</td>
-                                <td th:text="${invoice.customer.name}"></td>
+                                <td>
+                                    <a th:href="@{/invoice/{invoiceNumber}(invoiceNumber=${invoice.invoiceNumber != null ? invoice.invoiceNumber.replace('/', '_') : 'Dummy'})}"
+                                       th:text="${invoice.invoiceNumber}"></a>
+                                </td>
+                                
+                                <td th:text="${invoice.customer?.name ?: 'Unknown Customer'}"></td>
                                 <td th:text="${'Rp' + #numbers.formatDecimal(invoice.subtotal, 0, 'COMMA', 2, 'POINT')}"></td>
                                 <td th:text="${invoice.staffRole}">Division</td>
                                 <!-- The status column will be updated according to your business logic -->

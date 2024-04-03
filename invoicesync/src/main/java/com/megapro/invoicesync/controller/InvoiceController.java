@@ -129,13 +129,15 @@ public class InvoiceController {
         return "redirect:/create-invoice";
     }
 
-    @GetMapping("/invoice/{id}")
-    public String getDetailInvoice(@PathVariable("id") UUID invoiceId, Model model) {
+    @GetMapping("/invoice/{invoiceNumber}")
+    public String getDetailInvoice(@PathVariable("invoiceNumber") String encodedInvoiceNumber, Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         var user = userAppDb.findByEmail(email);
         String role = user.getRole().getRole();
-        var invoice = invoiceService.getInvoiceById(invoiceId);
+        String invoiceNumber = encodedInvoiceNumber.replace('_', '/');
+
+        var invoice = invoiceService.getInvoiceByInvoiceNumber(invoiceNumber); // Perlu metode baru untuk mencari berdasarkan invoiceNumber
         List<Product> listProduct = invoiceService.getListProductInvoice(invoice);
         var invoiceDTO = invoiceMapper.readInvoiceToInvoiceResponse(invoice);
 
@@ -234,7 +236,6 @@ public class InvoiceController {
         // List<ReadInvoiceResponse> myInvoiceDTOs = myInvoices.stream()
         //                                                     .map(invoice -> invoiceMapper.readInvoiceToInvoiceResponse(invoice))
         //                                                     .collect(Collectors.toList());
-
         model.addAttribute("invoices", invoices);
         return "invoice/my-invoices-view"; // Ganti dengan nama view Thymeleaf Anda
     }

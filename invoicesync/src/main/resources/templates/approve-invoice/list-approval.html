@@ -7,6 +7,11 @@
     <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
     <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
     <style>
+        .table-custom th, .table-custom td {
+        border: none;
+        text-align: center;        /* Teks rata tengah horizontal */
+        vertical-align: middle;    /* Teks rata tengah vertikal */
+    }
     </style>
 </head>
 <body>
@@ -24,7 +29,6 @@
                         <tr>
                             <th>No</th>
                             <th>ID</th>
-                            <th>Invoice Number</th>
                             <th>Client Name</th>
                             <th>Total Amount</th>
                             <th>Status</th>
@@ -33,10 +37,11 @@
                     <tbody>
                         <tr th:each="invoice, iterStat : ${invoices}" >
                             <td th:text="${iterStat.count}"></td>
-                                <td th:text="${invoice.invoiceId}">/td>
-                                    <a href="URL_TUJUAN">INV/KRD/01/003</a>
-                                    <td><a th:text="${invoice.invoiceNumber}" th:href="@{/invoice/{id}(id=${invoice.invoiceId})}"></a></td>
-                                <td th:text="${invoice.customerName}"></td> 
+                            <td>
+                                <a th:href="@{/invoice/{invoiceNumber}(invoiceNumber=${invoice.invoiceNumber != null ? invoice.invoiceNumber.replace('/', '_') : 'Dummy'})}"
+                                   th:text="${invoice.invoiceNumber}"></a>
+                            </td>
+                            <td th:text="${invoice.customer?.name ?: 'Unknown Customer'}"></td>
                                 <td th:text="${'Rp' + #numbers.formatDecimal(invoice.subtotal, 0, 'COMMA', 2, 'POINT')}"></td>
                         </tr>
                     </tbody>
