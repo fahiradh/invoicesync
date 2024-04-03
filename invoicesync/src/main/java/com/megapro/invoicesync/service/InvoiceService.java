@@ -6,7 +6,7 @@ import com.megapro.invoicesync.model.Product;
 
 import java.util.List;
 import java.util.UUID;
-
+import java.time.LocalDate;
 
 public interface InvoiceService {
     void createInvoice(Invoice invoice, String email);
@@ -25,4 +25,5 @@ public interface InvoiceService {
     Invoice getDummyInvoice();
     String translateByte(byte[] byteFile);
     void transferData(CreateInvoiceRequestDTO invoiceRequestDTO, Invoice invoice);
+    String parseDate(LocalDate localDate);
 }

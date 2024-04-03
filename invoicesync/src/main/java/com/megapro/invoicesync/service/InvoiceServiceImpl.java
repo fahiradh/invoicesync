@@ -21,6 +21,7 @@ import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.UUID;
 import java.util.ArrayList;
+import java.time.LocalDate;
 
 @Service
 @Transactional
@@ -218,6 +219,17 @@ public class InvoiceServiceImpl implements InvoiceService{
         invoiceRequestDTO.setSubtotal(invoice.getSubtotal());
         invoiceRequestDTO.setTotalWords(invoice.getTotalWords());
         invoiceRequestDTO.setTotalDiscount(invoice.getTotalDiscount());
+    }
+
+    @Override
+    public String parseDate(LocalDate localDate){
+        int day = localDate.getDayOfMonth();
+        int monthIndex = localDate.getMonthValue();
+        int year = localDate.getYear();
+        String[] monthNames = {"January", "February", "March", "April", "May", "June",
+                               "July", "August", "September", "October", "November", "December"};
+        String formattedDate = day + " " + monthNames[monthIndex] + " " + year;
+        return formattedDate;
     }
 }
 

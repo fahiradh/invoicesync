@@ -9,7 +9,7 @@
 </head>
 
 <body>
-    <nav th:replace="~{fragments/navbar-non-finance :: navbar-non-finance(page = 'Create-Invoice')}"></nav>
+    <nav th:replace="~{fragments/navbar-non-finance :: navbar-non-finance-staff(page = 'Create-Invoice')}"></nav>
     <div class="header">
        <h4>Create Invoice / <span class="invoice-number">Draft</span></h4>
     </div>
@@ -69,7 +69,7 @@
                             <table class="table table-borderless">
                                 <tr>
                                     <td><p class="card-text mb-0">Invoice Date</p></td>
-                                    <td><input class="form-control" type="date" th:field="*{invoiceDate}" required /></td>
+                                    <td><input class="form-control" th:value="${date}" readonly /></td>
                                 </tr>
                                 <tr>
                                     <td><p class="card-text mb-0">Due Date</p></td>
@@ -174,7 +174,7 @@
                                         <input class="form-control" type="text" th:field="*{city}" placeholder="City" />
                                     </div>
                                     <div class="form-group">
-                                        <p class="card-text" th:text="', '+*{invoiceDate}"></p>
+                                        <p class="card-text" th:text="', '+${dateInvoice}"></p>
                                     </div>
                                 </div>
                                 <br>

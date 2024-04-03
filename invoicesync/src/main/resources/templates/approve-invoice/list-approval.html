@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Approve Invoice</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+    <style>
+    </style>
+</head>
+<body>
+    <nav th:if="${role == 'Non-Finance Manager'}" th:replace="~{fragments/navbar-non-finance :: navbar-non-finance-manager(page='Approve-Invoice')}"></nav>
+    <nav th:if="${role == 'Finance Staff'}" th:replace="~{fragments/navbar-finance :: navbar-finance-staff(page='Approve-Invoice')}"></nav>
+    <nav th:if="${role == 'Finance Manager'}" th:replace="~{fragments/navbar-finance :: navbar-finance-exc(page='Approve-Invoice')}"></nav>
+
+    <div class="container">
+        <div class="card-borderless ml-5 mr-5 mt-3 mb-5">
+            <div class="card-body p-4">
+                <h2>Approve Invoice</h2>
+                <p>This is the invoice submitted to you. Click on the ID number to proceed with approval.</p>
+                <table class="table table-custom">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>ID</th>
+                            <th>Invoice Number</th>
+                            <th>Client Name</th>
+                            <th>Total Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="invoice, iterStat : ${invoices}" >
+                            <td th:text="${iterStat.count}"></td>
+                                <td th:text="${invoice.invoiceId}">/td>
+                                    <a href="URL_TUJUAN">INV/KRD/01/003</a>
+                                    <td><a th:text="${invoice.invoiceNumber}" th:href="@{/invoice/{id}(id=${invoice.invoiceId})}"></a></td>
+                                <td th:text="${invoice.customerName}"></td> 
+                                <td th:text="${'Rp' + #numbers.formatDecimal(invoice.subtotal, 0, 'COMMA', 2, 'POINT')}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

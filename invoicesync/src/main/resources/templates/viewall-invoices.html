@@ -6,19 +6,8 @@
     <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
     <title>Invoice History</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Include Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <!-- Google Font -->
+    
     <style>
-        body {
-            font-family: 'Work Sans', sans-serif;
-            background-color: #f8f9fa;
-        }
-        .container {
-            max-width: 1200px;
-            margin: auto;
-            padding-top: 20px;
-        }
         .table-custom {
             border-radius: 10px;
             overflow: hidden;
@@ -57,59 +46,59 @@
     </style>
 </head>
 <body>
-    <nav th:replace="~{fragments/navbar-finance :: navbar-finance(page='All-Invoices-List')}"></nav>
+    <nav th:if="${role == 'Finance Staff'} " th:replace="~{fragments/navbar-finance :: navbar-finance-staff(page='All-Invoices-List')}"></nav>
+    <nav th:if="${role == 'Finance Manager' or role == 'Finance Director'} "th:replace="~{fragments/navbar-finance :: navbar-finance-exc(page='All-Invoices-List')}"></nav>
+    <nav th:if="${role == 'Non-Finance Manager'} "th:replace="~{fragments/navbar-non-finance :: navbar-non-finance-manager(page='All-Invoices-List')}"></nav>
+    
     <div class="container">
-        <div class="table-title">Invoice History</div>
-        <div class="ml-3">
-            <form class="row g-3" th:action="@{/invoices}" method="GET">
-                <div class="col-auto">
-                    <label for="filterDropdown">Filter:</label>
-                </div>
-                <div class="col-auto">
-                    <div class="form-group">
-                        <select class="form-control" id="filterDropdown" name="status">
-                            <option th:selected="${status == null or status == ''}"></option>
-                            <option th:selected="${status == 'Need Approval'}" value="Need Approval">Need Approval</option>
-                            <option th:selected="${status == 'Pending Approval'}" value="Pending Approval">Pending Approval</option>
-                            <option th:selected="${status == 'Approved'}" value="Approved">Approved</option>
-                            <option th:selected="${status == 'Rejected'}" value="Rejected">Rejected</option>
-                            <option th:selected="${status == 'Waiting for Payment'}" value="Waiting for Payment">Waiting for Payment</option>
-                            <option th:selected="${status == 'Paid'}" value="Paid">Paid</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-auto">
-                  <button type="submit" class="btn btn-primary">Apply Filter</button>
-                </div>
-            </form>
+        <div class="card-borderless ml-5 mr-5 mt-3 mb-5">
+            <div class="card-body p-4">
+                <h2>Invoice History</h2>
+                    <form class="row g-3" th:action="@{/invoices}" method="GET">
+                        <div class="col-auto">
+                            <label for="filterDropdown" >Filter:</label>
+                        </div>
+                        <div class="col-auto">
+                            <select class="form-control" id="filterDropdown" name="status">
+                                <option value="">Select Status</option>
+                                <option value="Need Approval">Need Approval</option>
+                                <option value="Pending Approval">Pending Approval</option>
+                                <option value="Approved">Approved</option>
+                                <option value="Rejected">Rejected</option>
+                                <option value="Waiting for Payment">Waiting for Payment</option>
+                                <option value="Paid">Paid</option>
+                            </select>
+                        </div>
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-primary">Apply Filter</button>
+                        </div>
+                    </form>
+                    <table class="table table-custom">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>ID</th>
+                                <th>Invoice Number</th>
+                                <th>Client Name</th>
+                                <th>Total Amount</th>
+                                <th>Division</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="invoice, iterStat : ${invoices}">
+                                <td th:text="${iterStat.count}"></td>
+                                <td th:text="${invoice.invoiceId}">/td>
+                                <td th:text="${invoice.invoiceNumber}">4</td>
+                                <td th:text="${invoice.customer.name}"></td>
+                                <td th:text="${'Rp' + #numbers.formatDecimal(invoice.subtotal, 0, 'COMMA', 2, 'POINT')}"></td>
+                                <td th:text="${invoice.staffRole}">Division</td>
+                                <!-- The status column will be updated according to your business logic -->
+                            </tr>
+                        </tbody>
+                    </table>
+            </div>
         </div>
-        <table class="table table-custom">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>ID</th>
-                    <th>Invoice Number</th>
-                    <th>Client Name</th>
-                    <th>Total Amount</th>
-                    <th>Division</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="invoice, iterStat : ${invoices}">
-                    <td th:text="${iterStat.count}"></td>
-                    <td th:text="${invoice.invoiceId}">/td>
-                    <td th:text="${invoice.invoiceNumber}">4</td>
-                    <td th:text="${invoice.customer.name}"></td>
-                    <td th:text="${'Rp' + #numbers.formatDecimal(invoice.subtotal, 0, 'COMMA', 2, 'POINT')}"></td>
-                    <td th:text="${invoice.staffRole}">Division</td>
-                    <!-- The status column will be updated according to your business logic -->
-                </tr>
-            </tbody>
-        </table>
     </div>
-    <!-- Include Bootstrap JS and its dependencies -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.9.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

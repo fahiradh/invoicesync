@@ -37,7 +37,8 @@ h4{
     flex-direction: column;
     justify-content: center;
     margin: auto;
-    max-width: 1240px;
+    max-width: 1200px;
+    padding-top: 20px;
 }
 
 .container-title{

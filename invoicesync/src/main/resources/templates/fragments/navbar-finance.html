@@ -9,7 +9,7 @@
 </head>
 
 <body>
-    <nav th:fragment="navbar-finance" th:if="${role.contains('Staff')}" class="navbar navbar-expand-lg navbar-bg  p-3">
+    <nav th:fragment="navbar-finance-staff" th:if="${role == 'Finance Staff'}" class="navbar navbar-expand-lg navbar-bg  p-3">
         <div class="container-fluid theme-color">
             <a class="navbar-brand" th:href="@{/}">
                 <img th:src="@{/assets/nav-logo.png}" alt="INVOICESYNC Logo" style="width: 240px;" />
@@ -26,7 +26,7 @@
                     </li>
                     <li class="nav-item">
                         <!-- TODO : Add th:href -->
-                        <a th:classappend="${page == 'Approve-Invoice'} ? active : ''" class="nav-link mx-2" th:href="@{#}">Approve Invoice</a> 
+                        <a th:classappend="${page == 'Approve-Invoice'} ? active : ''" class="nav-link mx-2" th:href="@{/approve-invoice}">Approve Invoice</a> 
                     </li>
                     <li class="nav-item">
                         <a th:classappend="${page == 'All-Invoices-List'} ? active : ''" class="nav-link mx-2" th:href="@{/invoices}">All Invoices List</a> 
@@ -54,7 +54,7 @@
         </div>
     </nav>
 
-    <nav th:fragment="navbar-finance" th:if="${role.contains('Manager') or role.contains('Director')}" class="navbar navbar-expand-lg navbar-bg  p-3">
+    <nav th:fragment="navbar-finance-exc" th:if="${role == 'Finance Manager' or role == 'Finance Director'}" class="navbar navbar-expand-lg navbar-bg  p-3">
         <div class="container-fluid theme-color">
             <a class="navbar-brand" th:href="@{/}">
                 <img th:src="@{/assets/nav-logo.png}" alt="INVOICESYNC Logo" style="width: 240px;" />
@@ -70,7 +70,7 @@
                         <a th:classappend="${page == 'Home'} ? active : ''" class="nav-link mx-2" th:href="@{/home}">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a th:classappend="${page == 'Approve-Invoice'} ? active : ''" class="nav-link mx-2" th:href="@{#}">Approve Invoice</a> 
+                        <a th:classappend="${page == 'Approve-Invoice'} ? active : ''" class="nav-link mx-2" th:href="@{/approve-invoice}">Approve Invoice</a> 
                     </li>
                     <li class="nav-item">
                         <a th:classappend="${page == 'All-Invoices-List'} ? active : ''" class="nav-link mx-2" th:href="@{/invoices}">All Invoices List</a> 
