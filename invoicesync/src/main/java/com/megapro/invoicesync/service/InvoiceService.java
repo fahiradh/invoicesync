@@ -22,4 +22,5 @@ public interface InvoiceService {
     List<Invoice> retrieveInvoicesByDivisionAndStatus(String division, String status);
     List<Invoice> retrieveInvoicesByStatus(String status);
     Invoice getDummyInvoice();
+    String translateByte(byte[] byteFile);
 }

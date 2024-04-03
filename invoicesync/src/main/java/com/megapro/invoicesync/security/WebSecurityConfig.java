@@ -28,9 +28,9 @@ public class WebSecurityConfig {
                 .requestMatchers(new AntPathRequestMatcher("/login")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/tax")).hasAnyAuthority("Finance Staff")
                 .requestMatchers(new AntPathRequestMatcher("/create-account")).hasAnyAuthority("Admin")
-                .requestMatchers(new AntPathRequestMatcher("/create-invoice")).hasAnyAuthority("Warehouse Staff")
+                .requestMatchers(new AntPathRequestMatcher("/create-invoice")).hasAnyAuthority("Non-Finance Staff")
                 .requestMatchers(new AntPathRequestMatcher("/invoice/{id}")).hasAnyAuthority(
-                    "Warehouse Staff", "Warehouse Manager",
+                    "Non-Finance Staff", "Non-Finance Manager",
                     "Finance Staff", "Finance Manager",
                     "Finance Director")
                 .requestMatchers(new AntPathRequestMatcher("/approval-flows")).hasAnyAuthority("Admin")

@@ -8,8 +8,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
-import com.megapro.invoicesync.model.Customer;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -28,4 +26,5 @@ public class CreateInvoiceRequestDTO {
     private UUID customerId;
     private String productDocument;
     private String additionalDocument;
+    private String staffEmail;
 }

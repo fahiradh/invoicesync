@@ -28,24 +28,20 @@ public class PageController {
         model.addAttribute("role", role);
         model.addAttribute("division", division);
 
-        if (role.contains("Staf")) {
-            if (role.contains("Finance")) {
-                return "home/home-staff-finance.html";
-            }
-            else {
-                return "home/home-non-finance.html"; // home staf non finance
-            }
+        if (role.equals("Non-Finance Staff")) {
+            return "home/home-non-finance.html"; // home staf non finance
+        } else if (role.equals("Finance Staff")) {
+            return "home/home-staff-finance.html";
+        } else if (role.equals("Non-Finance Manager")) {
+            return "home/home-exc-non-finance.html";
+        } else if (role.equals("Finance Manager") || role.equals("Finance Director") ) {
+            return "home/home-exc-finance.html";
+        } else {
+            return "home/home-admin.html";
         }
-        else if (role.contains("Manager") || role.contains("Director")) {
-            if (role.contains("Finance")) {
-                return "home/home-exc-finance.html"; // home manager finance dan direktur keuangan
-            }
-            else {
-                return "home/home-exc-non-finance.html"; // home manager non finance
-            }
-        }
-        return "home/home-admin.html";
     }
+
+
 
     @GetMapping("/login")
     public String loginPage(){

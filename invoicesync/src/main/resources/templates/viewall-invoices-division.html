@@ -54,7 +54,7 @@
     </style>
 </head>
 <body>
-    <nav th:replace="~{fragments/navbar-non-finance :: navbar-non-finance}"></nav>
+    <nav th:replace="~{fragments/navbar-non-finance :: navbar-non-finance(page='All-Invoices-List')}"></nav>
     <div class="container">
         <div class="table-title" th:text="'Invoice History - ' + ${division}">Invoice History - Division</div>
         <div class="ml-3">

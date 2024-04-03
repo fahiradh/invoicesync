@@ -22,7 +22,7 @@
             <div class=" collapse navbar-collapse" id="navbarNavDropdown">
                 <ul class="navbar-nav ms-auto ">
                     <li class="nav-item">
-                        <a th:classappend="${page == 'Home'} ? activ : ''" class="nav-link mx-2" th:href="@{/home}">Home</a>
+                        <a th:classappend="${page == 'Home'} ? active : ''" class="nav-link mx-2" th:href="@{/home}">Home</a>
                     </li>
                     <li class="nav-item">
                         <a th:classappend="${page == 'Create-Invoice'} ? active : ''" class="nav-link" th:href="@{/create-invoice}">Create Invoice</a>
@@ -62,13 +62,14 @@
             <div class=" collapse navbar-collapse" id="navbarNavDropdown">
                 <ul class="navbar-nav ms-auto ">
                     <li class="nav-item">
-                        <a class="nav-link mx-2" aria-current="page" href="/home">Home</a>
+                        <a th:classappend="${page == 'Home'} ? active : ''" class="nav-link mx-2" th:href="@{/home}">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link mx-2" href="#">Approve Invoice</a>
+                        <!-- TODO : Add th:href -->
+                        <a th:classappend="${page == 'Approve-Invoice'} ? active : ''" class="nav-link mx-2" th:href="@{#}">Approve Invoice</a> 
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link mx-2" th:href="@{/invoices/division/{division}(division=${division})}">Divisonal Invoice List</a>
+                        <a th:classappend="${page == 'All-Invoices-List'} ? active : ''" class="nav-link mx-2" th:href="@{/invoices/division/{division}(division=${division})}">Divisonal Invoice List</a> 
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link mx-2 dropdown-toggle nav-profile" href="#" id="navbarDropdownMenuLink" role="button"

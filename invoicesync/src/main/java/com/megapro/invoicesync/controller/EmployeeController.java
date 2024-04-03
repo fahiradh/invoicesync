@@ -1,13 +1,16 @@
 package com.megapro.invoicesync.controller;
 
+import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.megapro.invoicesync.dto.UserMapper;
@@ -20,6 +23,8 @@ import jakarta.validation.Valid;
 
 
 import com.megapro.invoicesync.service.RoleService;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 @Controller
@@ -125,6 +130,15 @@ public class EmployeeController {
         model.addAttribute("listEmployee", listEmployee);
 
         return "viewall-employee";
+    }
+    
+    // Delete employee
+    @GetMapping("employee/{id}/delete")
+    public String deleteEmployee(@PathVariable("id") UUID id, Model model) {
+        var employee = userService.getEmployeeById(id);
+        userService.deleteEmployee(employee);
+        // model.addAttribute("id", id);
+        return "redirect:/employees";
     }
     
 }

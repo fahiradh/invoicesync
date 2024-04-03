@@ -2,6 +2,8 @@ package com.megapro.invoicesync.service;
 
 import java.util.List;
 
+import java.util.UUID;
+
 import com.megapro.invoicesync.dto.request.CreateUserAppRequestDTO;
 import com.megapro.invoicesync.model.Employee;
 import com.megapro.invoicesync.model.UserApp;
@@ -13,4 +15,6 @@ public interface UserService {
     List<Employee> getAllEmployee();
     boolean existsByEmail(String email);
     boolean existsByNomorHp(String phoneNumber);
+    Employee getEmployeeById(UUID id);
+    void deleteEmployee(Employee employee);
 }
