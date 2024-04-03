@@ -1,5 +1,6 @@
 package com.megapro.invoicesync.service;
 
+import com.megapro.invoicesync.dto.request.CreateInvoiceRequestDTO;
 import com.megapro.invoicesync.model.Invoice;
 import com.megapro.invoicesync.model.Product;
 
@@ -23,4 +24,5 @@ public interface InvoiceService {
     List<Invoice> retrieveInvoicesByStatus(String status);
     Invoice getDummyInvoice();
     String translateByte(byte[] byteFile);
+    void transferData(CreateInvoiceRequestDTO invoiceRequestDTO, Invoice invoice);
 }

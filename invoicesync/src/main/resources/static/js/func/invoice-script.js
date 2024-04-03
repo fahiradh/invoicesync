@@ -1,14 +1,15 @@
-const dropArea = document.querySelector(".drag-area"),
-dragText = dropArea.querySelector("header"),
-button = dropArea.querySelector("button"),
-input = dropArea.querySelector("input");
-let file;
+const dropArea = document.querySelector(".drag-area");
+const dragText = dropArea.querySelector("header");
+const fileInput = document.getElementById("image");
 
-button.onclick = () =>{
-    input.onclick();
-}
+const browseFileLink = document.getElementById("browseFileLink");
 
-input.addEventListener("change", function(){
+browseFileLink.addEventListener("click", function(event) {
+    event.preventDefault();
+    fileInput.click();
+});
+
+fileInput.addEventListener("change", function(){
     file = this.files[0];
     dropArea.classList.add("active");
     showFile();
@@ -113,7 +114,8 @@ document.getElementById("addRowInvoice").addEventListener("click", function() {
     cellQuantity.innerHTML = '<input class="form-control quantity" type="number" name="productQuantity" value="1">';
     cellPrice.innerHTML = '<input class="form-control price" type="number" name="productPrice">';
     cellTotalPrice.innerHTML = '<input class="form-control subtotal" type="number" name="productSubtotal" readonly>';
-    cellAction.innerHTML = '<i class="fa fa-trash delete-icon" style="color:#dc3545; cursor: pointer;"></i>';
+    cellAction.innerHTML = '<i class="fa fa-trash delete-icon" style="color:#dc3545; cursor: pointer;"></i>' +
+                           '<i class="fa fa-check check-icon" style="color:green; cursor: pointer;"></i>';
 
     var quantityInput = cellQuantity.querySelector('input');
     var priceInput = cellPrice.querySelector('input');
@@ -129,38 +131,54 @@ document.getElementById("addRowInvoice").addEventListener("click", function() {
         updateSubtotalInvoice();
     });
 
-    var inputs = newRow.querySelectorAll('input');
-    inputs.forEach(input => {
-        input.addEventListener('input', function() {
-            updateSubtotalInvoice();
-        });
-    });
-    
     var deleteIcon = cellAction.querySelector('.delete-icon');
     deleteIcon.addEventListener('click', function() {
         tableBody.removeChild(newRow);
         updateRowNumbers(tableBody);
         updateSubtotalInvoice();
     });
+
+    var checkIcon = cellAction.querySelector('.check-icon');
+    checkIcon.addEventListener('click', handleCheckClick);
 });
+function handleCheckClick() {
+    var checkIcon = this;
+    var cellAction = checkIcon.parentElement;
+    var tableRow = cellAction.parentElement;
+    var cellProduct = tableRow.cells[1].querySelector('input[name="productName"]');
+    var cellDescription = tableRow.cells[2].querySelector('input[name="productDescription"]');
+    var cellQuantity = tableRow.cells[3].querySelector('input[name="productQuantity"]');
+    var cellPrice = tableRow.cells[4].querySelector('input[name="productPrice"]');
+    var cellTotalPrice = tableRow.cells[5].querySelector('input[name="productSubtotal"]');
+    
 
-document.getElementById("submitButton").addEventListener("click", function() {
-    var tableData = getAllTableData();
+    var productData = {
+        name: cellProduct.querySelector('input').value.toString(),
+        description: cellDescription.querySelector('input').value.toString(),
+        quantity: cellQuantity.querySelector('input').value,
+        price: cellPrice.querySelector('input').value,
+        totalPrice: cellTotalPrice.querySelector('input').value
+    };
 
-    tableData.forEach(function(productData) {
-        fetch('/api/v1/create-product', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(productData)
-        })
-        .catch(error => {
-            console.error('Error creating product:', error);
-            throw error;
-        });
+    fetch('/api/v1/create-product', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(productData)
+    })
+    .then(response => {
+        if (response.ok) {
+            console.error('Success');
+            checkIcon.style.display = 'none';
+        } else {
+            console.error('Failed');
+        }
+    })
+    .catch(error => {
+        console.error('Error creating product:', error);
     });
-});
+}
 
 function updateCustomerContact() {
     var selectedCustomerName = document.getElementById("customerName").value;

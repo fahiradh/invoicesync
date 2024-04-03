@@ -11,11 +11,11 @@
 <body>
     <nav th:replace="~{fragments/navbar-non-finance :: navbar-non-finance(page = 'Create-Invoice')}"></nav>
     <div class="header">
-       <h4>Detail Invoice / <span class="invoice-number" th:text="${invoice.invoiceNumber}"></span></h4>
+       <h4>Edit Invoice / <span class="invoice-number" th:text="${invoiceDTO.invoiceNumber}"></span></h4>
     </div>
-    <form th:action="@{/invoice/{id}(id=${invoice.invoiceId})}" th:object="${invoice}" method="GET" id="invoiceForm">
-        <a class="btn btn-primary" href="/home">Print</a> 
-        <a class="btn btn-primary" th:href="@{invoice/{id}/edit(id=${invoice.invoiceId})}">Edit</a>
+    <form th:action="@{/edit/{id}(id=${invoice.invoiceId})}" th:object="${invoiceDTO}" method="POST" id="invoiceForm">
+        <a class="btn btn-primary" href="/home">Cancel</a> 
+        <a class="btn btn-primary" href="/home">Save</a>
     <div class="container-invoice">
     <div class="sidebar">
         <h3 style="text-align:center;">Approval Log<h3>
