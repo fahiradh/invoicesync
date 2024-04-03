@@ -25,5 +25,6 @@ public interface InvoiceService {
     Invoice getDummyInvoice();
     String translateByte(byte[] byteFile);
     void transferData(CreateInvoiceRequestDTO invoiceRequestDTO, Invoice invoice);
+    Invoice getInvoiceByInvoiceNumber(String invoiceNumber);
     String parseDate(LocalDate localDate);
 }

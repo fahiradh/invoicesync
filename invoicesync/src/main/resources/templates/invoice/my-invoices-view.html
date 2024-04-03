@@ -7,6 +7,11 @@
     <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
     <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
     <style>
+        .table-custom th, .table-custom td {
+        border: none;
+        text-align: center;        /* Teks rata tengah horizontal */
+        vertical-align: middle;    /* Teks rata tengah vertikal */
+    }
     </style>
 </head>
 <body>
@@ -45,7 +50,6 @@
                         <tr>
                             <th>No</th>
                             <th>ID</th>
-                            <th>Invoice Number</th>
                             <th>Client Name</th>
                             <th>Total Amount</th>
                         </tr>
@@ -53,8 +57,8 @@
                     <tbody>
                         <tr th:each="invoice, iterStat : ${invoices}">
                             <td th:text="${iterStat.count}"></td>
-                            <td th:text="${invoice.invoiceId}"></td>
-                            <td th:text="${invoice.invoiceNumber}">4</td>
+                            <td><a th:href="@{/invoice/{invoiceNumber}(invoiceNumber=${invoice.invoiceNumber.replace('/', '_')})}" th:text="${invoice.invoiceNumber}">Invoice Link</a>
+                            </td>
                             <td th:text="${invoice.customer.name}"></td>
                             <td th:text="${'Rp' + #numbers.formatDecimal(invoice.subtotal, 0, 'COMMA', 2, 'POINT')}"></td>
                         </tr>

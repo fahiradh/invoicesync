@@ -1,6 +1,7 @@
 package com.megapro.invoicesync.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.Base64;
 
@@ -16,6 +17,7 @@ import com.megapro.invoicesync.repository.InvoiceDb;
 import com.megapro.invoicesync.repository.ProductDb;
 import com.megapro.invoicesync.repository.UserAppDb;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 import java.math.BigDecimal;
@@ -221,6 +223,12 @@ public class InvoiceServiceImpl implements InvoiceService{
         invoiceRequestDTO.setTotalDiscount(invoice.getTotalDiscount());
     }
 
+     @Override
+    public Invoice getInvoiceByInvoiceNumber(String invoiceNumber) {
+        Optional<Invoice> invoice = invoiceDb.findByInvoiceNumber(invoiceNumber);
+        return invoice.orElseThrow(() -> new EntityNotFoundException("Invoice with number: " + invoiceNumber + " was not found."));
+    }
+    
     @Override
     public String parseDate(LocalDate localDate){
         int day = localDate.getDayOfMonth();
