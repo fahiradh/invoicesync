@@ -7,6 +7,7 @@ import java.util.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.megapro.invoicesync.dto.request.CreateInvoiceRequestDTO;
 import com.megapro.invoicesync.model.Invoice;
 import com.megapro.invoicesync.model.Product;
 import com.megapro.invoicesync.model.Tax;
@@ -202,6 +203,22 @@ public class InvoiceServiceImpl implements InvoiceService{
         return invoiceDb.findDummyInvoice();
     }
 
+    @Override
+    public void transferData(CreateInvoiceRequestDTO invoiceRequestDTO, Invoice invoice){
+        invoiceRequestDTO.setAccountName(invoice.getAccountName());
+        invoiceRequestDTO.setAccountNumber(invoice.getAccountNumber());
+        invoiceRequestDTO.setAdditionalDocument(invoice.getAdditionalDocument());
+        invoiceRequestDTO.setBankName(invoice.getBankName());
+        invoiceRequestDTO.setCity(invoice.getCity());
+        invoiceRequestDTO.setCustomerId(invoice.getCustomer().getCustomerId());
+        invoiceRequestDTO.setDueDate(invoice.getDueDate());
+        invoiceRequestDTO.setStatus(invoice.getStatus());
+        invoiceRequestDTO.setSignature(invoice.getSignature());
+        invoiceRequestDTO.setStaffEmail(invoice.getStaffEmail());
+        invoiceRequestDTO.setSubtotal(invoice.getSubtotal());
+        invoiceRequestDTO.setTotalWords(invoice.getTotalWords());
+        invoiceRequestDTO.setTotalDiscount(invoice.getTotalDiscount());
+    }
 }
 
 

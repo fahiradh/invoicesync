@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 public class CreateProductRequestDTO {
     private String name;
     private String description;
-    private int quantity;
-    private long price;
+    private String quantity;
+    private String price;
     private String totalPrice;
 }

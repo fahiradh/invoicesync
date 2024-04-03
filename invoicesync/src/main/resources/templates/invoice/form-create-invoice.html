@@ -182,8 +182,8 @@
                                     <div class="icon"><i class="fas fa-cloud-upload-alt"></i></div>
                                     <header>Drag & Drop to Upload File</header>
                                     <span>OR</span>
-                                    <button>Browse File</button>
-                                    <input type="file" class="form-control" id="image" name="image" accept="image/*" required/>
+                                    <a href="#" id="browseFileLink">Browse File</a>
+                                    <input type="file" class="form-control" id="image" name="image" accept="image/*" hidden/>
                                     <input th:field="*{signature}" th:value="${signature}" hidden/>
                                 </div>
                                 <br>
@@ -200,20 +200,41 @@
       </div>
     </div>   
 
+    <!-- Modal untuk Pesan Sukses -->
     <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="modalLabel">Success</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+            <p id="successMessage"></p>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <!-- Modal untuk Pesan Error -->
+    <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="modalLabel">Success</h5>
+              <h5 class="modal-title" id="modalLabel">Error</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
             <div class="modal-body">
-              <p id="successMessage"></p>
+              <p id="errorMessage"></p>
             </div>
             <div class="modal-footer">
-              <a class="btn btn-signin btn-lg btn-block" href="/home">Home</a>
+              <a class="btn btn-signin btn-lg btn-block" href="/create-account">Retry</a>
             </div>
           </div>
         </div>
@@ -221,12 +242,21 @@
 
     <script src="/js/func/invoice-script.js"></script>
 
-    <script>
-        var successMessage = /*[[${successMessage}]]*/ null;
-        if (successMessage && successMessage.trim() !== '') {
-            document.getElementById("successMessage").innerText = successMessage;
-            $("#successModal").modal('show');
-        }
-    </script>
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+    $(document).ready(function() {
+      var successMessage = /*[[${successMessage}]]*/ null;
+      var errorMessage = /*[[${errorMessage}]]*/ null;
+      // Memeriksa jika ada pesan untuk ditampilkan
+      if (successMessage && successMessage !== '') {
+          $("#successMessage").text(successMessage); // Mengatur teks pesan sukses
+          $("#successModal").modal('show'); // Menampilkan modal sukses
+      } else if (errorMessage && errorMessage !== '') {
+          $("#errorMessage").text(errorMessage); // Mengatur teks pesan error
+          $("#errorModal").modal('show'); // Menampilkan modal error
+      }
+    });
+    /*]]>*/
+  </script>
 </body>
 </html>

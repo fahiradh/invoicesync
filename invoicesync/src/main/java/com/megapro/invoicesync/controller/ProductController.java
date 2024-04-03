@@ -40,6 +40,9 @@ public class ProductController {
 
     @PostMapping("/create-product")
     public ResponseEntity<Product> createProduct(@RequestBody CreateProductRequestDTO productDTO) {
+        System.out.println("===+++====");
+        System.out.println(productDTO.getDescription());
+        System.out.println(productDTO.getName());
         var dummyInvoice = invoiceService.getDummyInvoice();
         var product = productMapper.createProductRequestToProduct(productDTO);
         product.setInvoice(dummyInvoice);

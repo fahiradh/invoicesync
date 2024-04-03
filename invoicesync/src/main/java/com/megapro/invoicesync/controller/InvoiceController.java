@@ -23,6 +23,7 @@ import com.megapro.invoicesync.service.CustomerService;
 import com.megapro.invoicesync.service.InvoiceService;
 import com.megapro.invoicesync.service.TaxService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 import java.util.UUID;
@@ -69,7 +70,8 @@ public class InvoiceController {
     TaxService taxService;
 
     @GetMapping(value="/create-invoice")
-    public String formCreateInvoice(Model model, @ModelAttribute("successMessage") String successMessage){
+    public String formCreateInvoice(Model model, @ModelAttribute("successMessage") String successMessage, 
+                                    @ModelAttribute("errorMessage") String errorMessage){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         var user = userAppDb.findByEmail(email);
@@ -88,14 +90,17 @@ public class InvoiceController {
         model.addAttribute("listCustomer", listCustomer);
         model.addAttribute("customerDTO", customerDTO);
         model.addAttribute("invoiceDTO", invoiceDTO);
+        model.addAttribute("successMessage", successMessage);
+        model.addAttribute("errorMessage", errorMessage);
         return "invoice/form-create-invoice";
     }
 
     @PostMapping(value = "/create-invoice")
     public String createInvoice(@Valid CreateInvoiceRequestDTO invoiceDTO, Model model,
                                 RedirectAttributes redirectAttributes,
-                                @RequestParam("image") MultipartFile signature,
-                                @ModelAttribute("successMessage") String successMessage) throws IOException{
+                                // @RequestParam("image") MultipartFile signature,
+                                @ModelAttribute("successMessage") String successMessage,
+                                @ModelAttribute("errorMessage") String errorMessage) throws IOException{
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         var user = userAppDb.findByEmail(email);
@@ -105,9 +110,9 @@ public class InvoiceController {
         invoice.setCustomer(customer);
         invoiceService.attributeInvoice(invoice);
 
-        byte[] imageBytes = signature.getBytes();
-        String bytesToString = invoiceService.translateByte(imageBytes);
-        invoiceDTO.setSignature(bytesToString);
+        // byte[] imageBytes = signature.getBytes();
+        // String bytesToString = invoiceService.translateByte(imageBytes);
+        // invoiceDTO.setSignature(bytesToString);
         
         invoiceService.createInvoice(invoice, email);
         var newInvoiceDTO = new CreateInvoiceRequestDTO();
@@ -115,6 +120,7 @@ public class InvoiceController {
         model.addAttribute("role", role);
         model.addAttribute("invoiceDTO", newInvoiceDTO);
         model.addAttribute("successMessage", successMessage);
+        model.addAttribute("errorMessage", errorMessage);
         redirectAttributes.addFlashAttribute("successMessage", "Invoice has been successfully created!");
         return "redirect:/create-invoice";
     }
@@ -299,5 +305,26 @@ public class InvoiceController {
         
         return "viewall-invoices-division";
     }
+
+    @GetMapping("/invoice/{id}/edit")
+    public String formUpdateCatalog(@PathVariable("id") UUID id, Model model, HttpServletRequest request){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        var user = userAppDb.findByEmail(email);
+        String role = user.getRole().getRole();
+
+        Invoice invoice = invoiceService.getInvoiceById(id);
+        CreateInvoiceRequestDTO invoiceDTO = new CreateInvoiceRequestDTO();
+        invoiceService.transferData(invoiceDTO, invoice);
+        var listProduct = invoice.getListProduct();
+
+        model.addAttribute("listProduct", listProduct);
+        model.addAttribute("role", role);
+        model.addAttribute("id", id);
+        model.addAttribute("invoice", invoice);
+        model.addAttribute("invoiceDTO", invoiceDTO);
+        return "invoice/form-edit-invoice";
+    }
+
 
 }
