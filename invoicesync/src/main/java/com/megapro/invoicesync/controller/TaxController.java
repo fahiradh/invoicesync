@@ -55,20 +55,5 @@ public class TaxController {
         model.addAttribute("taxes", taxes);
         return new RedirectView("/tax");
     }
-
-    // @PostMapping("/count-tax")
-    // public String countTax(CountTaxRequestDTO countRequest, Model model){
-    //     var taxType = taxService.findById(countRequest.getId()).getTaxType();
-    //     if(taxType.equals("include")){
-    //         var countTaxResponse = taxService.countIncludedTaxes(countRequest);
-    //         model.addAttribute("countResponse", countTaxResponse);
-    //     } else {
-    //         var countTaxResponse = taxService.countExcludedTaxes(countRequest);
-    //         model.addAttribute("countResponse", countTaxResponse);
-    //     }
-
-    //     // TODO
-    //     return "";
-    // }
     
 }

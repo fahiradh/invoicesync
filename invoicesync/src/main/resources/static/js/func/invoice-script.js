@@ -50,6 +50,48 @@ function showFile(){
     }
 }
 
+// Ambil data tax dari backend
+var taxes = [];
+function fetchTaxes() {
+    console.log("Masuk fetch taxes")
+    fetch('/api/taxes')
+        .then(response => response.json())
+        .then(data => {
+            const taxList = document.getElementById('taxList');
+            taxList.innerHTML = '';
+
+            data.forEach(tax => {
+                taxes.push(tax);
+
+                const div = document.createElement('div');
+                div.classList.add('form-check');
+
+                const input = document.createElement('input');
+                input.classList.add('form-check-input');
+                input.type = 'checkbox';
+                input.id = tax.taxId;
+                input.name = 'taxOption';
+                input.value = tax.taxId;
+
+                input.setAttribute('th:field', '*{listTax}');
+
+                const label = document.createElement('label');
+                label.classList.add('form-check-label');
+                label.setAttribute('for', tax.taxId);
+                label.innerText = tax.taxName;
+
+                div.appendChild(input);
+                div.appendChild(label);
+                taxList.appendChild(div);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching taxes:', error);
+        });
+}
+
+fetchTaxes();
+
 function getAllTableData() {
     var tableBody = document.getElementById("invoiceTableBody");
     var tableDataList = [];
@@ -84,6 +126,45 @@ function updateSubtotalInvoice() {
         total += parseFloat(element.value || 0);
     });
     document.querySelector('input[name="subtotal"]').value = total.toFixed(2);
+}
+
+function getSelectedTaxPercentage() {
+    var array = []
+    var checkboxes = document.querySelectorAll('input[name="taxOption"]:checked')
+    checkboxes.forEach(checkbox => {
+        const taxId = checkbox.value;
+        const selectedTax = taxes.find(tax => tax.taxId === parseInt(taxId));
+        if (selectedTax) {
+            array.push(selectedTax.taxPercentage)
+        }
+    });
+
+    return array;
+}
+
+async function countTaxes() {
+    var selectedTaxPercentage = getSelectedTaxPercentage();
+    var amount = document.getElementById("subtotal").value;
+    var taxTotal = 0;
+
+    selectedTaxPercentage.forEach(tax => {
+        taxTotal += (tax*amount/100)
+    })
+
+    document.querySelector('input[name="taxTotal"]').value = taxTotal.toFixed(2);
+}
+
+
+function updateGrandTotalInvoice() {
+    var subtotalElement = document.querySelector('input[name="subtotal"]').value;
+    var subtotal = parseFloat(subtotalElement || 0);
+
+    var taxTotalElement = document.querySelector('input[name="taxTotal"]').value;
+    var taxTotal = parseFloat(taxTotalElement || 0);
+
+    var total = subtotal + taxTotal;
+
+    document.querySelector('input[name="grandTotal"]').value = total;
 }
 
 function updateRowNumbers(tableBody) {
@@ -124,11 +205,15 @@ document.getElementById("addRowInvoice").addEventListener("click", function() {
     quantityInput.addEventListener('change', function() {
         updateSubtotal(priceInput, this, subtotalInput);
         updateSubtotalInvoice();
+        countTaxes();
+        updateGrandTotalInvoice();
     });
 
     priceInput.addEventListener('change', function() {
         updateSubtotal(this, quantityInput, subtotalInput);
         updateSubtotalInvoice();
+        countTaxes();
+        updateGrandTotalInvoice();
     });
 
     var deleteIcon = cellAction.querySelector('.delete-icon');
@@ -136,11 +221,18 @@ document.getElementById("addRowInvoice").addEventListener("click", function() {
         tableBody.removeChild(newRow);
         updateRowNumbers(tableBody);
         updateSubtotalInvoice();
+        countTaxes();
+        updateGrandTotalInvoice();
     });
 
     var checkIcon = cellAction.querySelector('.check-icon');
     checkIcon.addEventListener('click', handleCheckClick);
 });
+
+document.getElementById("taxList").addEventListener("click", function(){
+    countTaxes();
+    updateGrandTotalInvoice();
+})
 
 function handleCheckClick() {
     var checkIcon = this;

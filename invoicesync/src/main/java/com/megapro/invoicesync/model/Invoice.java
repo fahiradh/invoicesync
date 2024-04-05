@@ -54,8 +54,16 @@ public class Invoice {
     @Column(name="total_discount")
     private int totalDiscount;
 
-    @OneToMany(mappedBy="taxId", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Tax> listTax;
+    @ManyToMany
+    @JoinTable(name = "invoice_tax", joinColumns = @JoinColumn(name = "invoice_id"),
+            inverseJoinColumns = @JoinColumn(name = "tax_id"))
+    List<Tax> listTax;
+
+    @Column(name="total_tax")
+    private BigDecimal taxTotal;
+
+    @Column(name="grand_total")
+    private BigDecimal grandTotal;
 
     @Column(name="account_number")
     private String accountNumber;

@@ -10,7 +10,7 @@ import java.time.LocalDate;
 
 public interface InvoiceService {
     void createInvoice(Invoice invoice, String email);
-    void attributeInvoice(Invoice invoice);
+    void attributeInvoice(Invoice invoice, List<Integer> listTax);
     long countInvoice();
     Invoice getInvoiceById(UUID id);
     List<Invoice> retrieveAllInvoice();

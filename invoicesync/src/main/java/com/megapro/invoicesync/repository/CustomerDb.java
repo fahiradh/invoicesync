@@ -8,6 +8,8 @@ import org.springframework.stereotype.Repository;
 import com.megapro.invoicesync.model.Customer;
 
 import jakarta.transaction.Transactional;
+import java.util.List;
+
 
 
 @Repository
