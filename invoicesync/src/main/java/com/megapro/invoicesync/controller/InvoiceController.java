@@ -102,6 +102,7 @@ public class InvoiceController {
     @PostMapping(value = "/create-invoice")
     public String createInvoice(@Valid CreateInvoiceRequestDTO invoiceDTO, Model model,
                                 RedirectAttributes redirectAttributes,
+                                @RequestParam(value = "taxOption", required = false) List<Integer> selectedTaxIds,
                                 // @RequestParam("image") MultipartFile signature,
                                 @ModelAttribute("successMessage") String successMessage,
                                 @ModelAttribute("errorMessage") String errorMessage) throws IOException{
@@ -112,7 +113,7 @@ public class InvoiceController {
         var customer = customerService.getCustomerById(invoiceDTO.getCustomerId());
         var invoice = invoiceMapper.createInvoiceRequestToInvoice(invoiceDTO);
         invoice.setCustomer(customer);
-        invoiceService.attributeInvoice(invoice);
+        invoiceService.attributeInvoice(invoice, selectedTaxIds);
 
         // byte[] imageBytes = signature.getBytes();
         // String bytesToString = invoiceService.translateByte(imageBytes);
@@ -139,12 +140,15 @@ public class InvoiceController {
 
         var invoice = invoiceService.getInvoiceByInvoiceNumber(invoiceNumber); // Perlu metode baru untuk mencari berdasarkan invoiceNumber
         List<Product> listProduct = invoiceService.getListProductInvoice(invoice);
+        List<Tax> taxList = taxService.findAllTaxes();
         var invoiceDTO = invoiceMapper.readInvoiceToInvoiceResponse(invoice);
 
         model.addAttribute("status", invoice.getStatus());
         model.addAttribute("email", email);
         model.addAttribute("role", role);
         model.addAttribute("listProduct", listProduct);
+        System.out.println("Ini tax "+ taxList.get(0));
+        model.addAttribute("taxList", taxList);
         model.addAttribute("invoice", invoiceDTO);
         return "invoice/view-detail-invoice";
     }

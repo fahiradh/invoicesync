@@ -130,13 +130,36 @@
                                         <td><input class="form-control" type="number" th:field="${invoice.totalDiscount}" readonly/></td>
                                     </tr>
                                     <tr>
-                                        <td><p class="card-text mb-0">Tax</p></td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
                                         <td><p class="card-text mb-0">Subtotal</p></td>
                                         <td>
                                             <input class="form-control" type="number" th:field="${invoice.subtotal}" readonly />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><p class="card-text mb-0">Tax</p></td>
+                                        <td>
+                                            <div id="taxList" th:each="tax : ${taxList}">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" 
+                                                        value="${tax.taxId}" 
+                                                        id="${tax.taxId}" 
+                                                        th:checked="${#lists.contains(taxList.![taxId], tax.taxId)}" disabled>
+                                                    <label class="form-check-label" for="${tax.taxId}" th:text="${tax.taxName}">
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><p class="card-text mb-0">Taxes</p></td>
+                                        <td>
+                                            <input class="form-control" th:field="*{taxTotal}" type="number" disabled />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><p class="card-text mb-0">Grand Total</p></td>
+                                        <td>
+                                            <input class="form-control" th:field="*{grandTotal}" type="number"  disabled />
                                         </td>
                                     </tr>
                                     <tr>

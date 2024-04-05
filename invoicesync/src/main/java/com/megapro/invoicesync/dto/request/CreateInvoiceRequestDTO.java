@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
+import java.util.List;
+
+import com.megapro.invoicesync.model.Tax;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -22,6 +25,9 @@ public class CreateInvoiceRequestDTO {
     private String city;
     private BigDecimal subtotal;
     private int totalDiscount = 0;
+    private List<Tax> listTax;
+    private BigDecimal taxTotal;
+    private BigDecimal grandTotal;
     private String accountNumber;
     private String bankName;
     private String accountName;

@@ -30,23 +30,16 @@ public class TaxService {
         return taxDB.findByTaxId(id);
     }
 
-    public CountTaxResponseDTO countIncludedTaxes(CountTaxRequestDTO request){
-        var amount = request.getAmount();
-        var tax = taxDB.findByTaxId(request.getId());
-
-        var invoiceNominal = amount * 10 / tax.getTaxPercentage();
-        var taxNominal = invoiceNominal - amount;
-
-        return new CountTaxResponseDTO(invoiceNominal, taxNominal);
+    public List<Tax> findAllTaxes(){
+        return taxDB.findAll();
     }
 
-    public CountTaxResponseDTO countExcludedTaxes(CountTaxRequestDTO request){
+    public CountTaxResponseDTO countTax(CountTaxRequestDTO request){
         var amount = request.getAmount();
         var tax = taxDB.findByTaxId(request.getId());
 
-        var invoiceNominal = amount * 10 / tax.getTaxPercentage();
-        var taxNominal = amount-invoiceNominal;
+        var taxNominal = amount * tax.getTaxPercentage() / 100;
 
-        return new CountTaxResponseDTO(invoiceNominal, taxNominal);
+        return new CountTaxResponseDTO(taxNominal);
     }
 }

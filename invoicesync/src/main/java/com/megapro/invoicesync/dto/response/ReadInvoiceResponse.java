@@ -7,9 +7,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.UUID;
 
 import com.megapro.invoicesync.model.Customer;
+import com.megapro.invoicesync.model.Tax;
 
 import java.math.BigDecimal;
 
@@ -30,6 +32,9 @@ public class ReadInvoiceResponse {
     private String productDocument;
     private BigDecimal subtotal;
     private int totalDiscount;
+    private List<Tax> listTax;
+    private BigDecimal taxTotal;
+    private BigDecimal grandTotal;
     private String accountNumber;
     private String bankName;
     private String accountName;

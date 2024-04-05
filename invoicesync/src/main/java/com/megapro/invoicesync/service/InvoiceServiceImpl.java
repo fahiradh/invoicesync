@@ -15,6 +15,7 @@ import com.megapro.invoicesync.model.Tax;
 import com.megapro.invoicesync.model.UserApp;
 import com.megapro.invoicesync.repository.InvoiceDb;
 import com.megapro.invoicesync.repository.ProductDb;
+import com.megapro.invoicesync.repository.TaxDb;
 import com.megapro.invoicesync.repository.UserAppDb;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -38,6 +39,9 @@ public class InvoiceServiceImpl implements InvoiceService{
     ProductDb productDb;
 
     @Autowired
+    TaxDb taxDb;
+
+    @Autowired
     UserAppDb userAppDb;
 
     @Override
@@ -52,7 +56,7 @@ public class InvoiceServiceImpl implements InvoiceService{
     }
 
     @Override
-    public void attributeInvoice(Invoice invoice) {
+    public void attributeInvoice(Invoice invoice, List<Integer> listTax) {
         long count = countInvoice()+1;
         String countStr = String.format("%04d", count);
         var invoiceDate = invoice.getInvoiceDate();
@@ -61,7 +65,6 @@ public class InvoiceServiceImpl implements InvoiceService{
         String year = String.valueOf(invoiceDate.getYear());
         String invoiceNumber = String.format("INV-%s/Krida/%s/%s",countStr,monthInRoman,year);
         invoice.setInvoiceNumber(invoiceNumber);
-
         var dummy = getDummyInvoice();
         List<Product> newListProduct = new ArrayList<>();
         List<Product> listProduct = productService.getAllProductDummyInvoice(dummy);
@@ -72,6 +75,11 @@ public class InvoiceServiceImpl implements InvoiceService{
         invoice.setListProduct(newListProduct);
         // parseListTax(invoice);
         calculateSubtotal(invoice);
+
+        invoice.setListTax(taxDb.findByTaxIdIn(listTax));
+        calculateTax(invoice);
+        
+        calculateGrandTotal(invoice);
     }
 
     @Override
@@ -109,6 +117,19 @@ public class InvoiceServiceImpl implements InvoiceService{
         //     subtotal = totalAftDisc * (tax.getTaxPercentage()/100.0);
         // }
         invoice.setSubtotal(BigDecimal.valueOf(totalAftDisc));
+    }
+
+    private void calculateTax(Invoice invoice){
+        double total = 0;
+        for(Tax tax:invoice.getListTax()){
+            total += (tax.getTaxPercentage()*invoice.getSubtotal().doubleValue()/100);
+        }
+        invoice.setTaxTotal(BigDecimal.valueOf(total));
+    }
+
+    private void calculateGrandTotal(Invoice invoice){
+        BigDecimal total = invoice.getSubtotal().add(invoice.getTaxTotal());
+        invoice.setGrandTotal(total);
     }
 
     // private void parseListTax(Invoice invoice){
