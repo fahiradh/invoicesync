@@ -29,7 +29,7 @@ h4{
     flex-direction: row;
     justify-content: center;
     margin: auto;
-    max-width: 1240px;
+    /* max-width: 1240px; */
 }
 
 .container{
@@ -261,6 +261,7 @@ h4{
     border-radius: 50%;
 }
 
+
 /* Added CSS for employee info container */
 .employee-info {
     flex-grow: 1;
@@ -366,4 +367,84 @@ h4{
     .grid-container {
         grid-template-columns: 1fr;
     }
+}
+
+/* Approval Logs */
+.grid-container-invoice-logs {
+    display: grid;
+    grid-template-columns: 5fr 2fr;
+}
+
+.grid-container-invoice-logs-child {
+    padding: 5px;
+}
+
+.container-logs {
+    width: 100%;
+}
+
+.left {
+    grid-area: left;
+}
+.name { 
+    grid-area: name;
+    color: #5d3ca4
+}
+.date { 
+    grid-area: date;
+    color: #9BA3AC;
+}
+.position { 
+    grid-area: position; 
+    color: #9BA3AC;
+}
+.status { 
+    grid-area: status;
+    vertical-align: middle;
+}
+.additional { 
+    grid-area: additional;
+}
+
+.grid-container-logs{
+    display: grid;
+    row-gap: 10px;
+    width: 90%;
+}
+
+.grid-container.log {
+    display: grid;
+    grid-template-areas:
+        'left name date'
+        'left position status'
+        'left additional additional';
+    grid-template-columns: 1fr 3fr 2fr;
+    gap: 3px;
+    width: 100%;
+    font-size: smaller;
+}
+
+.grid-container.log .date,
+.grid-container.log .status {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.oval-status {
+    width: 85%;
+    border-radius: 25px; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.grid-container.log p {
+    padding: 0;
+    margin: 0;
+}
+
+.rounded-photo.log {
+    width: 30px;
+    height: 30px;
 }

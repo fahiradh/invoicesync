@@ -29,7 +29,6 @@ public class Invoice {
     private String invoiceNumber;
 
     @Column(name="invoice_date")
-    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate invoiceDate;
 
     @Column(name="due_date")

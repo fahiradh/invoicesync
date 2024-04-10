@@ -1,7 +1,6 @@
 const dropArea = document.querySelector(".drag-area");
 const dragText = dropArea.querySelector("header");
-const fileInput = document.getElementById("image");
-
+const fileInput = document.getElementById("imageUrl");
 const browseFileLink = document.getElementById("browseFileLink");
 
 browseFileLink.addEventListener("click", function(event) {
@@ -36,11 +35,16 @@ function showFile(){
     let fileType = file.type;
     let validExtensions = ["image/jpeg", "image/jpg", "image/png"];
     if (validExtensions.includes(fileType)){
+        let fileImage = document.getElementById("signature");
         let fileReader = new FileReader();
         fileReader.onload = ()=>{
             let fileUrl = fileReader.result;
             let imgTag = `<img src="${fileUrl}" alt="image">`;
             dropArea.innerHTML = imgTag;
+            let base64String = fileUrl.split(',')[1]
+            fileImage.setAttribute('value', base64String);
+            console.log("aman aja");
+            console.log(fileImage.value);
         }
         fileReader.readAsDataURL(file);
     }else{
@@ -285,3 +289,8 @@ function updateCustomerContact() {
         document.getElementById("customerAddress").value = "";
     }
 }
+
+var closeModalButton = document.getElementById('closeModalButton');
+closeModalButton.addEventListener('click', function() {
+    $('#errorModal').modal('hide');
+});

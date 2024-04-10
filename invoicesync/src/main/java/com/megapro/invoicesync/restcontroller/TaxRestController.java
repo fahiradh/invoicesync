@@ -12,6 +12,7 @@ import com.megapro.invoicesync.dto.TaxMapper;
 import com.megapro.invoicesync.dto.request.CountTaxRequestDTO;
 import com.megapro.invoicesync.dto.request.CreateTaxRequestDTO;
 import com.megapro.invoicesync.dto.response.CountTaxResponseDTO;
+import com.megapro.invoicesync.dto.response.ReadTaxResponseDTO;
 import com.megapro.invoicesync.model.Tax;
 import com.megapro.invoicesync.repository.UserAppDb;
 import com.megapro.invoicesync.service.TaxService;
@@ -51,10 +52,11 @@ public class TaxRestController {
     // }
 
     @GetMapping("/api/taxes")
-    public ResponseEntity<List<Tax>> getTaxes() {
+    public ResponseEntity<List<ReadTaxResponseDTO>> getTaxes() {
         var taxes = taxService.getTaxes();
-        System.out.println("Ini taxesnya " + taxes);
-        return ResponseEntity.ok(taxes);
+        var taxesDTO = taxMapper.taxListToReadTaxResponseDTOList(taxes);
+        System.out.println("Ini taxesnya " + taxesDTO);
+        return ResponseEntity.ok(taxesDTO);
     }
     
 

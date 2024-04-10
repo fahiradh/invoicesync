@@ -21,17 +21,17 @@
                         <div class="row">
                             <div class="row-mr-15" style="margin-bottom:8px;">
                                 <p class="card-text mb-0">Name</p>
-                                <input class="form-control" type="text" th:field="*{name}" />
+                                <input class="form-control" type="text" th:field="*{name}" required/>
                             </div>
                             <div class="col-md-6">
                                 <table class="table table-borderless">
                                     <tr>
                                         <td><p class="card-text mb-0">Contact</p></td>
-                                        <td><input class="form-control" type="text" th:field="*{contact}" /></td>
+                                        <td><input class="form-control" type="text" th:field="*{contact}" required/></td>
                                     </tr>
                                     <tr>
                                         <td><p class="card-text mb-0">Phone</p></td>
-                                        <td><input class="form-control" type="text" th:field="*{phone}" /></td>
+                                        <td><input class="form-control" type="text" th:field="*{phone}" required /></td>
                                     </tr>
                                 </table>
                             </div>
@@ -39,7 +39,7 @@
                                 <table class="table table-borderless">
                                     <tr>
                                         <td style="vertical-align: baseline;"><p class="card-text mb-0">Address</p></td>
-                                        <td><textarea class="form-control" type="text" th:field="*{address}" style="height:100px"/></td>
+                                        <td><textarea class="form-control" type="text" th:field="*{address}" style="height:100px" required/></td>
                                     </tr>
                                 </table>
                             </div>

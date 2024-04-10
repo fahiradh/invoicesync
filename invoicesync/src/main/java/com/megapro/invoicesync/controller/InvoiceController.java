@@ -42,6 +42,7 @@ import com.megapro.invoicesync.repository.InvoiceDb;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
+import java.math.BigDecimal;
 
 @Controller
 public class InvoiceController {
@@ -105,7 +106,8 @@ public class InvoiceController {
                                 @RequestParam(value = "taxOption", required = false) List<Integer> selectedTaxIds,
                                 // @RequestParam("image") MultipartFile signature,
                                 @ModelAttribute("successMessage") String successMessage,
-                                @ModelAttribute("errorMessage") String errorMessage) throws IOException{
+                                @ModelAttribute("errorMessage") String errorMessage,
+                                @RequestParam(name="signature", required=false) String imageDataURL){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         var user = userAppDb.findByEmail(email);
@@ -126,7 +128,6 @@ public class InvoiceController {
         model.addAttribute("invoiceDTO", newInvoiceDTO);
         model.addAttribute("successMessage", successMessage);
         model.addAttribute("errorMessage", errorMessage);
-        redirectAttributes.addFlashAttribute("successMessage", "Invoice has been successfully created!");
         return "redirect:/create-invoice";
     }
 
@@ -143,13 +144,14 @@ public class InvoiceController {
         List<Tax> taxList = taxService.findAllTaxes();
         var invoiceDTO = invoiceMapper.readInvoiceToInvoiceResponse(invoice);
 
+        model.addAttribute("image", invoice.getSignature());
         model.addAttribute("status", invoice.getStatus());
         model.addAttribute("email", email);
         model.addAttribute("role", role);
         model.addAttribute("listProduct", listProduct);
-        System.out.println("Ini tax "+ taxList.get(0));
         model.addAttribute("taxList", taxList);
         model.addAttribute("invoice", invoiceDTO);
+        model.addAttribute("dateInvoice", invoiceService.parseDate(invoiceDTO.getInvoiceDate()));
         return "invoice/view-detail-invoice";
     }
     
@@ -235,11 +237,6 @@ public class InvoiceController {
             var invoiceDTO = invoiceMapper.readInvoiceToInvoiceResponse(invoice);
             invoices.add(invoiceDTO);
         }
-        
-        // Mapping dari Invoice ke DTO jika diperlukan
-        // List<ReadInvoiceResponse> myInvoiceDTOs = myInvoices.stream()
-        //                                                     .map(invoice -> invoiceMapper.readInvoiceToInvoiceResponse(invoice))
-        //                                                     .collect(Collectors.toList());
         model.addAttribute("invoices", invoices);
         return "invoice/my-invoices-view"; // Ganti dengan nama view Thymeleaf Anda
     }
@@ -314,21 +311,22 @@ public class InvoiceController {
         return "viewall-invoices-division";
     }
 
-    @GetMapping("/invoice/{id}/edit")
-    public String formUpdateCatalog(@PathVariable("id") UUID id, Model model, HttpServletRequest request){
+    @GetMapping("/invoice/{invoiceNumber}/edit")
+    public String formEditInvoice(@PathVariable("invoiceNumber") String encodedInvoiceNumber,
+                                    Model model, HttpServletRequest request){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         var user = userAppDb.findByEmail(email);
         String role = user.getRole().getRole();
+        String invoiceNumber = encodedInvoiceNumber.replace('_', '/');
 
-        Invoice invoice = invoiceService.getInvoiceById(id);
+        var invoice = invoiceService.getInvoiceByInvoiceNumber(invoiceNumber);
         CreateInvoiceRequestDTO invoiceDTO = new CreateInvoiceRequestDTO();
         invoiceService.transferData(invoiceDTO, invoice);
         var listProduct = invoice.getListProduct();
 
         model.addAttribute("listProduct", listProduct);
         model.addAttribute("role", role);
-        model.addAttribute("id", id);
         model.addAttribute("invoice", invoice);
         model.addAttribute("invoiceDTO", invoiceDTO);
         return "invoice/form-edit-invoice";

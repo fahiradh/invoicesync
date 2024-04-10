@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.megapro.invoicesync.dto.CustomerMapper;
@@ -19,6 +20,8 @@ import com.megapro.invoicesync.dto.request.CreateCustomerRequestDTO;
 import com.megapro.invoicesync.model.Customer;
 import com.megapro.invoicesync.repository.UserAppDb;
 import com.megapro.invoicesync.service.CustomerService;
+
+import jakarta.validation.Valid;
 
 @Controller
 public class CustomerController {
@@ -45,7 +48,7 @@ public class CustomerController {
     }
     
     @PostMapping("/create-customer")
-    public RedirectView createCustomer(@ModelAttribute CreateCustomerRequestDTO customerRequest, Model model){
+    public RedirectView createCustomer(@Valid CreateCustomerRequestDTO customerRequest){
         var customer = customerMapper.createCustomerDTOToCustomer(customerRequest);
         customerService.createCustomer(customer);
         return new RedirectView("/create-invoice");

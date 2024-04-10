@@ -40,10 +40,6 @@ public class ProductController {
 
     @PostMapping("/create-product")
     public ResponseEntity<Product> createProduct(@RequestBody CreateProductRequestDTO productDTO) {
-        System.out.println("MASUK KE SINI SUCCESS");
-        System.out.println(productDTO.getDescription());
-        System.out.println(productDTO.getName());
-        System.out.println(productDTO.getPrice());
         var dummyInvoice = invoiceService.getDummyInvoice();
         var product = productMapper.createProductRequestToProduct(productDTO);
         product.setInvoice(dummyInvoice);
@@ -52,6 +48,16 @@ public class ProductController {
         BigDecimal fixedPrice = BigDecimal.valueOf(totalPrice);
         product.setTotalPrice(fixedPrice);
         productService.createProduct(product);
+        return ResponseEntity.ok(product);
+    }
+
+    @PostMapping("/delete-product")
+    public ResponseEntity<Product> deleteProduct(@RequestBody CreateProductRequestDTO productDTO){
+        var product = productService.getProduct(productDTO);
+        System.out.println("=====++++++===");
+        System.out.println(product);
+        productService.delete(product);
+        System.out.println("DELETE DONE");
         return ResponseEntity.ok(product);
     }
 }
