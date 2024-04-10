@@ -106,7 +106,7 @@ public class InvoiceServiceImpl implements InvoiceService{
 
     private void calculateSubtotal(Invoice invoice){
         double total = 0;
-        // System.out.println("list product "+invoice.getListProduct());
+        System.out.println("list product "+invoice.getListProduct());
         for (Product p : invoice.getListProduct()){
             System.out.println("produk "+ p);
             total += p.getTotalPrice().doubleValue();

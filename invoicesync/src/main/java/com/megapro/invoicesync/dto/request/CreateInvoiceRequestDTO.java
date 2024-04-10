@@ -18,7 +18,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @NoArgsConstructor
 public class CreateInvoiceRequestDTO {
     private LocalDate invoiceDate = LocalDate.now();
-    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dueDate;
     private String totalWords;
     private String signature;

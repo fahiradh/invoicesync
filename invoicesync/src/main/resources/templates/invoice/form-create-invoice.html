@@ -73,7 +73,7 @@
                                 </tr>
                                 <tr>
                                     <td><p class="card-text mb-0">Due Date</p></td>
-                                    <td><input class="form-control" type="date" th:field="*{dueDate}" required/></td>
+                                    <td><input class="form-control" type="date" th:field="*{dueDate}"/></td>
                                 </tr>
                             </table>
                         </div>
@@ -114,15 +114,15 @@
                                 <table class="table table-borderless">
                                     <tr>
                                         <td><p class="card-text mb-0">Bank Name</p></td>
-                                        <td><input class="form-control" type="text" th:field="*{bankName}" placeholder="Bank Name" required /></td>
+                                        <td><input class="form-control" type="text" th:field="*{bankName}" placeholder="Bank Name" /></td>
                                     </tr>
                                     <tr>
                                         <td><p class="card-text mb-0">Account Number</p></td>
-                                        <td><input class="form-control" type="text" th:field="*{accountNumber}" placeholder="Account Number" required/></td>
+                                        <td><input class="form-control" type="text" th:field="*{accountNumber}" placeholder="Account Number"/></td>
                                     </tr>
                                     <tr>
                                         <td><p class="card-text mb-0">Account Name</p></td>
-                                        <td><input class="form-control" type="text" th:field="*{accountName}" placeholder="Account Name" required/></td>
+                                        <td><input class="form-control" type="text" th:field="*{accountName}" placeholder="Account Name"/></td>
                                     </tr>
                                 </table>
                             </div>
@@ -163,7 +163,7 @@
                                     </tr>
                                     <tr>
                                         <td><p class="card-text mb-0">Amount in Words</p></td>
-                                        <td><input class="form-control" type="text" th:field="*{totalWords}" required/></td>
+                                        <td><input class="form-control" type="text" th:field="*{totalWords}" /></td>
                                     </tr> 
                                 </table>
                             </div>
@@ -199,8 +199,9 @@
                                     <header>Drag & Drop to Upload File</header>
                                     <span>OR</span>
                                     <a href="#" id="browseFileLink">Browse File</a>
-                                    <input type="file" class="form-control" id="image" name="image" accept="image/*" hidden/>
-                                    <input th:field="*{signature}" th:value="${signature}" hidden/>
+                                    <input type="hidden" name="signature" id="signature" value="">
+                                    <input type="file" id="imageUrl" name="imageUrl" accept="image/*" hidden>
+                                    <input th:field="*{signature}" hidden>
                                 </div>
                                 <br>
                                 <input class="form-control" type="text" th:field="*{staffEmail}" readonly />
@@ -219,40 +220,40 @@
     <!-- Modal untuk Pesan Sukses -->
     <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-            <h5 class="modal-title" id="modalLabel">Success</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel">Success</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeModalButton">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p id="successMessage"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
             </div>
-            <div class="modal-body">
-            <p id="successMessage"></p>
-            </div>
-            <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            </div>
-        </div>
         </div>
     </div>
 
     <!-- Modal untuk Pesan Error -->
     <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="modalLabel">Error</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel">Error</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeModalButton">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p id="errorMessage"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
             </div>
-            <div class="modal-body">
-              <p id="errorMessage"></p>
-            </div>
-            <div class="modal-footer">
-              <a class="btn btn-signin btn-lg btn-block" href="/create-account">Retry</a>
-            </div>
-          </div>
         </div>
     </div>
 
@@ -261,6 +262,10 @@
     <script th:inline="javascript">
     /*<![CDATA[*/
     $(document).ready(function() {
+      var closeModalButton = document.getElementById('closeModalButton');
+      closeModalButton.addEventListener('click', function() {
+          $('#errorModal').modal('hide');
+      });
       var successMessage = /*[[${successMessage}]]*/ null;
       var errorMessage = /*[[${errorMessage}]]*/ null;
       // Memeriksa jika ada pesan untuk ditampilkan
