@@ -27,7 +27,6 @@ public class ReadInvoiceResponse {
     private LocalDate invoiceDate;
     private LocalDate dueDate;
     private String totalWords;
-    private String signature;
     private String city;
     private String productDocument;
     private BigDecimal subtotal;

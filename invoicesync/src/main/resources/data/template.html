@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <head>
+        <meta charset="UTF-8" />
+        <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+        <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+        <title>InvoiceSync</title>
+    </head>      
+		<style>
+			@media print {
+				@page {
+					size: A3;
+				}
+			}
+			ul {
+				padding: 0;
+				margin: 0 0 1rem 0;
+				list-style: none;
+			}
+			body {
+				font-family: "Inter", sans-serif;
+				margin: 0;
+			}
+			table {
+				width: 100%;
+				border-collapse: collapse;
+			}
+			table,
+			table th,
+			table td {
+				border: 1px solid silver;
+			}
+			table th,
+			table td {
+				text-align: right;
+				padding: 8px;
+			}
+			h1,
+			h4,
+			p {
+				margin: 0;
+			}
+
+			.container {
+				padding: 20px 0;
+				width: 1000px;
+				max-width: 90%;
+				margin: 0 auto;
+			}
+
+			.inv-title {
+				padding: 10px;
+				border: 1px solid silver;
+				text-align: center;
+				margin-bottom: 30px;
+			}
+
+			.inv-logo {
+				width: 150px;
+				display: block;
+				margin: 0 auto;
+				margin-bottom: 40px;
+			}
+
+			/* header */
+			.inv-header {
+				display: flex;
+				margin-bottom: 20px;
+			}
+			.inv-header > :nth-child(1) {
+				flex: 2;
+			}
+			.inv-header > :nth-child(2) {
+				flex: 1;
+			}
+			.inv-header h2 {
+				font-size: 20px;
+				margin: 0 0 0.3rem 0;
+			}
+			.inv-header ul li {
+				font-size: 15px;
+				padding: 3px 0;
+			}
+
+			/* body */
+			.inv-body table th,
+			.inv-body table td {
+				text-align: left;
+			}
+			.inv-body {
+				margin-bottom: 30px;
+			}
+
+			/* calculation */
+			.inv-calculation {
+				display: flex;
+				flex-direction: row;
+			}
+			.inv-calculation > :nth-child(1) {
+				flex: 2;
+			}
+			.inv-calculation > :nth-child(2) {
+				flex: 1;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<div class="inv-title">
+				<h1 th:text="${invoice.invoiceNumber}"></h1>
+			</div>
+			<img src="/static/assets/krida-logo.png" class="inv-logo" />
+			<div class="inv-header">
+				<div>
+					<h2 th:text="${invoice.customer.name}"></h2>
+					<ul>
+						<li th:text="${invoice.customer.contact}"></li>
+						<li th:text="${invoice.customer.phone}"></li>
+						<li th:text="${invoice.customer.address}"></li>
+					</ul>
+				</div>
+				<div>
+					<table>
+						<tr>
+							<th>Created Date</th>
+							<td>
+                                <p th:text="${invoice.invoiceDate}"></p>
+                            </td>
+						</tr>
+						<tr>
+							<th>Due Date</th>
+							<td>
+                                <p th:text="${invoice.dueDate}"></p>
+                            </td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div class="inv-body">
+				<table>
+					<thead>
+						<th>Product</th>
+						<th>Quantity</th>
+						<th>Price</th>
+					</thead>
+					<tbody>
+						<tr>
+							<td>
+								<h4>Hosting</h4>
+								<p>Some kind of hositing</p>
+							</td>
+							<td>1</td>
+							<td>2000</td>
+						</tr>
+						<tr>
+							<td>
+								<h4>Hosting</h4>
+								<p>Some kind of hositing</p>
+							</td>
+							<td>1</td>
+							<td>2000</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="inv-calculation">
+				<div><!-- required --></div>
+				<div>
+					<table>
+						<tr>
+							<th>Subtotal</th>
+							<td th:text="${invoice.subtotal}"></td>
+						</tr>
+						<tr>
+							<th>Sales tax</th>
+							<td th:text="${invoice.tax}"></td>
+						</tr>
+						<tr>
+							<th>Grand Total</th>
+							<td th:text="%{invoice.grandTotal}"></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+            <div class="inv-footer">
+                <div><!-- required --></div>
+                <div>
+                    <h4>Amount of Words</h4>
+                    <p th:text="${invoice.amountOfWords}"></p>
+                    <h4>Payment Information</h4>
+                    <table>
+						<tr>
+							<th>Bank Name</th>
+							<td th:text="${invoice.bankName}"></td>
+						</tr>
+						<tr>
+							<th>Bank Account</th>
+							<td th:text="${invoice.bankAccount}"></td>
+						</tr>
+						<tr>
+							<th>Account Name</th>
+							<td th:text="%{invoice.accountName}"></td>
+						</tr>
+					</table>
+                    <h4>Signature</h4>
+                    <p th:text="${invoice.invoiceDate}"></p>
+                    <p th:text="${staffName}"></p>
+                </div>
+            </div>
+		</div>
+	</body>
+</html>

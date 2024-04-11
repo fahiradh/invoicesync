@@ -32,6 +32,9 @@ dependencies {
 	implementation 'javax.xml.bind:jaxb-api:2.4.0-b180830.0359'
 	implementation 'com.itextpdf:kernel:7.2.1'
     implementation 'com.itextpdf:html2pdf:4.0.1'
+	implementation 'org.apache.poi:poi:3.12'
+    implementation 'org.apache.poi:poi-ooxml:3.12'
+	implementation 'org.apache.pdfbox:pdfbox:2.0.24'
 }
 
 

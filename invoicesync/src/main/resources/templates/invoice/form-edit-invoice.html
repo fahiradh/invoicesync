@@ -9,181 +9,253 @@
 </head>
 
 <body>
-    <nav th:replace="~{fragments/navbar-non-finance :: navbar-non-finance(page = 'Create-Invoice')}"></nav>
-    <div class="header">
-       <h4>Edit Invoice / <span class="invoice-number" th:text="${invoiceDTO.invoiceNumber}"></span></h4>
-    </div>
-    <form th:action="@{/edit/{id}(id=${invoice.invoiceId})}" th:object="${invoiceDTO}" method="POST" id="invoiceForm">
-        <a class="btn btn-primary" href="/home">Cancel</a> 
-        <a class="btn btn-primary" href="/home">Save</a>
+    <nav th:replace="~{fragments/navbar-non-finance :: navbar-non-finance-staff(page = 'Create-Invoice')}"></nav>
+    <form th:action="@{/invoice/{invoiceNumber}/edit(invoiceNumber=${invoiceNumber.replace('/', '_')})}" th:object="${invoice}" method="GET" enctype="multipart/form-data">
     <div class="container-invoice">
-    <div class="sidebar">
-        <h3 style="text-align:center;">Approval Log<h3>
-        <hr>
-    </div>
-        <div class="card ml-5 mr-5 mt-3 mb-5">
-            <div class="card-body p-4">
-            <div class="container-title">
-                <div class="row">
-                    <div class="col" style="text-align:left;">
-                        <h3 th:text="${invoice.invoiceNumber}"></h3>
-                    </div>
-                    <div class="col" style="text-align:right;" th:include="fragments/invoice-status :: invoice-status-show"></div>
-                </div>
+        <div class="item" style="margin-left:5%;">
+            <div class="header">
+                <h4>Detail Invoice / <span class="invoice-number" th:text="${invoiceNumber}"></span></h4>
             </div>
-            <hr>
-            <div class="content">
-                <div class="justify-content-center">
+            <a class="btn btn-danger" href="/home">Cancel</a> 
+            <button class="btn btn-primary" type="submit">Save</button>
+            <div class="card">
+                <div class="card-body p-4">
+                <div class="container-title">
                     <div class="row">
-                        <div class="col-md-6">
-                            <table class="table table-borderless">
-                                <tr>
-                                    <td><p class="card-text mb-0">Customer</p></td>
-                                    <td>
-                                        <input class="form-control" type="text" th:field="${invoice.customer.name}" id="customerContact" readonly /></td>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><p class="card-text mb-0">Contact</p></td>
-                                    <td><input class="form-control" type="text" th:field="${invoice.customer.contact}" id="customerContact" readonly /></td>
-                                </tr>
-                                <tr>
-                                    <td><p class="card-text mb-0">Address</p></td>
-                                    <td><input class="form-control" type="text" th:field="${invoice.customer.address}" id="customerAddress" readonly /></td>
-                                </tr>
-                            </table>
+                        <div class="col" style="text-align:left;">
+                            <h3 th:text="${invoiceNumber}"></h3>
                         </div>
-                        <div class="col-md-6">
-                            <table class="table table-borderless">
-                                <tr>
-                                    <td><p class="card-text mb-0">Invoice Date</p></td>
-                                    <td><input class="form-control" type="date" th:field="${invoice.invoiceDate}" readonly /></td>
-                                </tr>
-                                <tr>
-                                    <td><p class="card-text mb-0">Due Date</p></td>
-                                    <td><input class="form-control" type="date" th:field="${invoice.dueDate}" readonly/></td>
-                                </tr>
-                            </table>
-                        </div>
+                        <div class="col" style="text-align:right;" th:include="~{fragments/invoice-status :: invoice-status-show}"></div>
                     </div>
-                    
-                    <hr>
-                    <p class="card-info">Please attach document or input the fields below to add product list.</p>
-                    <br>
-
-                    <p class="card-text">Attach Product List (.xlsx)</p>
-                    <input type="file" class="form-control" id="file" name="file" accept=".xlsx" style="width: 35%;">
-                    <input th:field="${invoice.productDocument}" hidden/>
-                    <br>
-
-                    <table class="table table-bordered">
-                        <thead class="bg-dark text-white">
-                            <tr>
-                                <th>No</th>
-                                <th>Product</th>
-                                <th>Description</th>
-                                <th>Quantity</th>
-                                <th>Price/Qty</th>
-                                <th>Total Price</th>
-                            </tr>
-                        </thead> 
-                        <tbody>
-                            <tr th:each="product, iterationStatus: ${listProduct}">
-                                <td th:text="${iterationStatus.count}">#</td>
-                                <td th:text="${product.name}"></td>
-                                <td th:text="${product.description}"></td>
-                                <td th:text="${product.quantity}"></td>
-                                <td th:text="${product.price}"></td>
-                                <td th:text="${product.totalPrice}"></td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <hr>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-4">
-                                <p class="card-text">Payment Information</p>
+                </div>
+                <hr>
+                <div class="content">
+                    <div class="justify-content-center">
+                        <div class="row">
+                            <div class="col-md-6">
                                 <table class="table table-borderless">
                                     <tr>
-                                        <td><p class="card-text mb-0">Bank Name</p></td>
-                                        <td><input class="form-control" type="text" th:field="${invoice.bankName}" readonly /></td>
+                                        <td><p class="card-text mb-0">Customer</p></td>
+                                        <td><input class="form-control" type="text" th:value="${customer.name}" readonly /></td>     
                                     </tr>
                                     <tr>
-                                        <td><p class="card-text mb-0">Account Number</p></td>
-                                        <td><input class="form-control" type="text" th:field="${invoice.accountNumber}" readonly/></td>
+                                        <td><p class="card-text mb-0">Contact</p></td>
+                                        <td><input class="form-control" type="text" th:value="${customer.contact}" readonly /></td>
                                     </tr>
                                     <tr>
-                                        <td><p class="card-text mb-0">Account Name</p></td>
-                                        <td><input class="form-control" type="text" th:field="${invoice.accountName}" readonly/></td>
+                                        <td><p class="card-text mb-0">Address</p></td>
+                                        <td><input class="form-control" type="text" th:value="${customer.address}" readonly /></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-md-6">
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <td><p class="card-text mb-0">Invoice Date</p></td>
+                                        <td><input class="form-control" th:value="${date}" readonly /></td>
+                                    </tr>
+                                    <tr>
+                                        <td><p class="card-text mb-0">Due Date</p></td>
+                                        <td><input class="form-control" type="date" th:value="${invoice.dueDate}"/></td>
                                     </tr>
                                 </table>
                             </div>
                         </div>
+                        
+                        <hr>
+                        <p class="card-info">Please attach document or input the fields below to add product list.</p>
+                        <br>
 
-                        <div class="col-md-6">
-                            <div class="mb-4">
-                            <table class="table table-bordered-classic">
-                                    <tr>
-                                        <td><p class="card-text mb-0">Total Discount (%)</p></td>
-                                        <td><input class="form-control" type="number" th:field="${invoice.totalDiscount}" readonly/></td>
-                                    </tr>
-                                    <tr>
-                                        <td><p class="card-text mb-0">Tax</p></td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td><p class="card-text mb-0">Subtotal</p></td>
-                                        <td>
-                                            <input class="form-control" type="number" th:field="${invoice.subtotal}" readonly />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><p class="card-text mb-0">Amount in Words</p></td>
-                                        <td><input class="form-control" type="text" th:field="${invoice.totalWords}" readonly/></td>
-                                    </tr> 
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    <hr>
+                        <p class="card-text">Attach Product List (.xlsx)</p>
+                        <input type="file" class="form-control" id="document" name="document" style="width: 35%;"/>
+                        <input th:field="${invoice.productDocument}" hidden/>
+                        <br>
 
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-4">
-                                <p class="card-info">Please attach additional documents for approval.</p>
-                                <br>
-                                <p class="card-text">Additional Document</p>
-                                <input type="file" class="form-control" name="file"/>
-                                <input type="hidden" th:field="${invoice.additionalDocument}" readonly/>
-                            </div>
-                        </div>
+                        <table class="table table-bordered">
+                            <thead class="bg-dark text-white">
+                                <tr>
+                                    <th>No</th>
+                                    <th>Description</th>
+                                    <th>Quantity</th>
+                                    <th>Price/Qty</th>
+                                    <th>Total Price</th>
+                                </tr>
+                            </thead> 
+                            <tbody>
+                                <tr th:each="product, iterationStatus: ${listProduct}">
+                                    <td th:text="${iterationStatus.count}">#</td>
+                                    <td th:text="${product.description}"></td>
+                                    <td th:text="${product.quantity}"></td>
+                                    <td th:text="${product.price}"></td>
+                                    <td th:text="${product.totalPrice}"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p class="card-info">Please click the check button if the product details are correct.</p>
 
-                        <div class="col-md-6">
-                            <div class="mb-4">
-                                <p class="card-text">Signature</p>
-                                <div class="form-inline">
-                                    <div class="form-group mr-2">
-                                        <input class="form-control" type="text" th:field="${invoice.city}" readonly />
-                                    </div>
-                                    <div class="form-group">
-                                        <p class="card-text" th:text="', '+${invoice.invoiceDate}"></p>
-                                    </div>
+                        <hr>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-4">
+                                    <p class="card-text">Payment Information</p>
+                                    <table class="table table-borderless">
+                                        <tr>
+                                            <td><p class="card-text mb-0">Bank Name</p></td>
+                                            <td><input class="form-control" type="text" th:value="${invoice.bankName}" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td><p class="card-text mb-0">Account Number</p></td>
+                                            <td><input class="form-control" type="text" th:value="${invoice.accountNumber}" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td><p class="card-text mb-0">Account Name</p></td>
+                                            <td><input class="form-control" type="text" th:value="${invoice.accountName}" /></td>
+                                        </tr>
+                                    </table>
                                 </div>
-                                <br>
-                                <input type="file" class="form-control" name="image"/>
-                                <input type="hidden" th:field="${invoice.signature}" />
-                                <br>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="mb-4">
+                                <table class="table table-bordered-classic">
+                                        <tr>
+                                            <td><p class="card-text mb-0">Total Discount (%)</p></td>
+                                            <td><input class="form-control" type="number" th:value="${invoice.totalDiscount}" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td><p class="card-text mb-0">Subtotal</p></td>
+                                            <td>
+                                                <input class="form-control" type="number" th:value="${invoice.subtotal}" disabled />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><p class="card-text mb-0">Taxes</p></td>
+                                            <td>
+                                                <input class="form-control" th:value="${invoice.taxTotal}" type="number"  />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><p class="card-text mb-0">Grand Total</p></td>
+                                            <td>
+                                                <input class="form-control" th:value="${invoice.grandTotal}" type="number"  disabled />
+        
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><p class="card-text mb-0">Amount in Words</p></td>
+                                            <td><input class="form-control" type="text" th:value="${invoice.totalWords}" readonly/></td>
+                                        </tr> 
+                                    </table>
+                                </div>
                             </div>
                         </div>
+                        <hr>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-4">
+                                    <p class="card-info">Please attach additional documents for approval.</p>
+                                    <br>
+                                    <p class="card-text">Additional Document</p>
+                                    <input type="file" class="form-control" name="file"/>
+                                    <input type="hidden" th:value="${invoice.additionalDocument}" />
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="mb-4">
+                                    <p class="card-text">Signature</p>
+                                    <div class="form-inline">
+                                        <div class="form-group mr-2">
+                                            <input class="form-control" type="text" th:value="${invoice.city}"  />
+                                        </div>
+                                        <div class="form-group">
+                                            <p class="card-text" th:text="', '+${dateInvoice}"></p>
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="drag-area">
+                                        <img class="card-img-top" th:src="@{'data:image/jpeg;base64,' + ${image}}" alt="signature-image" style="max-height=150px;">
+                                    </div>
+                                    <br>
+                                    <input class="form-control" type="text" th:value="${invoice.staffEmail}" readonly />
+                                    <br>
+                                </div>
+                            </div>
+                        </div>
+                        </form>
                     </div>
-                    </form>
-                </div>
+                    </div>
                 </div>
             </div>
         </div>
-      </div>
-    </div>   
+        <div class="item" style="margin-right:5%;">
+            <h3 style="text-align:center;">Approval Log<h3>
+            <hr>
+        </div>  
+    </div>
+    <!-- Modal untuk Pesan Sukses -->
+    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel">Success</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeModalButton">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p id="successMessage"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal untuk Pesan Error -->
+    <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel">Error</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeModalButton">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p id="errorMessage"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/scripts/invoice-script.js"></script>
+
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+    $(document).ready(function() {
+      var closeModalButton = document.getElementById('closeModalButton');
+      closeModalButton.addEventListener('click', function() {
+          $('#errorModal').modal('hide');
+      });
+      var successMessage = /*[[${successMessage}]]*/ null;
+      var errorMessage = /*[[${errorMessage}]]*/ null;
+      // Memeriksa jika ada pesan untuk ditampilkan
+      if (successMessage && successMessage !== '') {
+          $("#successMessage").text(successMessage); // Mengatur teks pesan sukses
+          $("#successModal").modal('show'); // Menampilkan modal sukses
+      } else if (errorMessage && errorMessage !== '') {
+          $("#errorMessage").text(errorMessage); // Mengatur teks pesan error
+          $("#errorModal").modal('show'); // Menampilkan modal error
+      }
+    });
+    /*]]>*/
+  </script>
 </body>
 </html>

@@ -4,6 +4,7 @@ import com.megapro.invoicesync.dto.request.CreateInvoiceRequestDTO;
 import com.megapro.invoicesync.model.Invoice;
 import com.megapro.invoicesync.model.Product;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.time.LocalDate;
@@ -27,4 +28,5 @@ public interface InvoiceService {
     void transferData(CreateInvoiceRequestDTO invoiceRequestDTO, Invoice invoice);
     Invoice getInvoiceByInvoiceNumber(String invoiceNumber);
     String parseDate(LocalDate localDate);
+    String checkValidity(CreateInvoiceRequestDTO invoiceDTO, List<Integer> selectedTaskIds, String email);
 }

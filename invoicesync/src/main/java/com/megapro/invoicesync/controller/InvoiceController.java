@@ -8,10 +8,10 @@ import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 
 import com.megapro.invoicesync.dto.CustomerMapper;
 import com.megapro.invoicesync.dto.InvoiceMapper;
@@ -26,7 +26,6 @@ import com.megapro.invoicesync.service.TaxService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
-import java.util.UUID;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -40,6 +39,8 @@ import com.megapro.invoicesync.model.UserApp;
 import com.megapro.invoicesync.repository.InvoiceDb;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 import java.math.BigDecimal;
@@ -77,20 +78,16 @@ public class InvoiceController {
         String email = authentication.getName();
         var user = userAppDb.findByEmail(email);
         String role = user.getRole().getRole();
-
         var invoiceDTO = new CreateInvoiceRequestDTO();
         invoiceDTO.setStaffEmail(email);
         var customerDTO = new CreateCustomerRequestDTO();
         List<Customer> listCustomer = customerService.getAllCustomer();
-
-        System.out.println("GET INVOICE DATE "+invoiceDTO.getInvoiceDate());
-        // List<Tax> listTax = taxService.getTaxes();
+        LocalDate date = invoiceDTO.getInvoiceDate();
 
         model.addAttribute("email", email);
         model.addAttribute("role", role);
-        // model.addAttribute("listTax", listTax);
         model.addAttribute("dateInvoice", invoiceService.parseDate(invoiceDTO.getInvoiceDate()));
-        model.addAttribute("date",invoiceDTO.getInvoiceDate());
+        model.addAttribute("date", String.format("%02d/%02d/%04d", date.getDayOfMonth(),  date.getMonth().getValue(), date.getYear()));
         model.addAttribute("status", invoiceDTO.getStatus());
         model.addAttribute("listCustomer", listCustomer);
         model.addAttribute("customerDTO", customerDTO);
@@ -104,30 +101,36 @@ public class InvoiceController {
     public String createInvoice(@Valid CreateInvoiceRequestDTO invoiceDTO, Model model,
                                 RedirectAttributes redirectAttributes,
                                 @RequestParam(value = "taxOption", required = false) List<Integer> selectedTaxIds,
-                                // @RequestParam("image") MultipartFile signature,
                                 @ModelAttribute("successMessage") String successMessage,
                                 @ModelAttribute("errorMessage") String errorMessage,
-                                @RequestParam(name="signature", required=false) String imageDataURL){
+                                @RequestParam("base64String") MultipartFile imageDataUrl) throws IOException{
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         var user = userAppDb.findByEmail(email);
         String role = user.getRole().getRole();
-        var customer = customerService.getCustomerById(invoiceDTO.getCustomerId());
-        var invoice = invoiceMapper.createInvoiceRequestToInvoice(invoiceDTO);
-        invoice.setCustomer(customer);
-        invoiceService.attributeInvoice(invoice, selectedTaxIds);
 
-        // byte[] imageBytes = signature.getBytes();
-        // String bytesToString = invoiceService.translateByte(imageBytes);
-        // invoiceDTO.setSignature(bytesToString);
-        
-        invoiceService.createInvoice(invoice, email);
-        var newInvoiceDTO = new CreateInvoiceRequestDTO();
-        model.addAttribute("email", email);
-        model.addAttribute("role", role);
-        model.addAttribute("invoiceDTO", newInvoiceDTO);
-        model.addAttribute("successMessage", successMessage);
-        model.addAttribute("errorMessage", errorMessage);
+        try{
+            byte[] imageBytes = imageDataUrl.getBytes();
+            String bytesToString = invoiceService.translateByte(imageBytes);
+            invoiceDTO.setSignature(bytesToString);
+
+            System.out.println("invoice subtotal "+invoiceDTO.getSubtotal());
+            System.out.println("invoice grand total "+invoiceDTO.getGrandTotal());
+            System.out.println("invoice discount " + invoiceDTO.getTotalDiscount());
+            
+            var message = invoiceService.checkValidity(invoiceDTO, selectedTaxIds, email).split(",");
+            var newInvoiceDTO = new CreateInvoiceRequestDTO();
+
+            model.addAttribute("email", email);
+            model.addAttribute("role", role);
+            model.addAttribute("invoiceDTO", newInvoiceDTO);
+            model.addAttribute("successMessage", successMessage);
+            model.addAttribute("errorMessage", errorMessage);
+            redirectAttributes.addFlashAttribute(message[0], message[1]);
+        } catch (IOException e){
+            String mess = "Failed";
+            redirectAttributes.addFlashAttribute("errorMessage", mess);
+        }
         return "redirect:/create-invoice";
     }
 
@@ -143,12 +146,14 @@ public class InvoiceController {
         List<Product> listProduct = invoiceService.getListProductInvoice(invoice);
         List<Tax> taxList = taxService.findAllTaxes();
         var invoiceDTO = invoiceMapper.readInvoiceToInvoiceResponse(invoice);
+        var date = invoiceDTO.getInvoiceDate();
 
         model.addAttribute("image", invoice.getSignature());
         model.addAttribute("status", invoice.getStatus());
         model.addAttribute("email", email);
         model.addAttribute("role", role);
         model.addAttribute("listProduct", listProduct);
+        model.addAttribute("date", String.format("%02d/%02d/%04d", date.getDayOfMonth(),  date.getMonth().getValue(), date.getYear()));
         model.addAttribute("taxList", taxList);
         model.addAttribute("invoice", invoiceDTO);
         model.addAttribute("dateInvoice", invoiceService.parseDate(invoiceDTO.getInvoiceDate()));
@@ -324,11 +329,16 @@ public class InvoiceController {
         CreateInvoiceRequestDTO invoiceDTO = new CreateInvoiceRequestDTO();
         invoiceService.transferData(invoiceDTO, invoice);
         var listProduct = invoice.getListProduct();
+        var date = invoice.getInvoiceDate();
 
+        model.addAttribute("image", invoice.getSignature());
         model.addAttribute("listProduct", listProduct);
         model.addAttribute("role", role);
-        model.addAttribute("invoice", invoice);
-        model.addAttribute("invoiceDTO", invoiceDTO);
+        model.addAttribute("date", String.format("%02d/%02d/%04d", date.getDayOfMonth(),  date.getMonth().getValue(), date.getYear()));
+        model.addAttribute("invoiceNumber", invoice.getInvoiceNumber());
+        model.addAttribute("invoice", invoiceDTO);
+        model.addAttribute("dateInvoice", invoiceService.parseDate(invoiceDTO.getInvoiceDate()));
+        model.addAttribute("customer", invoice.getCustomer());
         return "invoice/form-edit-invoice";
     }
 

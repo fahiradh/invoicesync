@@ -60,6 +60,7 @@ public class ApproveInvoiceController {
             invoiceDTOList.add(invoiceDTO);
         }
         model.addAttribute("invoices", invoiceDTOList);
+        model.addAttribute("email", email);
         return "approve-invoice/list-approval.html";
     }
     
