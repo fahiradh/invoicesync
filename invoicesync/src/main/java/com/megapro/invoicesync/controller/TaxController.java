@@ -40,6 +40,8 @@ public class TaxController {
 
         var taxes = taxService.getTaxes();
         model.addAttribute("taxes", taxes);
+        
+        model.addAttribute("email", email);
         return "tax/tax";
     }
     

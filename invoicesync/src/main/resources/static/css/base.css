@@ -25,11 +25,14 @@ h4{
 
 /* Container */
 .container-invoice {
-    display: flex;
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap:20px;
     justify-content: center;
-    margin: auto;
-    /* max-width: 1240px; */
+}
+
+.item {
+    padding: 20px;
 }
 
 .container{
@@ -48,9 +51,6 @@ h4{
 .header{
     display: flex;
     flex-direction: column;
-    margin-left: 10rem;
-    margin-top: 5rem;
-    max-width: 1240px;
 }
 
 .sidebar{
@@ -125,13 +125,14 @@ h4{
     --bs-card-border-color: #EEF2F5;
     --bs-card-border-radius: 0.7rem;
     --bs-card-inner-border-radius: 0.7rem;
-    margin-left: 10%;
-    margin-right: 10%;
+    /* margin-left: 10%;
+    margin-right: 10%; */
 }
 
 .card-borderless{
-    margin-left: 10%;
-    margin-right: 10%;
+    border: #FFF;
+    /* margin-left: 10%;
+    margin-right: 10%; */
 }
 
 .card-title{
@@ -287,6 +288,7 @@ h4{
     align-items: center;
     justify-content: center;
     flex-direction: column;
+    height: 150px;
 }
 
 .drag-area.active{

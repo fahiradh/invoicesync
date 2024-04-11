@@ -11,6 +11,9 @@
 <body>
     <div th:fragment="invoice-status-show" class="invoice-status-tag">
         <div class="status-tag-item" th:if="${status == 'Draft'}" style="background-color:#9BA3AC">
+            <div class="status-name">Draft</div>
+        </div>
+        <div class="status-tag-item" th:if="${status == 'Waiting for Approver'}" style="background-color:#9BA3AC">
             <div class="status-name">Waiting for Approver</div>
         </div>
         <div class="status-tag-item" th:if="${status == 'Pending Approval'}" style="background-color:#5C5C77">

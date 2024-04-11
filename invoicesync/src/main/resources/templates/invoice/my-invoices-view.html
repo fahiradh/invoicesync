@@ -60,7 +60,7 @@
                             <td><a th:href="@{/invoice/{invoiceNumber}(invoiceNumber=${invoice.invoiceNumber.replace('/', '_')})}" th:text="${invoice.invoiceNumber}">Invoice Link</a>
                             </td>
                             <td th:text="${invoice.customer.name}"></td>
-                            <td th:text="${'Rp' + #numbers.formatDecimal(invoice.subtotal, 0, 'COMMA', 2, 'POINT')}"></td>
+                            <td th:text="${'Rp' + #numbers.formatDecimal(invoice.grandTotal, 0, 'COMMA', 2, 'POINT')}"></td>
                         </tr>
                     </tbody>
                 </table>

@@ -1,58 +1,76 @@
-const dropArea = document.querySelector(".drag-area");
-const dragText = dropArea.querySelector("header");
-const fileInput = document.getElementById("imageUrl");
-const browseFileLink = document.getElementById("browseFileLink");
+// const dragText = dropArea.querySelector("header");
+// const fileInput = document.getElementById("imageUrl");
+// const browseFileLink = document.getElementById("browseFileLink");
 
-browseFileLink.addEventListener("click", function(event) {
-    event.preventDefault();
-    fileInput.click();
-});
+// browseFileLink.addEventListener("click", function(event) {
+//     event.preventDefault();
+//     fileInput.click();
+// });
 
-fileInput.addEventListener("change", function(){
-    file = this.files[0];
-    dropArea.classList.add("active");
-    showFile();
-});
+// fileInput.addEventListener("change", function(){
+//     file = this.files[0];
+//     dropArea.classList.add("active");
+//     showFile();
+// });
 
-dropArea.addEventListener("dragover", (event)=>{
-    event.preventDefault();
-    dropArea.classList.add("active");
-    dragText.textContent = "Release to Upload File";
-});
+// dropArea.addEventListener("dragover", (event)=>{
+//     event.preventDefault();
+//     dropArea.classList.add("active");
+//     dragText.textContent = "Release to Upload File";
+// });
 
-dropArea.addEventListener("dragleave", ()=>{
-    dropArea.classList.remove("active");
-    dragText.textContent = "Drag & Drop to Upload File";
-});
+// dropArea.addEventListener("dragleave", ()=>{
+//     dropArea.classList.remove("active");
+//     dragText.textContent = "Drag & Drop to Upload File";
+// });
 
-dropArea.addEventListener("drop", (event)=>{
-    event.preventDefault();
-    file = event.dataTransfer.files[0];
-    showFile();
-});
+// dropArea.addEventListener("drop", (event)=>{
+//     event.preventDefault();
+//     file = event.dataTransfer.files[0];
+//     showFile();
+//     checkImage();
+// });
 
-function showFile(){
-    let fileType = file.type;
-    let validExtensions = ["image/jpeg", "image/jpg", "image/png"];
-    if (validExtensions.includes(fileType)){
-        let fileImage = document.getElementById("signature");
-        let fileReader = new FileReader();
-        fileReader.onload = ()=>{
-            let fileUrl = fileReader.result;
-            let imgTag = `<img src="${fileUrl}" alt="image">`;
-            dropArea.innerHTML = imgTag;
-            let base64String = fileUrl.split(',')[1]
-            fileImage.setAttribute('value', base64String);
-            console.log("aman aja");
-            console.log(fileImage.value);
-        }
-        fileReader.readAsDataURL(file);
-    }else{
-        alert("This is not an image file!");
-        dropArea.classList.remove("active");
-        dragText.textContent = "Drag & Drop to Upload File"
-    }
-}
+// function checkImage(){
+//     console.log("eaaa");
+//     console.log(document.getElementById('imageSignature').value);
+// }
+
+// function showFile(){
+//     let fileType = file.type;
+//     let validExtensions = ["image/jpeg", "image/jpg", "image/png"];
+//     if (validExtensions.includes(fileType)){
+//         let fileReader = new FileReader();
+//         fileReader.onload = ()=>{
+//             let fileUrl = fileReader.result;
+//             let imgTag = `<img src="${fileUrl}" alt="signature-image">`;
+//             dropArea.innerHTML = imgTag;
+//         }
+//         fileReader.readAsDataURL(file);
+//     }else{
+//         alert("This is not an image file!");
+//         dropArea.classList.remove("active");
+//         dragText.textContent = "Drag & Drop to Upload File"
+//     }
+// }
+
+// document.getElementById('image').addEventListener('change', function() {
+//     const file = this.files[0];
+//     const dropArea = document.querySelector(".drag-area");
+//     if (file) {
+//         const reader = new FileReader();
+//         reader.onload = function(e) {
+//            const base64String = e.target.result;
+//             var img =  `<img id="previewImage" src="${base64String}" alt="Preview Image" style="max-height: 150px;"></img>`;
+//             dropArea.innerHTML = img;
+//             console.log(base64String);
+//             document.getElementById('base64String').value = base64String;
+//             // setValue(base64String);
+//         };
+//         reader.readAsDataURL(file);
+//     }
+// });
+
 
 // Ambil data tax dari backend
 var taxes = [];
@@ -103,12 +121,10 @@ function getAllTableData() {
     for (var i = 0; i < tableBody.rows.length; i++) {
         var row = tableBody.rows[i];
         var rowData = {};
-
-        rowData.name = row.cells[1].querySelector('input[name="productName"]').value;
-        rowData.description = row.cells[2].querySelector('input[name="productDescription"]').value;
-        rowData.quantity = row.cells[3].querySelector('input[name="productQuantity"]').value;
-        rowData.price = row.cells[4].querySelector('input[name="productPrice"]').value;
-        rowData.totalPrice = row.cells[5].querySelector('input[name="productSubtotal"]').value;
+        rowData.description = row.cells[1].querySelector('input[name="productDescription"]').value;
+        rowData.quantity = row.cells[2].querySelector('input[name="productQuantity"]').value;
+        rowData.price = row.cells[3].querySelector('input[name="productPrice"]').value;
+        rowData.totalPrice = row.cells[4].querySelector('input[name="productSubtotal"]').value;
 
         tableDataList.push(rowData);
     }
@@ -179,6 +195,13 @@ function updateRowNumbers(tableBody) {
     }
 }
 
+function calculateGrandTotal() {
+    var subtotal = parseFloat(document.getElementById('subtotal').value);
+    var totalDiscount = parseFloat(document.getElementById('totalDiscount').value);
+    var grandTotal = subtotal - (subtotal * (totalDiscount / 100));
+    document.getElementById('grandTotal').value = grandTotal.toFixed(2);
+}
+
 document.getElementById("addRowInvoice").addEventListener("click", function() {
     var tableBody = document.getElementById("invoiceTableBody");
     var rowCount = tableBody.rows.length;
@@ -186,21 +209,19 @@ document.getElementById("addRowInvoice").addEventListener("click", function() {
     var newRow = tableBody.insertRow(rowCount);
 
     var cellNo = newRow.insertCell(0);
-    var cellProduct = newRow.insertCell(1);
-    var cellDescription = newRow.insertCell(2);
-    var cellQuantity = newRow.insertCell(3);
-    var cellPrice = newRow.insertCell(4);
-    var cellTotalPrice = newRow.insertCell(5);
-    var cellAction = newRow.insertCell(6);
+    var cellDescription = newRow.insertCell(1);
+    var cellQuantity = newRow.insertCell(2);
+    var cellPrice = newRow.insertCell(3);
+    var cellTotalPrice = newRow.insertCell(4);
+    var cellAction = newRow.insertCell(5);
 
     cellNo.innerHTML = rowCount+1;
-    cellProduct.innerHTML = '<input class="form-control" type="text" name="productName">';
     cellDescription.innerHTML = '<input class="form-control" type="text" name="productDescription">';
     cellQuantity.innerHTML = '<input class="form-control quantity" type="number" name="productQuantity" value="1">';
     cellPrice.innerHTML = '<input class="form-control price" type="number" name="productPrice">';
     cellTotalPrice.innerHTML = '<input class="form-control subtotal" type="number" name="productSubtotal" readonly>';
-    cellAction.innerHTML = '<i class="fa fa-trash delete-icon" style="color:#dc3545; cursor: pointer;"></i>' +
-                           '<i class="fa fa-check check-icon" style="color:green; cursor: pointer;"></i>';
+    cellAction.innerHTML = '<i class="fa fa-trash delete-icon" style="color:#dc3545; cursor: pointer; margin:4px;"></i>' +
+                           '<i class="fa fa-check check-icon" style="color:green; cursor: pointer; margin:4px;"></i>';
 
     var quantityInput = cellQuantity.querySelector('input');
     var priceInput = cellPrice.querySelector('input');
@@ -242,14 +263,12 @@ function handleCheckClick() {
     var checkIcon = this;
     var cellAction = checkIcon.parentElement;
     var tableRow = cellAction.parentElement;
-    var cellProduct = tableRow.cells[1].querySelector('input[name="productName"]');
-    var cellDescription = tableRow.cells[2].querySelector('input[name="productDescription"]');
-    var cellQuantity = tableRow.cells[3].querySelector('input[name="productQuantity"]');
-    var cellPrice = tableRow.cells[4].querySelector('input[name="productPrice"]');
-    var cellTotalPrice = tableRow.cells[5].querySelector('input[name="productSubtotal"]');
+    var cellDescription = tableRow.cells[1].querySelector('input[name="productDescription"]');
+    var cellQuantity = tableRow.cells[2].querySelector('input[name="productQuantity"]');
+    var cellPrice = tableRow.cells[3].querySelector('input[name="productPrice"]');
+    var cellTotalPrice = tableRow.cells[4].querySelector('input[name="productSubtotal"]');
     
     var productData = {
-        name: cellProduct.value,
         description: cellDescription.value,
         quantity: cellQuantity.value,
         price: cellPrice.value,

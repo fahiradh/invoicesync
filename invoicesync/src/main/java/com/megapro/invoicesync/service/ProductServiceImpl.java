@@ -48,8 +48,7 @@ public class ProductServiceImpl implements ProductService{
         double totalPrice = Double.parseDouble(productDTO.getTotalPrice());
         double price = Double.parseDouble(productDTO.getPrice());
         for (Product p : listProduct){
-            if (p.getName().equals(productDTO.getName()) &&
-                p.getDescription().equals(productDTO.getDescription())){
+            if (p.getDescription().equals(productDTO.getDescription())){
                     return p;
                 }
         }

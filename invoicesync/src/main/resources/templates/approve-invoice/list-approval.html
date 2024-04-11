@@ -35,14 +35,14 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr th:each="invoice, iterStat : ${invoices}" >
+                        <tr th:each="invoice, iterStat : ${invoices}" th:if="${invoice.customer != null}">
                             <td th:text="${iterStat.count}"></td>
                             <td>
                                 <a th:href="@{/invoice/{invoiceNumber}(invoiceNumber=${invoice.invoiceNumber != null ? invoice.invoiceNumber.replace('/', '_') : 'Dummy'})}"
                                    th:text="${invoice.invoiceNumber}"></a>
                             </td>
-                            <td th:text="${invoice.customer?.name ?: 'Unknown Customer'}"></td>
-                                <td th:text="${'Rp' + #numbers.formatDecimal(invoice.subtotal, 0, 'COMMA', 2, 'POINT')}"></td>
+                            <td th:text="${invoice.customer.name}"></td>
+                                <td th:text="${'Rp' + #numbers.formatDecimal(invoice.grandTotal, 0, 'COMMA', 2, 'POINT')}"></td>
                         </tr>
                     </tbody>
                 </table>

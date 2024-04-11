@@ -68,7 +68,6 @@
                     <thead class="bg-dark text-white">
                         <tr>
                             <th>No</th>
-                            <th>Product</th>
                             <th>Description</th>
                             <th>Quantity</th>
                             <th>Price/Qty</th>
@@ -78,7 +77,6 @@
                     <tbody>
                         <tr th:each="product, iterationStatus: ${listProduct}">
                             <td th:text="${iterationStatus.count}">#</td>
-                            <td th:text="${product.name}"></td>
                             <td th:text="${product.description}"></td>
                             <td th:text="${product.quantity}"></td>
                             <td th:text="${product.price}"></td>

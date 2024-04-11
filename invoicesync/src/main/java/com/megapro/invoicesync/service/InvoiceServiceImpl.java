@@ -1,13 +1,16 @@
 package com.megapro.invoicesync.service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.Base64;
+import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.megapro.invoicesync.dto.InvoiceMapper;
 import com.megapro.invoicesync.dto.request.CreateInvoiceRequestDTO;
 import com.megapro.invoicesync.model.Invoice;
 import com.megapro.invoicesync.model.Product;
@@ -44,6 +47,12 @@ public class InvoiceServiceImpl implements InvoiceService{
     @Autowired
     UserAppDb userAppDb;
 
+    @Autowired
+    CustomerService customerService;
+
+    @Autowired
+    InvoiceMapper invoiceMapper;
+
     @Override
     public void createInvoice(Invoice invoice, String email) {
         invoice.setStaffEmail(email);
@@ -73,12 +82,10 @@ public class InvoiceServiceImpl implements InvoiceService{
             newListProduct.add(p);
         }
         invoice.setListProduct(newListProduct);
-        // parseListTax(invoice);
-        calculateSubtotal(invoice);
-
         invoice.setListTax(taxDb.findByTaxIdIn(listTax));
+        calculateSubtotal(invoice);
+        calculateDiscount(invoice);
         calculateTax(invoice);
-        
         calculateGrandTotal(invoice);
     }
 
@@ -108,40 +115,30 @@ public class InvoiceServiceImpl implements InvoiceService{
         double total = 0;
         System.out.println("list product "+invoice.getListProduct());
         for (Product p : invoice.getListProduct()){
-            System.out.println("produk "+ p);
             total += p.getTotalPrice().doubleValue();
         }
-        double totalAftDisc = total - ((invoice.getTotalDiscount()/100.0) * total);
-        // double subtotal = 0;
-        // for (Tax tax : invoice.getListTax()){
-        //     subtotal = totalAftDisc * (tax.getTaxPercentage()/100.0);
-        // }
-        invoice.setSubtotal(BigDecimal.valueOf(totalAftDisc));
+        invoice.setSubtotal(BigDecimal.valueOf(total));
+    }
+
+    private void calculateDiscount(Invoice invoice){
+        double subtotal = invoice.getSubtotal().doubleValue();
+        double discount = (invoice.getTotalDiscount()/100.0)*subtotal;
+        double afterDiscount = subtotal-discount;
+        invoice.setGrandTotal(BigDecimal.valueOf(afterDiscount));
     }
 
     private void calculateTax(Invoice invoice){
         double total = 0;
         for(Tax tax:invoice.getListTax()){
-            total += (tax.getTaxPercentage()*invoice.getSubtotal().doubleValue()/100);
+            total += (tax.getTaxPercentage()*invoice.getGrandTotal().doubleValue()/100);
         }
         invoice.setTaxTotal(BigDecimal.valueOf(total));
     }
 
     private void calculateGrandTotal(Invoice invoice){
-        BigDecimal total = invoice.getSubtotal().add(invoice.getTaxTotal());
+        BigDecimal total = invoice.getGrandTotal().add(invoice.getTaxTotal());
         invoice.setGrandTotal(total);
     }
-
-    // private void parseListTax(Invoice invoice){
-    //     var dummy = getDummyInvoice();
-    //     List<Tax> dummyListTax = dummy.getListTax();
-    //     List<Tax> invoiceListTax = new ArrayList<>();
-    //     for (Tax tax : dummyListTax){
-    //         invoiceListTax.add(tax);
-    //     }
-    //     invoice.setListTax(invoiceListTax);
-    //     dummy.setListTax(new ArrayList<>());
-    // }
 
     @Override
     public List<Invoice> retrieveAllInvoice() {
@@ -259,6 +256,33 @@ public class InvoiceServiceImpl implements InvoiceService{
                                "July", "August", "September", "October", "November", "December"};
         String formattedDate = day + " " + monthNames[monthIndex] + " " + year;
         return formattedDate;
+    }
+
+    @Override
+    public String checkValidity(CreateInvoiceRequestDTO invoiceDTO, List<Integer> selectedTaxIds, String email) {
+        var res = "";
+        if (invoiceDTO.getCustomerId() == null){
+            res = "errorMessage, Customer can't be empty";
+        }
+        else if (invoiceDTO.getAccountName() == null || invoiceDTO.getAccountNumber() == null ||
+                invoiceDTO.getBankName() == null){
+            res = "errorMessage, Please provide the account information";
+        }
+        else if (invoiceDTO.getDueDate() == null){
+            res = "errorMessage, Please select invoice due date";
+        }
+        else {
+            invoiceDTO.setStatus("Waiting for Approver");
+            var customer = customerService.getCustomerById(invoiceDTO.getCustomerId());
+            System.out.println("total discount "+invoiceDTO.getTotalDiscount());
+            var invoice = invoiceMapper.createInvoiceRequestToInvoice(invoiceDTO);
+            invoice.setCustomer(customer);
+            attributeInvoice(invoice, selectedTaxIds);
+            // invoiceDTO.setSignature(imageDataUrl);
+            createInvoice(invoice, email);
+            res = "successMessage, Invoice created successfully!";
+        }    
+        return res;
     }
 }
 
