@@ -12,10 +12,14 @@ import org.springframework.stereotype.Service;
 
 import com.megapro.invoicesync.dto.InvoiceMapper;
 import com.megapro.invoicesync.dto.request.CreateInvoiceRequestDTO;
+import com.megapro.invoicesync.model.Approval;
+import com.megapro.invoicesync.model.Employee;
 import com.megapro.invoicesync.model.Invoice;
 import com.megapro.invoicesync.model.Product;
 import com.megapro.invoicesync.model.Tax;
 import com.megapro.invoicesync.model.UserApp;
+import com.megapro.invoicesync.repository.ApprovalDb;
+import com.megapro.invoicesync.repository.EmployeeDb;
 import com.megapro.invoicesync.repository.InvoiceDb;
 import com.megapro.invoicesync.repository.ProductDb;
 import com.megapro.invoicesync.repository.TaxDb;
@@ -48,6 +52,10 @@ public class InvoiceServiceImpl implements InvoiceService{
     UserAppDb userAppDb;
 
     @Autowired
+    EmployeeDb employeeDb;
+
+    @Autowired
+    ApprovalDb approvalDb;
     CustomerService customerService;
 
     @Autowired
@@ -259,6 +267,33 @@ public class InvoiceServiceImpl implements InvoiceService{
     }
 
     @Override
+    public void addApproverToInvoice(UUID invoiceId, String email) {
+        Invoice invoice = invoiceDb.findById(invoiceId)
+            .orElseThrow(() -> new EntityNotFoundException("Invoice not found"));
+        
+        // Assuming you have a method in your UserAppDb or EmployeeDb to find by email
+        Employee employee = employeeDb.findByEmail(email);
+        
+        if (employee == null) {
+            throw new EntityNotFoundException("Employee with email: " + email + " not found");
+        }
+
+        if(approvalDb.existsByInvoiceAndEmployee(invoice, employee)) {
+            throw new IllegalStateException("Employee already added as an approver for this invoice.");
+        }
+        
+        Approval approval = new Approval();
+        approval.setEmployee(employee);
+        approval.setInvoice(invoice);
+        approval.setApprovalStatus("Pending"); // Set the initial approval status
+        
+        // Set other fields as necessary...
+        
+        approvalDb.save(approval);
+    }
+    
+    
+    
     public String checkValidity(CreateInvoiceRequestDTO invoiceDTO, List<Integer> selectedTaxIds, String email) {
         var res = "";
         if (invoiceDTO.getCustomerId() == null){
