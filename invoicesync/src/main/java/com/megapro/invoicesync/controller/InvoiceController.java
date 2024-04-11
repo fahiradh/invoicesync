@@ -1,5 +1,6 @@
 package com.megapro.invoicesync.controller;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,6 +20,7 @@ import com.megapro.invoicesync.dto.ProductMapper;
 import com.megapro.invoicesync.dto.request.CreateCustomerRequestDTO;
 import com.megapro.invoicesync.dto.request.CreateInvoiceRequestDTO;
 import com.megapro.invoicesync.repository.UserAppDb;
+import com.megapro.invoicesync.service.ApprovalService;
 import com.megapro.invoicesync.service.CustomerService;
 import com.megapro.invoicesync.service.InvoiceService;
 import com.megapro.invoicesync.service.TaxService;
@@ -31,6 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.megapro.invoicesync.dto.response.ReadInvoiceResponse;
+import com.megapro.invoicesync.model.Approval;
 import com.megapro.invoicesync.model.Customer;
 import com.megapro.invoicesync.model.Invoice;
 import com.megapro.invoicesync.model.Product;
@@ -70,6 +73,9 @@ public class InvoiceController {
 
     @Autowired
     TaxService taxService;
+
+    @Autowired
+    private ApprovalService approvalService;
 
     @GetMapping(value="/create-invoice")
     public String formCreateInvoice(Model model, @ModelAttribute("successMessage") String successMessage, 
@@ -146,6 +152,11 @@ public class InvoiceController {
         List<Product> listProduct = invoiceService.getListProductInvoice(invoice);
         List<Tax> taxList = taxService.findAllTaxes();
         var invoiceDTO = invoiceMapper.readInvoiceToInvoiceResponse(invoice);
+        List<UserApp> employees = userAppDb.findByRoleName("Finance Staff");
+        List<Approval> approvers = approvalService.findApproversByInvoice(invoice);
+        model.addAttribute("approvers", approvers);
+ // Replace "ApproverRole" with the actual role name
+        model.addAttribute("employees", employees);
         var date = invoiceDTO.getInvoiceDate();
 
         model.addAttribute("image", invoice.getSignature());
@@ -342,5 +353,26 @@ public class InvoiceController {
         return "invoice/form-edit-invoice";
     }
 
+    @PostMapping("/invoice/{invoiceNumber}/add-approver")
+    public String addApprover(@PathVariable("invoiceNumber") String invoiceNumber,
+                              @RequestParam("approverEmail") String approverEmail,
+                              RedirectAttributes redirectAttributes) {
+        try {
+            String decodedInvoiceNumber = invoiceNumber.replace('_', '/');
+            Invoice invoice = invoiceService.getInvoiceByInvoiceNumber(decodedInvoiceNumber);
+            
+            invoiceService.addApproverToInvoice(invoice.getInvoiceId(), approverEmail);
+            
+            redirectAttributes.addFlashAttribute("success", "Approver successfully added.");
+        } catch (IllegalStateException ex) {
+            redirectAttributes.addFlashAttribute("error", ex.getMessage());
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Failed to add approver: " + ex.getMessage());
+        }
+        return "redirect:/invoice/" + invoiceNumber.replace('/', '_');
+    }
+    
+    
+    
 
 }

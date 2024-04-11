@@ -6,6 +6,13 @@
   <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
   <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
   <title>InvoiceSync</title>
+  <style>
+    .table-custom th, .table-custom td {
+    border: none;
+    text-align: center;        /* Teks rata tengah horizontal */
+    vertical-align: middle;    /* Teks rata tengah vertikal */
+}
+</style>
 </head>
 
 <body>
@@ -228,7 +235,7 @@
                                     </div>
                                     <br>
                                     <div class="drag-area">
-                                        <img class="card-img-top" th:src="@{'data:image/jpeg;base64,' + ${image}}" alt="signature-image" style="max-height=150px;">
+                                        <img class="card-img-top" th:src="@{'data:image/jpeg;base64,' + ${image}}" alt="signature-image" style="max-height:150px;">
                                     </div>
                                     <br>
                                     <input class="form-control" type="text" th:value="${invoice.staffEmail}" readonly />
@@ -340,7 +347,104 @@
         </div>
     </div>
     </div>
+    <!-- Add Approver Modal -->
+    <div class="modal fade" id="addApproverModal" tabindex="-1" role="dialog" aria-labelledby="addApproverModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addApproverModalLabel">Add Approver</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- The action URL should point to the controller method that handles adding an approver -->
+                    <form th:action="@{/invoice/{invoiceNumber}/add-approver(invoiceNumber=${invoice.invoiceNumber.replace('/', '_')})}" method="post">
+                        <!-- form inputs -->
+                        <div class="form-group">
+                            <label for="approverName">Approver Name</label>
+                            <select class="form-control" id="approverName" name="approverEmail">
+                                <option value="">Select Approver</option>
+                                <!-- Iterate over employees and display first and last names -->
+                                <option th:each="employee : ${employees}" 
+                                        th:value="${employee.email}" 
+                                        th:text="${employee.first_name + ' ' + employee.last_name}">
+                                </option>
+                            </select>                        
+                        </div>
+                        <div class="form-group">
+                            <!-- Include hidden field to hold the invoice number or ID -->
+                            <input type="hidden" name="invoiceNumber" th:value="${invoice.invoiceNumber}" />
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Existing HTML code -->
 
+ <!-- Approver List Section -->
+ <div class="container-invoice">
+    <div class="card mt-3 mb-5" style="width: 100%;"> <!-- Set the width to 100% of the container -->
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addApproverModal">Add Approver</button>
+        <div class="card-header">
+            <h5 class="card-title">Approvers</h5>
+        </div>
+        <div class="card-body">
+            <table class="table table-custom" id="approversTable">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Approver</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Iteration over approvers -->
+                    <tr th:each="approver, iterStat : ${approvers}">
+                        <td th:text="${iterStat.count}"></td>
+                        <td th:text="${approver.employee.first_name + ' ' + approver.employee.last_name}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+  
+
+<!-- Rest of your existing HTML including the Add Approver Modal -->
+<script>
+    /*<![CDATA[*/
+$(document).ready(function() {
+  $('#addApproverForm').submit(function(event) {
+    event.preventDefault();
+    var formData = $(this).serialize(); // Serialize form data for submission
+    // Update the AJAX call as per your form serialization
+    $.ajax({
+      url: "@{/invoice/{invoiceNumber}/add-approver(invoiceNumber=${invoice.invoiceNumber.replace('/', '_')})}", // Update this URL to your POST endpoint
+      type: 'POST',
+      data: formData, // Send the serialized form data
+      success: function(response) {
+        // Assuming the response contains the updated list of approvers
+        var approversTable = $('#approversTable tbody');
+        approversTable.empty(); // Clear existing rows
+        $.each(response.approvers, function(i, approver) {
+          approversTable.append('<tr>' +
+                                  '<td>' + (i+1) + '</td>' +
+                                  '<td>' + approver.employee.firstName + ' ' + approver.employee.lastName + '</td>' +
+                                '</tr>');
+        });
+        $('#addApproverModal').modal('hide');
+      },
+      error: function() {
+        alert('Error adding approver.');
+      }
+    });
+  });
+});
+/*]]>*/
+
+</script>
     <script src="/js/scripts/print-script.js"></script>
     
 </body>
