@@ -19,4 +19,5 @@ public class CreateApprovalRequestDTO {
     private int cycle;
     private String approvalStatus;
     private String comment;
+    private boolean shown;
 }

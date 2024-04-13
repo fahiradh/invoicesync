@@ -46,7 +46,12 @@
                 </div>
             </div>
             <div class="form-buttons" th:if="${status == null || status == ''}">
-                <button class="btn btn-success" type="submit" formaction="@{/approve-invoice}">Approve</button>
+                <form action="/approve-invoice" method="post" th:object="${approvalDTO}" style="display: inline-block;">
+                    <input class="form-control" type="hidden" th:field="*{approvalId}">
+                    <button type="submit" class="btn btn-success">Approve</button>
+                </form>
+
+                <!-- <button class="btn btn-success" type="submit" formaction="@{/approve-invoice}">Approve</button> -->
                 <button class="btn btn-danger" type="submit" formaction="@{/reject-invoice}">Reject</button>
                 <!-- <button class="btn btn-warning" type="submit" formaction="@{/revision-invoice}">Need Revision</button> -->
                 <button class="btn btn-warning" type="submit" data-bs-toggle="modal" data-bs-target="#exampleModalCenter">
@@ -334,7 +339,7 @@
                                 <p th:text="${log.comment}">
                                 </p>
                                 <a href="https://documentcloud.adobe.com/spodintegration/index.html?locale=en-us" target="_blank">Read more</a>
-                                <!-- <embed src="C:\Users\Neysa\Downloads\867-1955-1-PB.pdf" width="800px" height="2100px" /> -->
+                               
                             </div>
                         </div>
                     </div>
