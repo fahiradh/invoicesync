@@ -26,6 +26,9 @@ import com.megapro.invoicesync.service.ApprovalService;
 import com.megapro.invoicesync.service.InvoiceService;
 import com.megapro.invoicesync.service.TaxService;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 
 
 @Controller
@@ -52,7 +55,7 @@ public class ApproveInvoiceController {
     @Autowired
     TaxService taxService;
 
-    @GetMapping("/approve-invoice")
+    @GetMapping("/approval")
     public String approveInvoicePage(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
@@ -69,20 +72,23 @@ public class ApproveInvoiceController {
                 ReadInvoiceResponse invoiceDTO = invoiceMapper.readInvoiceToInvoiceResponse(invoice);
                 invoiceDTO.setApprovalId(approval.getApprovalId());
                 System.out.println("Ini approval id yang dibawa " + invoiceDTO.getApprovalId());
-                invoiceDTOList.add(invoiceDTO);
+                System.out.println(invoiceDTO.getInvoiceNumber());
+                System.out.println(invoiceDTO.getStatus());
+                if (invoiceDTO.getStatus().equals("Waiting for Approver")) {
+                    invoiceDTOList.add(invoiceDTO);
+                    
+                }
             }
+            model.addAttribute("invoices", invoiceDTOList);
         }
-        model.addAttribute("email", email);
-        model.addAttribute("invoices", invoiceDTOList);
-
         return "approve-invoice/list-approval.html";
     }
     
     // Detail invoice untuk diapprove
-    @GetMapping("/approve-invoice/{invoiceNumber}")
+    @GetMapping("/approval/{invoiceNumber}")
     public String getApprovalDetail(
                             @PathVariable("invoiceNumber") String encodedInvoiceNumber, 
-                            int approvalId,
+                            @RequestParam(required = false) Integer approvalId,
                             Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
@@ -141,7 +147,7 @@ public class ApproveInvoiceController {
 
         var invoiceNumber = approval.getInvoice().getInvoiceNumber().replace('/', '_');
         
-        return "redirect:/approve-invoice/"+invoiceNumber;
+        return "redirect:/approval/"+invoiceNumber;
     }
     
     @PostMapping("/reject-invoice")
@@ -157,6 +163,26 @@ public class ApproveInvoiceController {
 
         var invoiceNumber = approval.getInvoice().getInvoiceNumber().replace('/', '_');
         
-        return "redirect:/approve-invoice/"+invoiceNumber;
+        return "redirect:/approval/"+invoiceNumber;
+    }
+
+    @PostMapping("/approve-invoice")
+    public String approve(UpdateApprovalRequestDTO updateApprovalRequestDTO, RedirectAttributes redirectAttributes) {
+
+        var approval = approvalService.findApprovalByApprovalId(updateApprovalRequestDTO.getApprovalId());
+        approval.setApprovalStatus("Approved");
+        approval.setApprovalTime(LocalDate.now());
+        approvalService.saveApproval(approval);
+
+        var invoice = approval.getInvoice();
+        invoice.setStatus("Approved");
+        invoiceService.updateInvoice(invoice);
+
+        var invoiceNumber = approval.getInvoice().getInvoiceNumber().replace('/', '_');
+        System.out.println("Attempting to redirect to: /approval/" + invoiceNumber);
+
+        redirectAttributes.addFlashAttribute("message", "Invoice Approved Successfully");
+
+        return "redirect:/approval/" + invoiceNumber + "?approvalId=" + approval.getApprovalId();
     }
 }

@@ -33,7 +33,7 @@
                         <tr th:each="invoice, iterStat : ${invoices}" th:if="${invoice.customer != null}">
                             <td th:text="${iterStat.count}"></td>
                             <td>
-                                <a th:href="@{/approve-invoice/{invoiceNumber}(invoiceNumber=${invoice.invoiceNumber != null ? invoice.invoiceNumber.replace('/', '_') : 'Dummy'}, approvalId=${invoice.approvalId})}"
+                                <a th:href="@{/approval/{invoiceNumber}(invoiceNumber=${invoice.invoiceNumber != null ? invoice.invoiceNumber.replace('/', '_') : 'Dummy'}, approvalId=${invoice.approvalId})}"
                                    th:text="${invoice.invoiceNumber}"
                                    name="approvalId"
                                    th:value="${invoice.approvalId}"></a>
