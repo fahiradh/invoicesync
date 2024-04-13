@@ -24,16 +24,6 @@ h4{
 }
 
 /* Container */
-.container-invoice {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap:20px;
-    justify-content: center;
-}
-
-.item {
-    padding: 20px;
-}
 
 .container{
     display: flex;
@@ -41,7 +31,8 @@ h4{
     justify-content: center;
     margin: auto;
     max-width: 1200px;
-    padding-top: 20px;
+    padding-top: 3%;
+    padding-bottom:3%;
 }
 
 .container-title{
@@ -137,7 +128,6 @@ h4{
 
 .card-title{
     text-align: center;
-    padding-top:5%;
 }
 
 .card-text {
@@ -203,6 +193,7 @@ h4{
     border-radius: 10px;
     overflow: hidden;
     margin-top: 20px;
+    text-align: center;
 }
 .table-custom thead {
     background-color: #3F2685;
@@ -375,10 +366,11 @@ h4{
 .grid-container-invoice-logs {
     display: grid;
     grid-template-columns: 5fr 2fr;
+    gap: 20px;
 }
 
 .grid-container-invoice-logs-child {
-    padding: 5px;
+    padding-top: 10px;
 }
 
 .container-logs {

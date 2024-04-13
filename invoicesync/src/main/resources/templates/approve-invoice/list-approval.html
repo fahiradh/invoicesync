@@ -6,13 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
     <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
-    <style>
-        .table-custom th, .table-custom td {
-        border: none;
-        text-align: center;        /* Teks rata tengah horizontal */
-        vertical-align: middle;    /* Teks rata tengah vertikal */
-    }
-    </style>
 </head>
 <body>
     <nav th:if="${role == 'Non-Finance Manager'}" th:replace="~{fragments/navbar-non-finance :: navbar-non-finance-manager(page='Approve-Invoice')}"></nav>
@@ -20,17 +13,19 @@
     <nav th:if="${role == 'Finance Manager'}" th:replace="~{fragments/navbar-finance :: navbar-finance-exc(page='Approve-Invoice')}"></nav>
 
     <div class="container">
-        <div class="card-borderless ml-5 mr-5 mt-3 mb-5">
-            <div class="card-body p-4">
-                <h2>Approve Invoice</h2>
-                <p>This is the invoice submitted to you. Click on the ID number to proceed with approval.</p>
+        <div class="card-title">
+            <h2>Approve Invoice</h2>
+        </div>
+        <div class="card-borderless">
+            <div class="card-body">
+                <p>These are some invoices submitted to you. Click on the invoice number to proceed with approval.</p>
                 <table class="table table-custom">
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>ID</th>
+                            <th>Invoice Number</th>
                             <th>Client Name</th>
-                            <th>Total Amount</th>
+                            <th>Grand Total</th>
                             <th>Status</th>
                         </tr>
                     </thead>
@@ -44,7 +39,8 @@
                                    th:value="${invoice.approvalId}"></a>
                             </td>
                             <td th:text="${invoice.customer.name}"></td>
-                                <td th:text="${'Rp' + #numbers.formatDecimal(invoice.grandTotal, 0, 'COMMA', 2, 'POINT')}"></td>
+                            <td th:text="${'Rp' + #numbers.formatDecimal(invoice.grandTotal, 0, 'COMMA', 2, 'POINT')}"></td>
+                            <td th:with="status=${invoice.status}" th:include="fragments/invoice-status :: invoice-status-show"></td>
                         </tr>
                     </tbody>
                 </table>

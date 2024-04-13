@@ -11,14 +11,13 @@ import java.util.List;
 
 import com.megapro.invoicesync.model.Tax;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateInvoiceRequestDTO {
     private LocalDate invoiceDate = LocalDate.now();
     private LocalDate dueDate;
+    private String invoiceNumber;
     private String totalWords;
     private String signature;
     private String city;
@@ -30,7 +29,7 @@ public class CreateInvoiceRequestDTO {
     private String accountNumber;
     private String bankName;
     private String accountName;
-    private String status = "Draft";
+    private String status;
     private UUID customerId;
     private String productDocument;
     private String additionalDocument;

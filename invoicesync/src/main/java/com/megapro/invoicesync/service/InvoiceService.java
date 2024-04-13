@@ -11,7 +11,6 @@ import java.time.LocalDate;
 
 public interface InvoiceService {
     void createInvoice(Invoice invoice, String email);
-    void updateInvoice(Invoice invoice);
     void attributeInvoice(Invoice invoice, List<Integer> listTax);
     long countInvoice();
     Invoice getInvoiceById(UUID id);
@@ -26,10 +25,10 @@ public interface InvoiceService {
     List<Invoice> retrieveInvoicesByStatus(String status);
     Invoice getDummyInvoice();
     String translateByte(byte[] byteFile);
-    void transferData(CreateInvoiceRequestDTO invoiceRequestDTO, Invoice invoice);
+    // void transferData(CreateInvoiceRequestDTO invoiceRequestDTO, Invoice invoice);
     Invoice getInvoiceByInvoiceNumber(String invoiceNumber);
     String parseDate(LocalDate localDate);
-    public void addApproverToInvoice(UUID invoiceId, String email);
-    
     String checkValidity(CreateInvoiceRequestDTO invoiceDTO, List<Integer> selectedTaskIds, String email);
+    Invoice updateInvoice(Invoice invoiceFromDTO);
+    void addApproverToInvoice(UUID invoiceId, String email);
 }

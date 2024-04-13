@@ -23,6 +23,7 @@ public class CustomerServiceImpl implements CustomerService{
 
     @Override
     public Customer getCustomerById(UUID id){
+        System.out.println("customer id di service " + id);
         return customerDb.findByCustomerId(id);
     }
 

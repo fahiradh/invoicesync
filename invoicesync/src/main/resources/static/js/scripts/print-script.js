@@ -4,7 +4,9 @@ document.getElementById("printButton").addEventListener("click", function(event)
 });
 
 function generatePdf() {
-    fetch('/api/v1/download-invoice', {
+    var inv = document.getElementById("invoiceId").value;
+    console.log("invoice id nya "+inv);
+    fetch('/api/v1/download-invoice/'+inv, {
         method: 'GET'
     })
     .then(response => {

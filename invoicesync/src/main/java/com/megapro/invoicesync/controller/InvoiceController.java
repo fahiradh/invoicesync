@@ -19,11 +19,13 @@ import com.megapro.invoicesync.dto.InvoiceMapper;
 import com.megapro.invoicesync.dto.ProductMapper;
 import com.megapro.invoicesync.dto.request.CreateCustomerRequestDTO;
 import com.megapro.invoicesync.dto.request.CreateInvoiceRequestDTO;
+import com.megapro.invoicesync.dto.request.UpdateInvoiceRequestDTO;
 import com.megapro.invoicesync.repository.UserAppDb;
 import com.megapro.invoicesync.service.ApprovalService;
 import com.megapro.invoicesync.service.CustomerService;
 import com.megapro.invoicesync.service.InvoiceService;
 import com.megapro.invoicesync.service.TaxService;
+import com.megapro.invoicesync.service.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -35,6 +37,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.megapro.invoicesync.dto.response.ReadInvoiceResponse;
 import com.megapro.invoicesync.model.Approval;
 import com.megapro.invoicesync.model.Customer;
+import com.megapro.invoicesync.model.Employee;
 import com.megapro.invoicesync.model.Invoice;
 import com.megapro.invoicesync.model.Product;
 import com.megapro.invoicesync.model.Tax;
@@ -77,6 +80,9 @@ public class InvoiceController {
     TaxService taxService;
 
     @Autowired
+    UserService userService;
+
+    @Autowired
     private ApprovalService approvalService;
 
     @GetMapping(value="/create-invoice")
@@ -88,9 +94,11 @@ public class InvoiceController {
         String role = user.getRole().getRole();
         var invoiceDTO = new CreateInvoiceRequestDTO();
         invoiceDTO.setStaffEmail(email);
+        invoiceDTO.setStatus("Draft");
         var customerDTO = new CreateCustomerRequestDTO();
         List<Customer> listCustomer = customerService.getAllCustomer();
         LocalDate date = invoiceDTO.getInvoiceDate();
+        // Employee employee = userService.findByEmail(email);
 
         model.addAttribute("email", email);
         model.addAttribute("role", role);
@@ -102,6 +110,7 @@ public class InvoiceController {
         model.addAttribute("invoiceDTO", invoiceDTO);
         model.addAttribute("successMessage", successMessage);
         model.addAttribute("errorMessage", errorMessage);
+        // model.addAttribute("employeeName", String.format("%s %s", employee.getFirst_name(), employee.getLast_name()));
         return "invoice/form-create-invoice";
     }
 
@@ -122,10 +131,6 @@ public class InvoiceController {
             String bytesToString = invoiceService.translateByte(imageBytes);
             invoiceDTO.setSignature(bytesToString);
 
-            System.out.println("invoice subtotal "+invoiceDTO.getSubtotal());
-            System.out.println("invoice grand total "+invoiceDTO.getGrandTotal());
-            System.out.println("invoice discount " + invoiceDTO.getTotalDiscount());
-            
             var message = invoiceService.checkValidity(invoiceDTO, selectedTaxIds, email).split(",");
             var newInvoiceDTO = new CreateInvoiceRequestDTO();
 
@@ -150,14 +155,14 @@ public class InvoiceController {
         String role = user.getRole().getRole();
         String invoiceNumber = encodedInvoiceNumber.replace('_', '/');
 
-        var invoice = invoiceService.getInvoiceByInvoiceNumber(invoiceNumber); // Perlu metode baru untuk mencari berdasarkan invoiceNumber
+        var invoice = invoiceService.getInvoiceByInvoiceNumber(invoiceNumber);
         List<Product> listProduct = invoiceService.getListProductInvoice(invoice);
         List<Tax> taxList = taxService.findAllTaxes();
         var invoiceDTO = invoiceMapper.readInvoiceToInvoiceResponse(invoice);
         List<UserApp> employees = userAppDb.findByRoleName("Finance Staff");
         List<Approval> approvers = approvalService.findApproversByInvoice(invoice);
         model.addAttribute("approvers", approvers);
- // Replace "ApproverRole" with the actual role name
+        // Replace "ApproverRole" with the actual role name
         model.addAttribute("employees", employees);
         var date = invoiceDTO.getInvoiceDate();
 
@@ -205,7 +210,7 @@ public class InvoiceController {
         }
 
         model.addAttribute("invoices", invoiceDTOList);
-        return "viewall-invoices";
+        return "invoice/viewall-invoices";
     }
 
     @GetMapping(value="/invoices", params = "status")
@@ -235,7 +240,7 @@ public class InvoiceController {
         }
 
         model.addAttribute("invoices", invoiceDTOList);
-        return "viewall-invoices";
+        return "invoice/viewall-invoices";
     }
 
     @GetMapping("/my-invoices")
@@ -301,7 +306,7 @@ public class InvoiceController {
         model.addAttribute("invoices", invoiceDTOList);
         model.addAttribute("division", requestedDivision); // Ganti role dengan division
         
-        return "viewall-invoices-division";
+        return "invoice/viewall-invoices-division";
     }
 
     @GetMapping(value="/invoices/division/{division}", params = "status")
@@ -326,7 +331,7 @@ public class InvoiceController {
         model.addAttribute("invoices", invoiceDTOList);
         model.addAttribute("division", requestedDivision);
         
-        return "viewall-invoices-division";
+        return "invoice/viewall-invoices-division";
     }
 
     @GetMapping("/invoice/{invoiceNumber}/edit")
@@ -339,39 +344,35 @@ public class InvoiceController {
         String invoiceNumber = encodedInvoiceNumber.replace('_', '/');
 
         var invoice = invoiceService.getInvoiceByInvoiceNumber(invoiceNumber);
-        CreateInvoiceRequestDTO invoiceDTO = new CreateInvoiceRequestDTO();
-        invoiceService.transferData(invoiceDTO, invoice);
-        var listProduct = invoice.getListProduct();
+        UpdateInvoiceRequestDTO invoiceDTO = invoiceMapper.updateInvoiceToInvoiceDTO(invoice);
+        List<Product> listProduct = invoiceService.getListProductInvoice(invoice);
         var date = invoice.getInvoiceDate();
 
         model.addAttribute("image", invoice.getSignature());
         model.addAttribute("listProduct", listProduct);
         model.addAttribute("role", role);
         model.addAttribute("date", String.format("%02d/%02d/%04d", date.getDayOfMonth(),  date.getMonth().getValue(), date.getYear()));
-        model.addAttribute("invoiceNumber", invoice.getInvoiceNumber());
-        model.addAttribute("invoice", invoiceDTO);
-        model.addAttribute("dateInvoice", invoiceService.parseDate(invoiceDTO.getInvoiceDate()));
+        model.addAttribute("invoiceNumber", invoiceNumber);
+        model.addAttribute("dateInvoice", invoiceService.parseDate(invoice.getInvoiceDate()));
         model.addAttribute("customer", invoice.getCustomer());
+        model.addAttribute("email", email);
+        model.addAttribute("invoiceDTO", invoiceDTO);
+        model.addAttribute("currentSignature", invoice.getSignature());
         return "invoice/form-edit-invoice";
     }
 
-    @PostMapping("/invoice/{invoiceNumber}/add-approver")
-    public String addApprover(@PathVariable("invoiceNumber") String invoiceNumber,
-                              @RequestParam("approverEmail") String approverEmail,
-                              RedirectAttributes redirectAttributes) {
-        try {
-            String decodedInvoiceNumber = invoiceNumber.replace('_', '/');
-            Invoice invoice = invoiceService.getInvoiceByInvoiceNumber(decodedInvoiceNumber);
-            
-            invoiceService.addApproverToInvoice(invoice.getInvoiceId(), approverEmail);
-            
-            redirectAttributes.addFlashAttribute("success", "Approver successfully added.");
-        } catch (IllegalStateException ex) {
-            redirectAttributes.addFlashAttribute("error", ex.getMessage());
-        } catch (Exception ex) {
-            redirectAttributes.addFlashAttribute("error", "Failed to add approver: " + ex.getMessage());
-        }
-        return "redirect:/invoice/" + invoiceNumber.replace('/', '_');
+    @PostMapping("/invoice/edit")
+    public String editInvoice(@ModelAttribute UpdateInvoiceRequestDTO invoiceDTO, Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        var user = userAppDb.findByEmail(email);
+        String role = user.getRole().getRole();
+        var invoiceFromDTO = invoiceMapper.updateInvoiceDTOToInvoice(invoiceDTO);
+        var invoice = invoiceService.updateInvoice(invoiceFromDTO);
+        String encodedInvoiceNumber = invoice.getInvoiceNumber().replace("/", "_");
+        model.addAttribute("email", email);
+        model.addAttribute("role", role);
+        return String.format("redirect:/invoice/%s", encodedInvoiceNumber);
     }
 
     // @GetMapping

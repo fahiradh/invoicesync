@@ -7,7 +7,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,7 +22,6 @@ import jakarta.validation.Valid;
 
 
 import com.megapro.invoicesync.service.RoleService;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 
@@ -63,7 +61,7 @@ public class EmployeeController {
         model.addAttribute("successMessage", successMessage);
         model.addAttribute("errorMessage", errorMessage);
 
-        return "form-create-account";
+        return "account/form-create-account";
     }
     
     @PostMapping("/create-account")
@@ -101,7 +99,7 @@ public class EmployeeController {
 
         if (result.hasErrors()) {
             model.addAttribute("errorMessage", "Please check your input");
-            return "form-create-account"; 
+            return "account/form-create-account"; 
         }
         
         employee.setNomorHp(employeeDTO.getNomorHp());
@@ -129,7 +127,7 @@ public class EmployeeController {
         var listEmployee = userService.getAllEmployee();
         model.addAttribute("listEmployee", listEmployee);
 
-        return "viewall-employee";
+        return "account/viewall-employee";
     }
     
     // Delete employee

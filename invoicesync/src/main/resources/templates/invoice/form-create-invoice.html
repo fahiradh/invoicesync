@@ -10,14 +10,15 @@
 
 <body>
     <nav th:replace="~{fragments/navbar-non-finance :: navbar-non-finance-staff(page = 'Create-Invoice')}"></nav>
+    <div class="container">
     <form th:action="@{/create-invoice}" th:object="${invoiceDTO}" method="POST" enctype="multipart/form-data">
-    <div class="container-invoice">
-        <div class="item" style="margin-left:5%;">
-            <div class="header">
-                <h4>Create Invoice / <span class="invoice-number">Draft</span></h4>
-            </div>
-            <a class="btn btn-danger" href="/home">Cancel</a> 
-            <button class="btn btn-primary" type="submit">Save</button>
+    <div class="header">
+        <h4>Create Invoice / <span class="invoice-number">Draft</span></h4>
+    </div>
+    <a class="btn btn-danger" href="/home">Cancel</a> 
+    <button class="btn btn-primary" type="submit">Save</button>
+    <div class="grid-container-invoice-logs">
+        <div class="grid-container-invoice-logs-child">
             <div class="card">
                 <div class="card-body p-4">
                 <div class="container-title">
@@ -31,13 +32,13 @@
                 <hr>
                 <div class="content">
                     <div class="justify-content-center">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <a th:href="@{/create-customer}" class="btn btn-primary">Add New Customer</a></td>
+                        <div class="row" style="align-items:center;">
+                            <div class="col">
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addCustomerModal">New Customer</button>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col">
                                 <table class="table table-borderless">
                                     <tr>
                                         <td><p class="card-text mb-0">Customer</p></td>
@@ -62,7 +63,7 @@
                                     </tr>
                                 </table>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col">
                                 <table class="table table-borderless">
                                     <tr>
                                         <td><p class="card-text mb-0">Invoice Date</p></td>
@@ -105,7 +106,7 @@
                         <hr>
 
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col">
                                 <div class="mb-4">
                                     <p class="card-text">Payment Information</p>
                                     <table class="table table-borderless">
@@ -125,7 +126,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col">
                                 <div class="mb-4">
                                 <table class="table table-bordered-classic">
                                         <tr>
@@ -146,10 +147,6 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td><p class="card-text mb-0">Taxes</p></td>
-                                            <td>
-                                                <input class="form-control" th:field="*{taxTotal}" type="number" disabled />
-                                            </td>
                                         </tr>
                                         <tr>
                                             <td><p class="card-text mb-0">Grand Total</p></td>
@@ -169,7 +166,7 @@
                         <hr>
 
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col">
                                 <div class="mb-4">
                                     <p class="card-info">Please attach additional documents for approval.</p>
                                     <br>
@@ -179,7 +176,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col">
                                 <div class="mb-4">
                                     <p class="card-text">Signature</p>
                                     <div class="form-inline">
@@ -207,10 +204,11 @@
                 </div>
             </div>
         </div>
-        <div class="item" style="margin-right:5%;">
+        <div class="grid-container-invoice-logs-child">
             <h3 style="text-align:center;">Approval Log<h3>
             <hr>
         </div>  
+    </div>
     </div>
     <!-- Modal untuk Pesan Sukses -->
     <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
@@ -218,7 +216,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalLabel">Success</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeModalButton">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -251,6 +249,35 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="addCustomerModal" tabindex="-1" role="dialog" aria-labelledby="addCustomerModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addCustomerModalLabel">Add New Customer</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form th:action="@{/create-customer}" th:object="${customerDTO}" method="post">
+                        <div class="form-group">
+                            <label for="customerName">Name</label>
+                            <input class="form-control" type="text" th:field="*{name}" required/>
+                            <label for="customerContact">Contact</label>
+                            <input class="form-control" type="text" th:field="*{contact}" required/>
+                            <label for="customerPhone">Phone</label>
+                            <input class="form-control" type="text" th:field="*{phone}" required/>
+                            <label for="customerAddress">Address</label>
+                            <textarea class="form-control" type="text" th:field="*{address}" style="height:100px" required/>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Existing HTML code -->
     
     <script src="/js/scripts/invoice-script.js"></script>
 

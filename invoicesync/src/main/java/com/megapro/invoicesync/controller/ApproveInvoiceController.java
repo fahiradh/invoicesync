@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalDate;
 
-import org.hibernate.validator.constraints.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,10 +25,7 @@ import com.megapro.invoicesync.repository.UserAppDb;
 import com.megapro.invoicesync.service.ApprovalService;
 import com.megapro.invoicesync.service.InvoiceService;
 import com.megapro.invoicesync.service.TaxService;
-
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
 
 
 @Controller
@@ -76,6 +72,7 @@ public class ApproveInvoiceController {
                 invoiceDTOList.add(invoiceDTO);
             }
         }
+        model.addAttribute("email", email);
         model.addAttribute("invoices", invoiceDTOList);
 
         return "approve-invoice/list-approval.html";

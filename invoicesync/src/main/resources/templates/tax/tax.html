@@ -5,75 +5,20 @@
   <title>Perpajakan</title>
   <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
   <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
-  <style>
-    /* Center modal vertically */
-    .btn-primary {
-    background-color: #3f2685; /* Purple color */
-    border-color: #3f2685; /* Border color same as background */
-    color: white; /* White text color */
-    }
-
-    .modal {
-      text-align: center;
-      padding: 0!important;
-    }
-    .modal:before {
-      content: '';
-      display: inline-block;
-      height: 100%;
-      vertical-align: middle;
-      margin-right: -4px; /* Adjusts for spacing */
-    }
-    .modal-dialog {
-      display: inline-block;
-      text-align: left;
-      vertical-align: middle;
-    }
-    .table-bordered-purple thead th {
-      background-color: #3f2685;
-      border: 1px solid white;
-      /* border: 1px solid #dee2e6; */
-      color: white
-    }
-
-    .table-bordered-purple tbody td {
-      border: 1px solid #dee2e6;
-    }
-
-    .rounded-table {
-    border-radius: 10px;
-    overflow: hidden;
-    }
-
-    .rounded-table thead th:first-child {
-      border-top-left-radius: 10px;
-    }
-
-    .rounded-table thead th:last-child {
-      border-top-right-radius: 10px;
-    }
-
-    .rounded-table tbody td:first-child {
-      border-bottom-left-radius: 10px;
-    }
-
-    .rounded-table tbody td:last-child {
-      border-bottom-right-radius: 10px;
-    }
-  </style>
 </head>
   <body>
     <nav th:replace="~{fragments/navbar-finance :: navbar-finance-staff(page='Tax')}"></nav>
     <div class="container">
-      <div class="card-borderless ml-5 mr-5 mt-3 mb-5">
+      <div class="card-title">
+        <h2>Tax Management</h2>
+      </div>
+      <div class="card-borderless">
         <div class="card-body p-4">
-          <h2>Tax Management</h2>
           <div class="row g-3">
             <div class="col-auto">
               <button type="button" class="btn btn-primary" style="padding-left: 0.5rem; padding-right: 0.5rem;" data-toggle="modal" data-target="#exampleModal">Add</button>
             </div>
           </div>
-          <!-- Table -->
     <table class="table table-custom">
       <thead>
         <tr>
