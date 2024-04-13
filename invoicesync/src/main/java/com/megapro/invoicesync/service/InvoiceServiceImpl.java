@@ -56,6 +56,8 @@ public class InvoiceServiceImpl implements InvoiceService{
 
     @Autowired
     ApprovalDb approvalDb;
+
+    @Autowired
     CustomerService customerService;
 
     @Autowired
@@ -318,6 +320,11 @@ public class InvoiceServiceImpl implements InvoiceService{
             res = "successMessage, Invoice created successfully!";
         }    
         return res;
+    }
+
+    @Override
+    public void updateInvoice(Invoice invoice) {
+        invoiceDb.save(invoice);
     }
 }
 

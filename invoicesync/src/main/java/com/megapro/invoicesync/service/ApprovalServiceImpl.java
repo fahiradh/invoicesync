@@ -42,4 +42,14 @@ public class ApprovalServiceImpl implements ApprovalService{
         // Implement any necessary decoding logic here, such as replacing underscores with slashes
         return encodedInvoiceNumber.replace('_', '/');
     }
+
+    @Override
+    public Approval findApprovalByApprovalId(int id) {
+        return approvalDb.findByApprovalId(id);
+    }
+
+    @Override
+    public void saveApproval(Approval approval) {
+        approvalDb.save(approval);
+    }
 }

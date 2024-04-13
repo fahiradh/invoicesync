@@ -47,6 +47,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 import java.math.BigDecimal;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @Controller
 public class InvoiceController {
@@ -371,8 +373,16 @@ public class InvoiceController {
         }
         return "redirect:/invoice/" + invoiceNumber.replace('/', '_');
     }
+
+    // @GetMapping
     
     
+    // @PostMapping("/invoice/revise-invoice")
+    // public String pressButtonRevise(Create) {
+    //     //TODO: process POST request
+        
+    //     return entity;
+    // }
     
 
 }

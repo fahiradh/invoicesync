@@ -139,6 +139,13 @@
                                             <td><input class="form-control" type="number" th:field="*{totalDiscount}" oninput="calculateGrandTotal()"/></td>
                                         </tr>
                                         <tr>
+                                            <td><p class="card-text mb-0">Tax</p></td>
+                                            <td>
+                                                <div id="taxList">
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
                                             <td><p class="card-text mb-0">Taxes</p></td>
                                             <td>
                                                 <input class="form-control" th:field="*{taxTotal}" type="number" disabled />

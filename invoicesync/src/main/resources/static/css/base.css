@@ -410,6 +410,7 @@ h4{
 
 .grid-container-logs{
     display: grid;
+    grid-auto-flow: row-reverse;
     row-gap: 10px;
     width: 90%;
 }

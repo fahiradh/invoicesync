@@ -7,5 +7,6 @@ import com.megapro.invoicesync.model.Invoice;
 
 public interface ApprovalService {
     public List<Approval> findApproversByInvoice(Invoice invoice);
-    
+    public Approval findApprovalByApprovalId(int id);
+    public void saveApproval(Approval approval);
 }
