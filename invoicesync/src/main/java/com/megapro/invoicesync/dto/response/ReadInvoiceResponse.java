@@ -41,4 +41,5 @@ public class ReadInvoiceResponse {
     private Customer customer;
     private String status;
     private String staffRole;
+    private int approvalId;
 }

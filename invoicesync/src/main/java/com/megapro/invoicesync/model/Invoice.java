@@ -5,9 +5,10 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import org.hibernate.annotations.Type;
 
 import jakarta.persistence.*;
+import jakarta.transaction.Transactional;
 import lombok.*;
 
 @Getter
@@ -88,4 +89,8 @@ public class Invoice {
 
     @Column(name="status")
     private String status;
+
+    @OneToMany(mappedBy = "invoice")
+    @OrderBy("approval_id ASC")
+    private List<Approval> listApproval;
 }

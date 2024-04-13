@@ -14,6 +14,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "approval")
 @Getter
@@ -23,10 +25,12 @@ import lombok.Setter;
 public class Approval {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int approval_id;
+    @Column(name = "approval_id")
+    private int approvalId;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "approval_user")
+    @JoinColumn(name = "approval_employee")
+    // @JoinColumn(name = "approval_user")
     private Employee employee;
 
     @ManyToOne(cascade = CascadeType.ALL)
@@ -39,9 +43,15 @@ public class Approval {
     @Column(name="cycle")
     private int cycle;
 
+    @Column(name="shown")
+    private boolean shown = false;
+
     @Column(name="approval_status")
     private String approvalStatus;
 
     @Column(name="comment")
     private String comment;
+
+    @Column(name="approval_time")
+    private LocalDate approvalTime;
 }
