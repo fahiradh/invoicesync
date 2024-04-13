@@ -19,9 +19,39 @@
   <div class="container">
     <div class="row">
         <div class="col">
-            <h1 class="center-text theme-color">Halo, <span th:text="${email}"></span></h1>
+          <h1 th:if="${showModal}" class="center-text theme-color">Halo, <span th:text="${email}"></span></h1>
+          <h1 th:unless="${showModal}" class="center-text theme-color">Halo, <span th:text="${employee.first_name} + ' ' + ${employee.last_name}"></span></h1>
         </div>
     </div>
   </div>
+
+  <!-- Modal -->
+  <div id="myModal" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title theme-color">Complete Your Profile Now</h4>
+            </div>
+            <div class="modal-body">
+                <p class="theme-color" >First time on the system? Please <a th:href="@{/profile-page/edit}">complete your profile</a> first before using InvoiceSync.</p>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <!-- JavaScript code to handle modal display -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.9.3/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script>
+
+    var showModal = "[[${showModal}]]";
+
+    if (showModal == "true") {
+        document.getElementById('myModal').style.display = 'block';
+    }
+  </script>
+
+
 </body>
 </html>

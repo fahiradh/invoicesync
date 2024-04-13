@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Add your CSS links or stylesheets here -->
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+</head>
+<body>
+    <nav th:if="${role == 'Non-Finance Manager'}" th:replace="~{fragments/navbar-non-finance :: navbar-non-finance-manager(page='Profile')}"></nav>
+    <nav th:if="${role == 'Non-Finance Staff'}" th:replace="~{fragments/navbar-non-finance :: navbar-non-finance-staff(page='Profile')}"></nav>
+    <nav th:if="${role == 'Finance Staff'}" th:replace="~{fragments/navbar-finance :: navbar-finance-staff(page='Profile')}"></nav>
+    <nav th:if="${role == 'Finance Manager'}" th:replace="~{fragments/navbar-finance :: navbar-finance-exc(page='Profile')}"></nav>
+
+    <div class="container">
+        <div class="card-body d-flex align-items-center p-4">
+            <h2 class="mb-0">Profile Page</h2>
+        </div>
+
+        <!-- First Card: Profile Information -->
+        <div class="card mt-3">
+            <div class="card-body">
+                <div class="profile-info">
+                    <div class="profile-photo">
+                        <img th:if="${flag}"  th:src="'data:image/jpeg;base64,' + ${imageBase64}" class="img-fluid rounded-circle"/>
+                        <img th:unless="${flag}" th:src="${imageBase64}" class="img-fluid rounded-circle"/>
+                    </div>
+                    <div class="profile-details">
+                        <h4 class="theme-color" th:text="${employee.first_name} + ' ' + ${employee.last_name}"></h4>
+                        <p class="theme-color" th:text="${role}"></p>
+                        <p class="theme-color" th:text="${employee.city} + ', ' + ${employee.country}"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Second Card: Personal Information -->
+        <div class="card mt-3">
+            <div class="card-body">
+                <h3>Personal Information</h3>
+                <div class="personal-info">
+                    <br>
+                    <div class="info-row">
+                        <span class="card-text mb-0 font-weight-bold">First Name <br> </span>
+                        <span class="theme-color" th:text="${employee.first_name}"></span>
+                    </div>
+                    <br>
+                    <div class="info-row">
+                        <span class="card-text mb-0 font-weight-bold">Last Name <br> </span>
+                        <span class="theme-color" th:text="${employee.last_name}"></span>
+                    </div>
+                    <br>
+                    <div class="info-row">
+                        <span class="card-text mb-0 font-weight-bold">Email <br> </span>
+                        <span class="theme-color" th:text="${email}"></span>
+                    </div>
+                    <br>
+                    <div class="info-row">
+                        <span class="card-text mb-0 font-weight-bold">Phone <br> </span>
+                        <span class="theme-color" th:text="${employee.nomorHp}"></span>
+                    </div>
+                    <br>
+                    <div class="info-row">
+                        <span class="card-text mb-0 font-weight-bold">Position/role <br> </span>
+                        <span class="theme-color" th:text="${role}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Third Card: Address -->
+        <div class="card mt-3">
+            <div class="card-body">
+                <h3>Address</h3>
+                <div class="address-info">
+                    <br>
+                    <div class="info-row">
+                        <span class="card-text mb-0 font-weight-bold">Country <br> </span>
+                        <span class="theme-color" th:text="${employee.country}"></span>
+                    </div>
+                    <br>
+                    <div class="info-row">
+                        <span class="card-text mb-0 font-weight-bold">City/State <br> </span>
+                        <span class="theme-color" th:text="${employee.city}"></span>
+                    </div>
+                    <br>
+                    <div class="info-row">
+                        <span class="card-text mb-0 font-weight-bold">Postal Code <br> </span>
+                        <span class="theme-color" th:text="${employee.postCode}"></span>
+                    </div>
+                    <br>
+                    <div class="info-row">
+                        <span class="card-text mb-0 font-weight-bold">Street <br> </span>
+                        <span class="theme-color" th:text="${employee.street}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-center mt-3 mb-3">
+            <a class="btn btn-primary mr-2" th:href="@{/profile-page/edit}">Edit Profile</a>
+            <a href="/change-password" class="btn btn-primary">Change Passwords</a>
+        </div>
+
+
+    </div>
+</body>
+</html>

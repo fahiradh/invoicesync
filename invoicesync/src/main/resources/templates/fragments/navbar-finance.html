@@ -41,7 +41,7 @@
                             <span th:text="${email}"></span>
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <li><a class="dropdown-item" href="#">Profile</a></li>
+                            <li><a class="dropdown-item" th:href="@{/profile-page}">Profile</a></li>
                             <li>
                                 <form th:action="@{/logout}" method="post" class="logout-form">
                                   <button type="submit" class="dropdown-item" style="border: none; background: none; cursor: pointer;">Logout</button>
@@ -82,7 +82,7 @@
                         <span th:text="${email}"></span>
                     </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <li><a class="dropdown-item" href="#">Profile</a></li>
+                            <li><a class="dropdown-item" th:href="@{/profile-page}">Profile</a></li>
                             <li>
                                 <form th:action="@{/logout}" method="post" class="logout-form">
                                   <button type="submit" class="dropdown-item" style="border: none; background: none; cursor: pointer;">Logout</button>

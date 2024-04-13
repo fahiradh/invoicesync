@@ -8,12 +8,17 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import com.megapro.invoicesync.dto.request.CreateUserAppRequestDTO;
+import com.megapro.invoicesync.repository.EmployeeDb;
 import com.megapro.invoicesync.repository.UserAppDb;
 
 @Controller
 public class PageController {
+
     @Autowired
     UserAppDb userAppDb;
+
+    @Autowired
+    EmployeeDb employeeDb;
 
     @GetMapping("/home")
     public String home(Model model){
@@ -24,17 +29,40 @@ public class PageController {
         String[] parts = role.split(" ");
         String division = parts[0];
 
+        var employee = employeeDb.findByEmail(email);
+
         model.addAttribute("email", email);
         model.addAttribute("role", role);
         model.addAttribute("division", division);
+        model.addAttribute("employee", employee);
 
         if (role.equals("Non-Finance Staff")) {
+            if (employee.getFirst_name() == null) {
+                model.addAttribute("showModal", "true");
+            } else {
+                model.addAttribute("showModal", "false");
+            }
             return "home/home-non-finance.html"; // home staf non finance
         } else if (role.equals("Finance Staff")) {
+            if (employee.getFirst_name() == null) {
+                model.addAttribute("showModal", "true");
+            } else {
+                model.addAttribute("showModal", "false");
+            }
             return "home/home-staff-finance.html";
         } else if (role.equals("Non-Finance Manager")) {
+            if (employee.getFirst_name() == null) {
+                model.addAttribute("showModal", "true");
+            } else {
+                model.addAttribute("showModal", "false");
+            }
             return "home/home-exc-non-finance.html";
         } else if (role.equals("Finance Manager") || role.equals("Finance Director") ) {
+            if (employee.getFirst_name() == null) {
+                model.addAttribute("showModal", "true");
+            } else {
+                model.addAttribute("showModal", "false");
+            }
             return "home/home-exc-finance.html";
         } else {
             return "home/home-admin.html";

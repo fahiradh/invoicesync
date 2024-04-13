@@ -1,7 +1,10 @@
 package com.megapro.invoicesync.controller;
 
+import java.io.IOException;
+import java.util.Base64;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -12,9 +15,16 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import com.megapro.invoicesync.dto.UserMapper;
+import com.megapro.invoicesync.dto.request.ChangePasswordRequestDTO;
 import com.megapro.invoicesync.dto.request.CreateEmployeeRequestDTO;
+import com.megapro.invoicesync.dto.request.CreateInvoiceRequestDTO;
+import com.megapro.invoicesync.model.Employee;
+import com.megapro.invoicesync.model.Invoice;
 import com.megapro.invoicesync.model.Role;
+import com.megapro.invoicesync.model.UserApp;
+import com.megapro.invoicesync.repository.EmployeeDb;
 import com.megapro.invoicesync.repository.UserAppDb;
 import com.megapro.invoicesync.service.UserService;
 
@@ -22,6 +32,11 @@ import jakarta.validation.Valid;
 
 
 import com.megapro.invoicesync.service.RoleService;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 
 
@@ -38,6 +53,9 @@ public class EmployeeController {
 
     @Autowired
     UserAppDb userAppDb;
+
+    @Autowired
+    EmployeeDb employeeDb;
     
 
     @GetMapping("/create-account")
@@ -95,7 +113,7 @@ public class EmployeeController {
             model.addAttribute("errorMessage", errorMessage);
             redirectAttributes.addFlashAttribute("errorMessage", "Phone number already exists. Please choose a different phone number.");
             return "redirect:/create-account";
-    }
+        }
 
         if (result.hasErrors()) {
             model.addAttribute("errorMessage", "Please check your input");
@@ -138,5 +156,209 @@ public class EmployeeController {
         // model.addAttribute("id", id);
         return "redirect:/employees";
     }
+
+    @GetMapping("/profile-page")
+    public String getProfile(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        var user = userAppDb.findByEmail(email);
+        String role = user.getRole().getRole();
+        var employee = employeeDb.findByEmail(email);
+
+        Boolean flag = false;
+
+        if (employee.getImage() != null && employee.getImage().length > 0) {
+            flag = true;
+            var imageBase64 = Base64.getEncoder().encodeToString(employee.getImage());
+            model.addAttribute("imageBase64", imageBase64);
+        } else {
+            model.addAttribute("imageBase64", employee.getBase64Photo());
+        }
+
+        System.out.println("NOMOR HP " + employee.getNomorHp());
+        
+        model.addAttribute("flag", flag);
+        model.addAttribute("employee", employee);
+        model.addAttribute("role", role);
+        model.addAttribute("email", email);
+
+
+        return "home/profile-page.html";
+    }
+
+    @GetMapping("/profile-page/edit")
+    public String editProfile(Model model, @ModelAttribute("successMessage") String successMessage, @ModelAttribute("errorMessage") String errorMessage) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        var user = userAppDb.findByEmail(email);
+        String role = user.getRole().getRole();
+
+        var employee = employeeDb.findByEmail(email);
+        CreateEmployeeRequestDTO employeeDT0 = new CreateEmployeeRequestDTO();
+        userService.transferDataEmployee(employeeDT0, employee);
+        employeeDT0.setRoleString(role);
+
+        Boolean flag = false;
+
+        if (employee.getImage() != null && employee.getImage().length > 0) {
+            flag = true;
+            var imageBase64 = Base64.getEncoder().encodeToString(employee.getImage());
+            model.addAttribute("imageBase64", imageBase64);
+        } else {
+            model.addAttribute("imageBase64", employee.getBase64Photo());
+        }
+
+        model.addAttribute("flag", flag);
+        model.addAttribute("employeeDTO", employeeDT0);
+        model.addAttribute("employee", employee);
+        model.addAttribute("role", role);
+
+        return "home/edit-profile-page.html";
+    }
+    
+    @PostMapping("/profile-page/edit")
+    public String postEditProfile(@Valid @ModelAttribute CreateEmployeeRequestDTO employeeDTO, Model model, RedirectAttributes redirectAttributes,
+    @ModelAttribute("successMessage") String successMessage, @ModelAttribute("errorMessage") String errorMessage) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        var user = userAppDb.findByEmail(email);
+        String role = user.getRole().getRole();
+
+        var employee = employeeDb.findByEmail(email);
+
+        byte[] content;
+
+        if(!employeeDTO.getImageFile().isEmpty()){
+            try {
+                content = userService.cekFile(employeeDTO.getImageFile());
+            } catch (IOException e) {
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error processing the file");
+            }
+            userService.savePhoto(employee, content);
+        }
+
+        if (userService.cekNomorHpExist(employeeDTO.getNomorHp(), email)) {
+            var newEmployeeDTO = new CreateEmployeeRequestDTO();
+
+            Boolean flag = false;
+
+            if (employee.getImage() != null && employee.getImage().length > 0) {
+                flag = true;
+                var imageBase64 = Base64.getEncoder().encodeToString(employee.getImage());
+                model.addAttribute("imageBase64", imageBase64);
+            } else {
+                model.addAttribute("imageBase64", employee.getBase64Photo());
+            }
+
+            model.addAttribute("employeeDTO", newEmployeeDTO);
+            model.addAttribute("flag", flag);
+            model.addAttribute("employee", employee);
+            model.addAttribute("role", role);
+            model.addAttribute("successMessage", successMessage);
+            model.addAttribute("errorMessage", errorMessage);
+            redirectAttributes.addFlashAttribute("errorMessage", "Phone number already exists. Please choose a different phone number.");
+            return "redirect:/profile-page/edit";
+        }
+
+        Boolean flag = false;
+
+        if (employee.getImage() != null && employee.getImage().length > 0) {
+            flag = true;
+            var imageBase64 = Base64.getEncoder().encodeToString(employee.getImage());
+            model.addAttribute("imageBase64", imageBase64);
+        } else {
+            model.addAttribute("imageBase64", employee.getBase64Photo());
+        }
+
+        var employeeUpdated = userService.updateEmployee(employeeDTO);
+        
+        model.addAttribute("flag", flag);
+        model.addAttribute("employee", employeeUpdated);
+        model.addAttribute("role", role);
+        model.addAttribute("email", email);
+
+        return "home/profile-page.html";
+    }
+
+    @GetMapping("/change-password")
+    public String formChangePassword(Model model, @ModelAttribute("successMessage") String successMessage,
+    @ModelAttribute("errorMessage") String errorMessage){
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        var user = userAppDb.findByEmail(email);
+        String role = user.getRole().getRole();
+
+        ChangePasswordRequestDTO PasswordDTO = new ChangePasswordRequestDTO();
+
+        model.addAttribute("passwordDTO", PasswordDTO);
+        model.addAttribute("email", email);
+        model.addAttribute("role", role);
+        model.addAttribute("successMessage", successMessage);
+        model.addAttribute("errorMessage", errorMessage);
+
+        return "form-change-password";
+    }
+
+    @PostMapping("/change-password")
+    public String changePassword(@Valid ChangePasswordRequestDTO passwordDTO, Model model, RedirectAttributes redirectAttributes,
+    @ModelAttribute("successMessage") String successMessage, @ModelAttribute("errorMessage") String errorMessage) {
+        
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        var user = userAppDb.findByEmail(email);
+        var employee = employeeDb.findByEmail(email);
+        String role = user.getRole().getRole();
+
+        if (userService.checkPass(passwordDTO.getOldPassword(), user.getPassword())) {
+
+            if (!userService.checkPass(passwordDTO.getNewPassword(), user.getPassword())){
+
+                if (userService.isPassValid(passwordDTO.getNewPassword())) {
+                    userService.changePassword(employee, passwordDTO);
+                    model.addAttribute("role", role);
+                    model.addAttribute("successMessage", successMessage);
+                    model.addAttribute("errorMessage", errorMessage);
+                    redirectAttributes.addFlashAttribute("successMessage", "Succesfully changes your password");
+                    return "redirect:/change-password";
+
+                } else {
+
+                    ChangePasswordRequestDTO newPasswordDTO = new ChangePasswordRequestDTO();
+                    model.addAttribute("passwordDTO", newPasswordDTO);
+                    model.addAttribute("role", role);
+                    model.addAttribute("successMessage", successMessage);
+                    model.addAttribute("errorMessage", errorMessage);
+                    redirectAttributes.addFlashAttribute("errorMessage", "Please Make sure your new password met the requirement");
+                    return "redirect:/change-password";
+                }
+
+
+            } else {
+
+                ChangePasswordRequestDTO newPasswordDTO = new ChangePasswordRequestDTO();
+                model.addAttribute("passwordDTO", newPasswordDTO);
+                model.addAttribute("role", role);
+                model.addAttribute("successMessage", successMessage);
+                model.addAttribute("errorMessage", errorMessage);
+                redirectAttributes.addFlashAttribute("errorMessage", "Your new password cannot be the same as your old password");
+                return "redirect:/change-password";
+
+            }
+
+        } else {
+         
+            ChangePasswordRequestDTO newPasswordDTO = new ChangePasswordRequestDTO();
+            model.addAttribute("passwordDTO", newPasswordDTO);
+            model.addAttribute("role", role);
+            model.addAttribute("successMessage", successMessage);
+            model.addAttribute("errorMessage", errorMessage);
+            redirectAttributes.addFlashAttribute("errorMessage", "Your old password is incorrect, please input the correct password");
+            return "redirect:/change-password";
+        }
+    }
+    
+    
     
 }
