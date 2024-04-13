@@ -2,8 +2,11 @@ package com.megapro.invoicesync.model;
 
 import java.util.List;
 
+import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Lob;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -46,6 +49,12 @@ public class Employee extends UserApp {
 
     @Column(name = "is_deleted")
     private boolean deleted = false;
+
+    @Lob
+    @Basic(fetch = FetchType.EAGER)
+    @Column(name = "image")
+    private byte[] image;
+
 
     @OneToMany(mappedBy = "employee")
     private List<Approval> listApproval;

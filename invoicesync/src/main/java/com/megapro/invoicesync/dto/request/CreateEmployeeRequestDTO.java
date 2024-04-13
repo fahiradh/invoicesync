@@ -1,5 +1,6 @@
 package com.megapro.invoicesync.dto.request;
 
+import org.springframework.web.multipart.MultipartFile;
 import com.megapro.invoicesync.model.Role;
 
 import lombok.AllArgsConstructor;
@@ -20,6 +21,7 @@ public class CreateEmployeeRequestDTO {
     private String city;
     private String postCode;
     private String street;
-    private byte[] image;
+    private MultipartFile imageFile;
+    private String roleString;
 
 }
