@@ -1,12 +1,9 @@
 package com.megapro.invoicesync.service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.Base64;
-import java.util.HashMap;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -76,7 +73,7 @@ public class InvoiceServiceImpl implements InvoiceService{
 
     @Override
     public void attributeInvoice(Invoice invoice, List<Integer> listTax) {
-        long count = countInvoice()+1;
+        long count = countInvoice();
         String countStr = String.format("%04d", count);
         var invoiceDate = invoice.getInvoiceDate();
         int month = invoiceDate.getMonthValue();
@@ -123,7 +120,6 @@ public class InvoiceServiceImpl implements InvoiceService{
 
     private void calculateSubtotal(Invoice invoice){
         double total = 0;
-        System.out.println("list product "+invoice.getListProduct());
         for (Product p : invoice.getListProduct()){
             total += p.getTotalPrice().doubleValue();
         }
@@ -235,23 +231,6 @@ public class InvoiceServiceImpl implements InvoiceService{
     }
 
     @Override
-    public void transferData(CreateInvoiceRequestDTO invoiceRequestDTO, Invoice invoice){
-        invoiceRequestDTO.setAccountName(invoice.getAccountName());
-        invoiceRequestDTO.setAccountNumber(invoice.getAccountNumber());
-        invoiceRequestDTO.setAdditionalDocument(invoice.getAdditionalDocument());
-        invoiceRequestDTO.setBankName(invoice.getBankName());
-        invoiceRequestDTO.setCity(invoice.getCity());
-        invoiceRequestDTO.setCustomerId(invoice.getCustomer().getCustomerId());
-        invoiceRequestDTO.setDueDate(invoice.getDueDate());
-        invoiceRequestDTO.setStatus(invoice.getStatus());
-        invoiceRequestDTO.setSignature(invoice.getSignature());
-        invoiceRequestDTO.setStaffEmail(invoice.getStaffEmail());
-        invoiceRequestDTO.setSubtotal(invoice.getSubtotal());
-        invoiceRequestDTO.setTotalWords(invoice.getTotalWords());
-        invoiceRequestDTO.setTotalDiscount(invoice.getTotalDiscount());
-    }
-
-     @Override
     public Invoice getInvoiceByInvoiceNumber(String invoiceNumber) {
         Optional<Invoice> invoice = invoiceDb.findByInvoiceNumber(invoiceNumber);
         return invoice.orElseThrow(() -> new EntityNotFoundException("Invoice with number: " + invoiceNumber + " was not found."));
@@ -310,8 +289,9 @@ public class InvoiceServiceImpl implements InvoiceService{
         }
         else {
             invoiceDTO.setStatus("Waiting for Approver");
+            System.out.println("customer id nya adalah " + invoiceDTO.getCustomerId());
             var customer = customerService.getCustomerById(invoiceDTO.getCustomerId());
-            System.out.println("total discount "+invoiceDTO.getTotalDiscount());
+            System.out.println("total discount " + invoiceDTO.getTotalDiscount());
             var invoice = invoiceMapper.createInvoiceRequestToInvoice(invoiceDTO);
             invoice.setCustomer(customer);
             attributeInvoice(invoice, selectedTaxIds);
@@ -323,8 +303,19 @@ public class InvoiceServiceImpl implements InvoiceService{
     }
 
     @Override
-    public void updateInvoice(Invoice invoice) {
-        invoiceDb.save(invoice);
+    public Invoice updateInvoice(Invoice invoiceFromDTO) {
+        Invoice invoice = getInvoiceById(invoiceFromDTO.getInvoiceId());
+        if (invoice != null){
+            invoice.setAccountName(invoiceFromDTO.getAccountName());
+            invoice.setAccountNumber(invoiceFromDTO.getAccountNumber());
+            invoice.setAdditionalDocument(invoiceFromDTO.getAdditionalDocument());
+            invoice.setBankName(invoiceFromDTO.getBankName());
+            invoice.setProductDocument(invoiceFromDTO.getProductDocument());
+            invoice.setTotalDiscount(invoiceFromDTO.getTotalDiscount());
+            invoice.setListProduct(invoiceFromDTO.getListProduct());
+            invoiceDb.save(invoice);
+        }
+        return invoice;
     }
 }
 

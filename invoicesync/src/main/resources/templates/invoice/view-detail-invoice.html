@@ -6,34 +6,32 @@
   <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
   <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
   <title>InvoiceSync</title>
-  <style>
-    .table-custom th, .table-custom td {
-    border: none;
-    text-align: center;        /* Teks rata tengah horizontal */
-    vertical-align: middle;    /* Teks rata tengah vertikal */
-}
-</style>
 </head>
 
 <body>
-    <nav th:replace="~{fragments/navbar-non-finance :: navbar-non-finance-staff(page = 'Create-Invoice')}"></nav>
-    <!-- <div> -->
+    <nav th:if="${role == 'Finance Staff'} " th:replace="~{fragments/navbar-finance :: navbar-finance-staff(page='All-Invoices-List')}"></nav>
+    <nav th:if="${role == 'Finance Manager' or role == 'Finance Director'}" th:replace="~{fragments/navbar-finance :: navbar-finance-exc(page='All-Invoices-List')}"></nav>
+    <nav th:if="${role == 'Non-Finance Manager'} "th:replace="~{fragments/navbar-non-finance :: navbar-non-finance-manager(page='All-Invoices-List')}"></nav>
+    <nav th:if="${role == 'Non-Finance Staff'}" th:replace="~{fragments/navbar-non-finance :: navbar-non-finance-staff(page = 'My-Invoice')}"></nav>
+    
+    <div class="container">
     <div class="header">
         <h4>Detail Invoice / <span class="invoice-number" th:text="${invoice.invoiceNumber}"></span></h4>
     </div>
     <!-- Tombol Print dan Edit -->
     <form th:action="@{/invoice/{invoiceNumber}(invoiceNumber=${invoice.invoiceNumber.replace('/', '_')})}" th:object="${invoice}" method="GET" id="invoiceForm">
+        <input type="hidden" th:value="${invoice.invoiceId}" id="invoiceId" />
         <a id="printButton" class="btn btn-primary" href="/">Print</a> 
         <a class="btn btn-primary" th:href="@{/invoice/{invoiceNumber}/edit(invoiceNumber=${invoice.invoiceNumber.replace('/','_')})}">Edit</a>
         <th:block th:if="${invoice.status == 'Waiting for Approver'}">
-            <a class="btn btn-primary" href="#">Assign Approver</a>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addApproverModal">Assign Approver</button>
         </th:block>
     </form>
     <!-- </div> -->
     <div class="grid-container-invoice-logs">
         <!-- Bagian invoice -->
         <div class="grid-container-invoice-logs-child">
-            <div class="card ml-5 mr-5 mt-3 mb-5">
+            <div class="card">
                 <div class="card-body p-4">
                 <div class="container-title">
                     <div class="row">
@@ -47,30 +45,30 @@
                 <div class="content">
                     <div class="justify-content-center">
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col">
                                 <table class="table table-borderless">
                                     <tr>
-                                        <td><p class="card-text mb-0">Customer</p></td>
+                                        <td><p class="card-text">Customer</p></td>
                                         <td><input class="form-control" type="text" th:value="${invoice.customer.name}" readonly /></td>     
                                     </tr>
                                     <tr>
-                                        <td><p class="card-text mb-0">Contact</p></td>
+                                        <td><p class="card-text">Contact</p></td>
                                         <td><input class="form-control" type="text" th:value="${invoice.customer.contact}" readonly /></td>
                                     </tr>
                                     <tr>
-                                        <td><p class="card-text mb-0">Address</p></td>
+                                        <td><p class="card-text">Address</p></td>
                                         <td><input class="form-control" type="text" th:value="${invoice.customer.address}" readonly /></td>
                                     </tr>
                                 </table>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col">
                                 <table class="table table-borderless">
                                     <tr>
-                                        <td><p class="card-text mb-0">Invoice Date</p></td>
+                                        <td><p class="card-text">Invoice Date</p></td>
                                         <td><input class="form-control" th:value="${date}" readonly /></td>
                                     </tr>
                                     <tr>
-                                        <td><p class="card-text mb-0">Due Date</p></td>
+                                        <td><p class="card-text">Due Date</p></td>
                                         <td><input class="form-control" type="date" th:value="${invoice.dueDate}" readonly/></td>
                                     </tr>
                                 </table>
@@ -110,41 +108,41 @@
                         <hr>
     
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col">
                                 <div class="mb-4">
                                     <p class="card-text">Payment Information</p>
                                     <table class="table table-borderless">
                                         <tr>
-                                            <td><p class="card-text mb-0">Bank Name</p></td>
+                                            <td><p class="card-text">Bank Name</p></td>
                                             <td><input class="form-control" type="text" th:field="${invoice.bankName}" readonly /></td>
                                         </tr>
                                         <tr>
-                                            <td><p class="card-text mb-0">Account Number</p></td>
+                                            <td><p class="card-text">Account Number</p></td>
                                             <td><input class="form-control" type="text" th:field="${invoice.accountNumber}" readonly/></td>
                                         </tr>
                                         <tr>
-                                            <td><p class="card-text mb-0">Account Name</p></td>
+                                            <td><p class="card-text">Account Name</p></td>
                                             <td><input class="form-control" type="text" th:field="${invoice.accountName}" readonly/></td>
                                         </tr>
                                     </table>
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col">
                                 <div class="mb-4">
                                 <table class="table table-bordered-classic">
                                     <tr>
-                                        <td><p class="card-text mb-0">Subtotal</p></td>
+                                        <td><p class="card-text">Subtotal</p></td>
                                         <td>
                                             <input class="form-control" type="number" th:field="${invoice.subtotal}" readonly />
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td><p class="card-text mb-0">Total Discount (%)</p></td>
+                                        <td><p class="card-text">Total Discount (%)</p></td>
                                         <td><input class="form-control" type="number" th:field="${invoice.totalDiscount}" readonly/></td>
                                     </tr>
                                     <tr>
-                                        <td><p class="card-text mb-0">Tax</p></td>
+                                        <td><p class="card-text">Tax</p></td>
                                         <td>
                                             <div id="taxList" th:each="tax : ${taxList}">
                                                 <div class="form-check">
@@ -159,19 +157,19 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td><p class="card-text mb-0">Taxes</p></td>
+                                        <td><p class="card-text">Taxes</p></td>
                                         <td>
                                             <input class="form-control" th:field="${invoice.taxTotal}" type="number" disabled />
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td><p class="card-text mb-0">Grand Total</p></td>
+                                        <td><p class="card-text">Grand Total</p></td>
                                         <td>
                                             <input class="form-control" th:field="${invoice.grandTotal}" type="number"  disabled />
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td><p class="card-text mb-0">Amount in Words</p></td>
+                                        <td><p class="card-text">Amount in Words</p></td>
                                         <td><input class="form-control" type="text" th:field="${invoice.totalWords}" readonly/></td>
                                     </tr> 
                                 </table>
@@ -181,38 +179,7 @@
                     <hr>
 
                     <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-4">
-                                <p class="card-info">Please attach additional documents for approval.</p>
-                                <br>
-                                <p class="card-text">Additional Document</p>
-                                <input type="file" class="form-control" name="file"/>
-                                <input type="hidden" th:field="${invoice.additionalDocument}" readonly/>
-                            </div>
-                        </div>
-    
-                        <div class="col-md-6">
-                            <div class="mb-4">
-                                <p class="card-text">Signature</p>
-                                <div class="form-inline">
-                                    <div class="form-group mr-2">
-                                        <input class="form-control" type="text" th:field="${invoice.city}" readonly />
-                                    </div>
-                                    <div class="form-group">
-                                        <p class="card-text" th:text="', '+${invoice.invoiceDate}"></p>
-                                    </div>
-                                </div>
-                                <br>
-                                <input type="file" class="form-control" name="image"/>
-                                <input type="hidden" th:field="${image}" />
-                                <br>
-                            </div>
-                        </div>
-                    </div>
-                    <hr>
-
-                    <div class="row">
-                        <div class="col-md-6">
+                        <div class="col">
                             <div class="mb-4">
                                 <p class="card-info">Please attach additional documents for approval.</p>
                                 <br>
@@ -222,7 +189,7 @@
                             </div>
                         </div>
 
-                            <div class="col-md-6">
+                            <div class="col">
                                 <div class="mb-4">
                                     <p class="card-text">Signature</p>
                                     <div class="form-inline">
@@ -235,7 +202,7 @@
                                     </div>
                                     <br>
                                     <div class="drag-area">
-                                        <img class="card-img-top" th:src="@{'data:image/jpeg;base64,' + ${image}}" alt="signature-image" style="max-height:150px;">
+                                        <img class="card-img-top" th:src="@{'data:image/jpeg;base64,' + ${image}}" alt="signature-image" style="max-height=150px;">
                                     </div>
                                     <br>
                                     <input class="form-control" type="text" th:value="${invoice.staffEmail}" readonly />
@@ -347,12 +314,13 @@
         </div>
     </div>
     </div>
+    </div>
     <!-- Add Approver Modal -->
     <div class="modal fade" id="addApproverModal" tabindex="-1" role="dialog" aria-labelledby="addApproverModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addApproverModalLabel">Add Approver</h5>
+                    <h5 class="modal-title" id="addApproverModalLabel">Assign Approver</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -385,13 +353,12 @@
     <!-- Existing HTML code -->
 
  <!-- Approver List Section -->
- <div class="container-invoice">
-    <div class="card mt-3 mb-5" style="width: 100%;"> <!-- Set the width to 100% of the container -->
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addApproverModal">Add Approver</button>
+ <div class="container">
+    <div class="card" style="width: 100%;"> <!-- Set the width to 100% of the container -->
         <div class="card-header">
             <h5 class="card-title">Approvers</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body p-4">
             <table class="table table-custom" id="approversTable">
                 <thead>
                     <tr>
