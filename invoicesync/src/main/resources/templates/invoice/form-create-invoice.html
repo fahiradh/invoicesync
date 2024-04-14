@@ -147,6 +147,10 @@
                                             </td>
                                         </tr>
                                         <tr>
+                                            <td><p class="card-text">Taxes</p></td>
+                                            <td>
+                                                <input class="form-control" th:field="*{taxTotal}" type="number" disabled />
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td><p class="card-text">Grand Total</p></td>
@@ -170,9 +174,13 @@
                                 <div class="mb-4">
                                     <p class="card-info">Please attach additional documents for approval.</p>
                                     <br>
-                                    <p class="card-text">Additional Document</p>
+                                    <div class="mb-3">
+                                        <label for="files" class="col-form-label">Additional documents:</label>
+                                        <input class="form-control" type="file" id="files" name="files" multiple>
+                                    </div>
+                                    <!-- <p class="card-text">Additional Document</p>
                                     <input type="file" class="form-control" name="file"/>
-                                    <input type="hidden" th:field="*{additionalDocument}" />
+                                    <input type="hidden" th:field="*{additionalDocument}" /> -->
                                 </div>
                             </div>
 

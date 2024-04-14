@@ -1,6 +1,6 @@
 package com.megapro.invoicesync.dto.response;
 
-import java.util.UUID;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,4 +21,5 @@ public class ReadApprovalResponseDTO {
     private String approvalStatus;
     private String comment;
     private String approvalDate;
+    private List<ReadFileResponseDTO> filesDTO;
 }

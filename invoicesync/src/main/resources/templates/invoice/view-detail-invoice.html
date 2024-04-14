@@ -22,7 +22,7 @@
     <form th:action="@{/invoice/{invoiceNumber}(invoiceNumber=${invoice.invoiceNumber.replace('/', '_')})}" th:object="${invoice}" method="GET" id="invoiceForm">
         <input type="hidden" th:value="${invoice.invoiceId}" id="invoiceId" />
         <a id="printButton" class="btn btn-primary" href="/">Print</a>
-        <th:block th:if="${invoice.status == 'Need Revision' || invoice.status == 'Waiting for Approver'}">
+        <th:block th:if="${(invoice.status == 'Need Revision' || invoice.status == 'Waiting for Approver') && emailPermission == true}">
             <a class="btn btn-primary" th:href="@{/invoice/{invoiceNumber}/edit(invoiceNumber=${invoice.invoiceNumber.replace('/','_')})}">Edit</a>
         </th:block>
         <th:block th:if="${invoice.status == 'Waiting for Approver'}">
@@ -220,57 +220,55 @@
         </div>
 
         <!-- Bagian approval log -->
-        <div class="grid-container-invoice-logs-child">
+        <div class="grid-container-invoice-logs-child" th:if="${emailPermission}">
             <div class="container-logs">
                 <div class="container title" style="text-align: center; margin-bottom: 0;">
                     <h3>Approval Log</h3>
                 </div>
                 <hr>
-                <div class="grid-container-logs">
-                    <div class="grid-container log">
+                <div class="grid-container-logs" th:each="log: ${approvalLogs}">
+                    <div class="grid-container log mb-3">
                         <div class="left">
                             <img src="" alt="" class="rounded-photo log default-photo">
                         </div>
                         <div class="name">
-                            <p><b>David Beckham</b></p>
+                            <b><p th:text="${log.employeeName}"></p></b>
                         </div>
                         <div class="date">
-                            <p style="font-size: smaller;"><i>3 April 2023</i></p>
+                            <i><p style="font-size: smaller;" th:text="${log.approvalDate}">3 April 2023</p></i>
                         </div>
                         <div class="position">
-                            <p>Manager Nonfinance</p>
+                            <p th:text="${log.employeeRole}"></p>
                         </div>
                         <div class="status">
-                            <div class="oval-status" style="background-color: #3B9C8F;">
+                            <!-- Status Approved -->
+                            <div th:if="${log.approvalStatus == 'Approved'}"
+                                class="oval-status" style="background-color: #3B9C8F;">
                                 <p style="
                                     font-size: smaller;
                                     color: whitesmoke;
                                     "><b>Approved</b></p>
                             </div>
-                        </div>
-                    </div>
-                    <div class="grid-container log">
-                        <div class="left">
-                            <img src="" alt="" class="rounded-photo log default-photo">
-                        </div>
-                        <div class="name">
-                            <p><b>David Beckham</b></p>
-                        </div>
-                        <div class="date">
-                            <p style="font-size: smaller;"><i>3 April 2023</i></p>
-                        </div>
-                        <div class="position">
-                            <p>Manager Nonfinance</p>
-                        </div>
-                        <div class="status">
-                            <div class="oval-status" style="background-color: #FFDB20;">
+
+                            <!-- Status Revisi -->
+                            <div th:if="${log.approvalStatus == 'Need Revision'}"
+                                class="oval-status" style="background-color: #FFDB20;">
                                 <p style="
                                     font-size: smaller;
                                     color: white;
                                     "><b>Need Revision</b></p>
                             </div>
+
+                            <!-- Status Rejected -->
+                            <div th:if="${log.approvalStatus == 'Rejected'}"
+                                class="oval-status" style="background-color: #E93D3D;">
+                                <p style="
+                                    font-size: smaller;
+                                    color: whitesmoke;
+                                    "><b>Rejected</b></p>
+                            </div>
                         </div>
-                        <div class="additional">
+                        <div class="additional" th:if="${log.approvalStatus == 'Need Revision'}">
                             <div class="additional-content" style="
                                     background-color: #ECF1F4; 
                                     border-radius: 25px;
@@ -278,39 +276,15 @@
                                     padding: 10px;
                                     padding-top: 5px;">
                                 <span style="margin-bottom: 10px;"><b>Comment</b></span>
-                                <p>Tolong diisi yah additional documentnya thankk you yah 
-                                    Tolong diisi yah additional documentnya thankk you yah 
-                                    Tolong diisi yah additional documentnya thankk you yah 
-                                    Tolong diisi yah additional documentnya thankk you yah 
-                                </p>
-                                <a href="https://documentcloud.adobe.com/spodintegration/index.html?locale=en-us" target="_blank">Read more</a>
-                                <!-- <embed src="C:\Users\Neysa\Downloads\867-1955-1-PB.pdf" width="800px" height="2100px" /> -->
+                                <p th:text="${log.comment}"></p>
+                                <div class="additional-document" style="margin-top: 10px;">
+                                    <span th:each="file: ${log.filesDTO}">
+                                        <a th:href="${file.fileUrl}" th:text="${file.fileName}" class="mb-2" style="font-size: smaller;"></a>
+                                        <p></p>
+                                    </span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="grid-container log">
-                        <div class="left">
-                            <img src="" alt="" class="rounded-photo log default-photo">
-                        </div>
-                        <div class="name">
-                            <p><b>David Beckham</b></p>
-                        </div>
-                        <div class="date">
-                            <p style="font-size: smaller;"><i>3 April 2023</i></p>
-                        </div>
-                        <div class="position">
-                            <p>Manager Nonfinance</p>
-                        </div>
-                        <div class="status">
-                            <div class="oval-status" style="background-color: #E93D3D;">
-                                <p style="
-                                    font-size: smaller;
-                                    color: whitesmoke;
-                                    "><b>Rejected</b></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="additional-log">
                     </div>
                 </div>
             </div>

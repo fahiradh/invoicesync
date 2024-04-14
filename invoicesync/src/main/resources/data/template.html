@@ -17,15 +17,15 @@
             border-radius: 5px;
         }
         .invoice-header h1 {
-			color: #3F2685;
+   color: #3F2685;
         }
         .invoice-header h2 {
             font-size: 24px;
             margin-bottom: 10px;
         }
         .invoice-date{
-			text-align: right;
-		}
+   text-align: right;
+  }
         .invoice-body {
             margin-bottom: 2px;
         }
@@ -51,14 +51,14 @@
         .invoice-signature{
             text-align: right;
         }
-		.invoice-status{
+  .invoice-status{
             background-color: grey;
             display: inline-block;
             padding: 1px 10px;
             border-radius: 20px;
             color: #fff;
             text-transform: uppercase;
-		}
+  }
         .invoice-logo-brand {
             max-width: 100px;
             width: 100%;
@@ -101,17 +101,17 @@
                 </div>
             </div>
         </div>
-		<div class="invoice-date">
-			<p>Invoice Date: {invoiceDate}</p>
-			<p>Due Date: {dueDate}<p>
-		</div>
+  <div class="invoice-date">
+   <p>Invoice Date: {invoiceDate}</p>
+   <p>Due Date: {dueDate}<p>
+  </div>
         <div class="invoice-body">
-			<p><b>Customer</b></p>
-			<p>{customerName}</p>
-			<p>{customerAddress}</p>
-			<p>Contact: {customerContact}</p>
-			<p>Telp: {customerPhone}</p>
-			<br>
+   <p><b>Customer</b></p>
+   <p>{customerName}</p>
+   <p>{customerAddress}</p>
+   <p>Contact: {customerContact}</p>
+   <p>Telp: {customerPhone}</p>
+   <br>
             <table class="invoice-table">
                 <thead>
                     <tr>
@@ -158,13 +158,10 @@
         <p><b>Payment Information</b></p>
         <p>{accountNumber} {bankName} a/n {accountName}</p>
         <br>
-        <p><b>Attached Document</b></p>
-        <p>{attachedDocument}</p>
-        <br>
         <div class="invoice-signature">
             <p>{city}, {invoiceDate}</p>
             <img src="{signature}" alt="" style="max-height: fit-content; max-width: 300px;" />
-            <p>{staffEmail}</p>
+            <p text-align="center">{employeeName}</p>
         </div>
     </div>
 </body>

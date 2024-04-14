@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.stereotype.Controller;
@@ -14,7 +15,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 
+import com.megapro.invoicesync.dto.ApprovalMapper;
 import com.megapro.invoicesync.dto.CustomerMapper;
+import com.megapro.invoicesync.dto.FileMapper;
 import com.megapro.invoicesync.dto.InvoiceMapper;
 import com.megapro.invoicesync.dto.ProductMapper;
 import com.megapro.invoicesync.dto.request.CreateCustomerRequestDTO;
@@ -23,6 +26,7 @@ import com.megapro.invoicesync.dto.request.UpdateInvoiceRequestDTO;
 import com.megapro.invoicesync.repository.UserAppDb;
 import com.megapro.invoicesync.service.ApprovalService;
 import com.megapro.invoicesync.service.CustomerService;
+import com.megapro.invoicesync.service.FilesStorageService;
 import com.megapro.invoicesync.service.InvoiceService;
 import com.megapro.invoicesync.service.TaxService;
 import com.megapro.invoicesync.service.UserService;
@@ -34,10 +38,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.megapro.invoicesync.dto.response.ReadApprovalResponseDTO;
+import com.megapro.invoicesync.dto.response.ReadFileResponseDTO;
 import com.megapro.invoicesync.dto.response.ReadInvoiceResponse;
 import com.megapro.invoicesync.model.Approval;
 import com.megapro.invoicesync.model.Customer;
 import com.megapro.invoicesync.model.Employee;
+import com.megapro.invoicesync.model.FileModel;
 import com.megapro.invoicesync.model.Invoice;
 import com.megapro.invoicesync.model.Product;
 import com.megapro.invoicesync.model.Tax;
@@ -85,6 +92,15 @@ public class InvoiceController {
     @Autowired
     private ApprovalService approvalService;
 
+    @Autowired
+    private FilesStorageService fileService;
+
+    @Autowired
+    private FileMapper fileMapper;
+
+    @Autowired
+    private ApprovalMapper approvalMapper;
+
     @GetMapping(value="/create-invoice")
     public String formCreateInvoice(Model model, @ModelAttribute("successMessage") String successMessage, 
                                     @ModelAttribute("errorMessage") String errorMessage){
@@ -120,7 +136,8 @@ public class InvoiceController {
                                 @RequestParam(value = "taxOption", required = false) List<Integer> selectedTaxIds,
                                 @ModelAttribute("successMessage") String successMessage,
                                 @ModelAttribute("errorMessage") String errorMessage,
-                                @RequestParam("base64String") MultipartFile imageDataUrl) throws IOException{
+                                @RequestParam("base64String") MultipartFile imageDataUrl,
+                                @RequestParam(value = "files", required = false) MultipartFile[] files) throws IOException{
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         var user = userAppDb.findByEmail(email);
@@ -133,6 +150,10 @@ public class InvoiceController {
 
             var message = invoiceService.checkValidity(invoiceDTO, selectedTaxIds, email).split(",");
             var newInvoiceDTO = new CreateInvoiceRequestDTO();
+
+            if(!files[0].getOriginalFilename().equals("")){
+                fileService.save(files, UUID.fromString(message[2]));
+            }
 
             model.addAttribute("email", email);
             model.addAttribute("role", role);
@@ -167,6 +188,8 @@ public class InvoiceController {
         var date = invoiceDTO.getInvoiceDate();
         Employee employee = userService.findByEmail(email);
 
+        var emailPermission = email.equals(invoice.getStaffEmail());
+
         model.addAttribute("image", invoice.getSignature());
         model.addAttribute("status", invoice.getStatus());
         model.addAttribute("email", email);
@@ -177,6 +200,30 @@ public class InvoiceController {
         model.addAttribute("invoice", invoiceDTO);
         model.addAttribute("dateInvoice", invoiceService.parseDate(invoiceDTO.getInvoiceDate()));
         model.addAttribute("employee", employee);
+        model.addAttribute("emailPermission", emailPermission);
+
+        // Bagian logs
+        var approvals = invoice.getListApproval();
+        List<ReadApprovalResponseDTO> approvalLogs = new ArrayList<>();
+        for(Approval approval:approvals){
+            if(approval.getApprovalStatus()==null || approval.getApprovalStatus().isEmpty()){
+                break;
+            }
+            var filesLog = approval.getApprovalFiles();
+            List<ReadFileResponseDTO> filesDTO = new ArrayList<>();
+            if(filesLog != null || filesLog.size()!=0){
+                for(FileModel fileModel : filesLog){
+                    var fileDTO = fileMapper.fileModelToReadFileResponseDTO(fileModel);
+                    filesDTO.add(fileDTO);
+                }
+            }
+            var approvalLog = approvalMapper.approvalToReadApprovalResponseDTO(approval);
+            approvalLog.setFilesDTO(filesDTO);
+            approvalLogs.add(approvalLog);
+        }
+
+        model.addAttribute("approvalLogs", approvalLogs);
+
         return "invoice/view-detail-invoice";
     }
     
@@ -379,13 +426,4 @@ public class InvoiceController {
         return String.format("redirect:/invoice/%s", encodedInvoiceNumber);
     }
 
-    // @GetMapping
-    
-    
-    // @PostMapping("/invoice/revise-invoice")
-    // public String pressButtonRevise(Create) {
-    //     //TODO: process POST request
-        
-    //     return entity;
-    // }
 }

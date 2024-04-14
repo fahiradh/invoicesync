@@ -1,9 +1,11 @@
 package com.megapro.invoicesync.restcontroller;
 
+import com.megapro.invoicesync.model.Employee;
 import com.megapro.invoicesync.model.Invoice;
 import com.megapro.invoicesync.model.Product;
 import com.megapro.invoicesync.service.InvoiceService;
 import com.megapro.invoicesync.service.ProductService;
+import com.megapro.invoicesync.service.UserService;
 import com.megapro.invoicesync.utils.PrintInvoice;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,9 @@ public class PrintRestController {
     @Autowired
     InvoiceService invoiceService;
 
+    @Autowired
+    UserService userService;
+
     @GetMapping("/download-invoice/{invoiceId}")
     public ResponseEntity<byte[]> generatePdf(@PathVariable("invoiceId") UUID invoiceId) {
         Invoice invoice = invoiceService.getInvoiceById(invoiceId);
@@ -53,6 +58,10 @@ public class PrintRestController {
     private String processInvoiceData(String htmlTemplate, Invoice invoice) {
         String invoiceDate = invoiceService.parseDate(invoice.getInvoiceDate());
         String dueDate = invoiceService.parseDate(invoice.getDueDate());
+        Employee employee = userService.findByEmail(invoice.getStaffEmail());
+        String employeeName = String.format("%s %s", employee.getFirst_name(), employee.getLast_name());
+        String grandTotal = String.format("Rp%,.2f", invoice.getGrandTotal());
+        String subtotal = String.format("Rp%,.2f", invoice.getSubtotal());
         htmlTemplate = htmlTemplate.replace("{invoiceNumber}", invoice.getInvoiceNumber());
         htmlTemplate = htmlTemplate.replace("{customerName}", invoice.getCustomer().getName());
         htmlTemplate = htmlTemplate.replace("{customerAddress}", invoice.getCustomer().getAddress());
@@ -60,9 +69,9 @@ public class PrintRestController {
         htmlTemplate = htmlTemplate.replace("{customerContact}", invoice.getCustomer().getContact());
         htmlTemplate = htmlTemplate.replace("{dueDate}", dueDate);
         htmlTemplate = htmlTemplate.replace("{invoiceDate}", invoiceDate);
-        htmlTemplate = htmlTemplate.replace("{subtotal}", invoice.getSubtotal().toString());
+        htmlTemplate = htmlTemplate.replace("{subtotal}", subtotal);
         htmlTemplate = htmlTemplate.replace("{taxes}", invoice.getTaxTotal().toString());
-        htmlTemplate = htmlTemplate.replace("{grandTotal}", invoice.getGrandTotal().toString());
+        htmlTemplate = htmlTemplate.replace("{grandTotal}", grandTotal);
         htmlTemplate = htmlTemplate.replace("{totalDiscount}", String.valueOf(invoice.getTotalDiscount()));
         htmlTemplate = htmlTemplate.replace("{status}", invoice.getStatus());
         htmlTemplate = htmlTemplate.replace("{totalWords}", invoice.getTotalWords());
@@ -71,7 +80,7 @@ public class PrintRestController {
         htmlTemplate = htmlTemplate.replace("{bankName}", invoice.getBankName());
         htmlTemplate = htmlTemplate.replace("{city}", invoice.getCity());
         htmlTemplate = htmlTemplate.replace("{signature}", "data:image/jpeg;base64,"+invoice.getSignature());
-        htmlTemplate = htmlTemplate.replace("{staffEmail}", invoice.getStaffEmail());
+        htmlTemplate = htmlTemplate.replace("{employeeName}", employeeName);
         return htmlTemplate;
     }
 
@@ -93,4 +102,3 @@ public class PrintRestController {
     }
     
 }
-
