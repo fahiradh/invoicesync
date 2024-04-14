@@ -38,6 +38,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.megapro.invoicesync.dto.response.ApproverDisplay;
 import com.megapro.invoicesync.dto.response.ReadApprovalResponseDTO;
 import com.megapro.invoicesync.dto.response.ReadFileResponseDTO;
 import com.megapro.invoicesync.dto.response.ReadInvoiceResponse;
@@ -57,6 +58,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import org.springframework.web.bind.annotation.RequestBody;
 
 
@@ -180,7 +182,8 @@ public class InvoiceController {
         List<Product> listProduct = invoiceService.getListProductInvoice(invoice);
         List<Tax> taxList = taxService.findAllTaxes();
         var invoiceDTO = invoiceMapper.readInvoiceToInvoiceResponse(invoice);
-        List<UserApp> employees = userAppDb.findByRoleName("Finance Staff");
+        List<String> rolesToFind = Arrays.asList("Finance Manager", "Finance Director", "Finance Staff");
+        List<UserApp> employees = userAppDb.findByRoleNames(rolesToFind);
         List<Approval> approvers = approvalService.findApproversByInvoice(invoice);
         model.addAttribute("approvers", approvers);
         // Replace "ApproverRole" with the actual role name
@@ -199,6 +202,8 @@ public class InvoiceController {
         model.addAttribute("taxList", taxList);
         model.addAttribute("invoice", invoiceDTO);
         model.addAttribute("dateInvoice", invoiceService.parseDate(invoiceDTO.getInvoiceDate()));
+        List<ApproverDisplay> approverDisplays = invoiceService.getApproverDisplaysForInvoice(invoice);
+        model.addAttribute("approverDisplays", approverDisplays);
         model.addAttribute("employee", employee);
         model.addAttribute("emailPermission", emailPermission);
 
@@ -412,6 +417,44 @@ public class InvoiceController {
         return "invoice/form-edit-invoice";
     }
 
+    // @PostMapping("/invoice/{invoiceNumber}/add-approver")
+    // public String addApprover(@PathVariable("invoiceNumber") String invoiceNumber,
+    //                           @RequestParam("approverEmail") String approverEmail,
+    //                           RedirectAttributes redirectAttributes) {
+    //     try {
+    //         String decodedInvoiceNumber = invoiceNumber.replace('_', '/');
+    //         Invoice invoice = invoiceService.getInvoiceByInvoiceNumber(decodedInvoiceNumber);
+            
+    //         invoiceService.addApproverToInvoice(invoice.getInvoiceId(), approverEmail);
+            
+    //         redirectAttributes.addFlashAttribute("success", "Approver successfully added.");
+    //     } catch (IllegalStateException ex) {
+    //         redirectAttributes.addFlashAttribute("error", ex.getMessage());
+    //     } catch (Exception ex) {
+    //         redirectAttributes.addFlashAttribute("error", "Failed to add approver: " + ex.getMessage());
+    //     }
+    //     return "redirect:/invoice/" + invoiceNumber.replace('/', '_');
+    // }
+    
+    @PostMapping("/invoice/{invoiceNumber}/add-approver")
+    public String addApprover(@PathVariable("invoiceNumber") String invoiceNumber,
+                              @RequestParam("approverEmail") String approverEmail,
+                              RedirectAttributes redirectAttributes) {
+        try {
+            String decodedInvoiceNumber = invoiceNumber.replace('_', '/');
+            Invoice invoice = invoiceService.getInvoiceByInvoiceNumber(decodedInvoiceNumber);
+            
+            invoiceService.addApproverToInvoice(invoice.getInvoiceId(), approverEmail);
+            
+            redirectAttributes.addFlashAttribute("success", "Approver successfully added.");
+        } catch (IllegalStateException ex) {
+            redirectAttributes.addFlashAttribute("error", ex.getMessage());
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Failed to add approver: " + ex.getMessage());
+        }
+        return "redirect:/invoice/" + invoiceNumber.replace('/', '_');
+    }
+    
     @PostMapping("/invoice/edit")
     public String editInvoice(@ModelAttribute UpdateInvoiceRequestDTO invoiceDTO, Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

@@ -9,13 +9,16 @@ import org.springframework.stereotype.Service;
 
 import com.megapro.invoicesync.dto.InvoiceMapper;
 import com.megapro.invoicesync.dto.request.CreateInvoiceRequestDTO;
+import com.megapro.invoicesync.dto.response.ApproverDisplay;
 import com.megapro.invoicesync.model.Approval;
+import com.megapro.invoicesync.model.ApprovalFlow;
 import com.megapro.invoicesync.model.Employee;
 import com.megapro.invoicesync.model.Invoice;
 import com.megapro.invoicesync.model.Product;
 import com.megapro.invoicesync.model.Tax;
 import com.megapro.invoicesync.model.UserApp;
 import com.megapro.invoicesync.repository.ApprovalDb;
+import com.megapro.invoicesync.repository.ApprovalFlowDb;
 import com.megapro.invoicesync.repository.EmployeeDb;
 import com.megapro.invoicesync.repository.InvoiceDb;
 import com.megapro.invoicesync.repository.ProductDb;
@@ -29,6 +32,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 import java.util.ArrayList;
 import java.time.LocalDate;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -59,6 +63,9 @@ public class InvoiceServiceImpl implements InvoiceService{
 
     @Autowired
     InvoiceMapper invoiceMapper;
+
+    @Autowired
+    ApprovalFlowDb approvalFlowDb;
 
     @Override
     public void createInvoice(Invoice invoice, String email) {
@@ -248,32 +255,79 @@ public class InvoiceServiceImpl implements InvoiceService{
     }
 
     @Override
-    public void addApproverToInvoice(UUID invoiceId, String email) {
+    public void addApproverToInvoice(UUID invoiceId, String approverEmail) {
         Invoice invoice = invoiceDb.findById(invoiceId)
             .orElseThrow(() -> new EntityNotFoundException("Invoice not found"));
         
-        // Assuming you have a method in your UserAppDb or EmployeeDb to find by email
-        Employee employee = employeeDb.findByEmail(email);
-        
-        if (employee == null) {
-            throw new EntityNotFoundException("Employee with email: " + email + " not found");
-        }
-
+        Employee employee = employeeDb.findByEmail(approverEmail);
+    
         if(approvalDb.existsByInvoiceAndEmployee(invoice, employee)) {
             throw new IllegalStateException("Employee already added as an approver for this invoice.");
         }
+        
+        List<ApprovalFlow> approvalFlows = approvalFlowDb.findAllByOrderByNominalRangeDesc();
+        
+        ApprovalFlow requiredFlow = approvalFlows.stream()
+            .filter(flow -> invoice.getGrandTotal().compareTo(BigDecimal.valueOf(flow.getNominalRange())) >= 0)
+            .findFirst()
+            .orElseThrow(() -> new IllegalArgumentException("No approval flow matches the invoice's nominal range."));
+    
+        long existingApprovalsCount = approvalDb.countByInvoice(invoice);
+        if (existingApprovalsCount >= requiredFlow.getApprovalRank()) {
+            throw new IllegalStateException("The number of approvers for this invoice has reached the limit for the required rank.");
+        }
+        
         
         Approval approval = new Approval();
         approval.setEmployee(employee);
         approval.setInvoice(invoice);
         approval.setApprovalStatus("Pending"); // Set the initial approval status
+        approval.setApprovalTime(LocalDate.now());
         
-        // Set other fields as necessary...
+        // Set rank of the approval based on the required flow
+        approval.setRank(requiredFlow.getApprovalRank());
         
         approvalDb.save(approval);
     }
     
     
+//     @Override
+// public void addApproverToInvoice(UUID invoiceId, String approverEmail) {
+//     Invoice invoice = invoiceDb.findById(invoiceId)
+//         .orElseThrow(() -> new EntityNotFoundException("Invoice not found"));
+
+//     Employee employee = employeeDb.findByEmail(approverEmail);
+//     if(employee == null) {
+//         throw new EntityNotFoundException("Employee with email: " + approverEmail + " not found");
+//     }
+
+//     if(approvalDb.existsByInvoiceAndEmployee(invoice, employee)) {
+//         throw new IllegalStateException("Employee already added as an approver for this invoice.");
+//     }
+
+//     BigDecimal grandTotal = invoice.getGrandTotal();
+//     ApprovalFlow requiredFlow = approvalFlowDb
+//         .findTopByNominalRangeLessThanEqualOrderByNominalRangeDesc(grandTotal)
+//         .orElseThrow(() -> new IllegalArgumentException("No approval flow matches the invoice's nominal range."));
+
+//     if (!employee.getRole().equals(requiredFlow.getApproverRole())) {
+//         throw new IllegalStateException("Employee does not have the required role for this approval rank.");
+//     }
+
+//     long existingApprovalsCount = approvalDb.countByInvoice(invoice);
+//     if(existingApprovalsCount >= requiredFlow.getApprovalRank()) {
+//         throw new IllegalStateException("The number of approvers for this invoice has reached the limit for the required rank.");
+//     }
+
+//     Approval approval = new Approval();
+//     approval.setEmployee(employee);
+//     approval.setInvoice(invoice);
+//     approval.setApprovalStatus("Pending");
+//     approval.setRank((int) (existingApprovalsCount + 1)); // Increment the rank based on existing approvals
+    
+//     approvalDb.save(approval);
+// }
+
     
     public String checkValidity(CreateInvoiceRequestDTO invoiceDTO, List<Integer> selectedTaxIds, String email) {
         var res = "";
@@ -301,6 +355,42 @@ public class InvoiceServiceImpl implements InvoiceService{
         }    
         return res;
     }
+
+    // ... other methods in InvoiceServiceImpl ...
+@Override
+public List<ApproverDisplay> getApproverDisplaysForInvoice(Invoice invoice) {
+    BigDecimal total = invoice.getGrandTotal();
+    List<ApprovalFlow> approvalFlows = approvalFlowDb.findAllByOrderByNominalRangeDesc();
+    List<String> rolesToFind = new ArrayList<>();
+
+    // Determine which roles are required based on the total price and approval flow
+    for (ApprovalFlow flow : approvalFlows) {
+        if (total.compareTo(BigDecimal.valueOf(flow.getNominalRange())) >= 0) {
+            rolesToFind.add(flow.getApproverRole());
+            if (rolesToFind.size() == flow.getApprovalRank()) {
+                break;
+            }
+        }
+    }
+
+    // Fetch employees based on the roles determined above
+    List<UserApp> employees = userAppDb.findByRoleNames(rolesToFind);
+    
+    // Fetch existing approvers for this invoice
+    List<Approval> existingApprovers = approvalDb.findByInvoice(invoice);
+
+    // Map existing approvers to their roles for display
+    Map<String, List<Approval>> approversByRole = existingApprovers.stream()
+        .collect(Collectors.groupingBy(approval -> approval.getEmployee().getRole().getRole()));
+
+    // Prepare the list of approvers for each required role
+    return rolesToFind.stream()
+        .map(role -> new ApproverDisplay(role, approversByRole.getOrDefault(role, new ArrayList<>())))
+        .collect(Collectors.toList());
+}
+
+// ... rest of the service implementation ...
+
 
     @Override
     public Invoice updateInvoice(Invoice invoiceFromDTO) {

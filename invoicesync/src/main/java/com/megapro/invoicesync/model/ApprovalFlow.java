@@ -21,7 +21,7 @@ public class ApprovalFlow {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long approvalRank;
+    private int approvalRank;
     private String approverRole;
     private Long nominalRange;
 }
