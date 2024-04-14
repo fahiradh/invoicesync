@@ -9,24 +9,26 @@
 </head>
 
 <body>
+    <nav th:if="${role == 'Finance Staff'} " th:replace="~{fragments/navbar-finance :: navbar-finance-staff(page='All-Invoices-List')}"></nav>
+    <nav th:if="${role == 'Finance Manager' or role == 'Finance Director'}" th:replace="~{fragments/navbar-finance :: navbar-finance-exc(page='All-Invoices-List')}"></nav>
+    <nav th:if="${role == 'Non-Finance Manager'} "th:replace="~{fragments/navbar-non-finance :: navbar-non-finance-manager(page='All-Invoices-List')}"></nav>
     <nav th:if="${role == 'Non-Finance Staff'}" th:replace="~{fragments/navbar-non-finance :: navbar-non-finance-staff(page = 'My-Invoice')}"></nav>
-    <nav th:if="${role == 'Non-Finance Manager'}" th:replace="~{fragments/navbar-non-finance :: navbar-non-finance-manager(page='All-Invoices-List')}"></nav>
-    <nav th:if="${role == 'Finance Staff'}" th:replace="~{fragments/navbar-finance :: navbar-finance-staff(page='Approve-Invoice')}"></nav>
-    <nav th:if="${role == 'Finance Manager'}" th:replace="~{fragments/navbar-finance :: navbar-finance-exc(page='Approve-Invoice')}"></nav>
-
+    
     <div class="container">
-        <div class="card-body p-4">
-            <h4>Detail Invoice / <span class="invoice-number" th:text="${invoice.invoiceNumber}">Invoice #</span></h4>
-            <!-- Tombol Print dan Edit -->
-            <form th:action="@{/invoice/{invoiceNumber}(invoiceNumber=${invoice.invoiceNumber.replace('/', '_')})}" th:object="${invoice}" method="GET" id="invoiceForm">
-                <input type="hidden" th:value="${invoice.invoiceId}" id="invoiceId" />
-                <a id="printButton" class="btn btn-primary" href="/">Print</a> 
-                <a class="btn btn-primary" th:href="@{/invoice/{invoiceNumber}/edit(invoiceNumber=${invoice.invoiceNumber.replace('/','_')})}">Edit</a>
-                <th:block th:if="${invoice.status == 'Waiting for Approver'}">
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addApproverModal">Assign Approver</button>
-                </th:block>
-            </form>
-        </div>
+    <div class="header">
+        <h4>Detail Invoice / <span class="invoice-number" th:text="${invoice.invoiceNumber}"></span></h4>
+    </div>
+    <!-- Tombol Print dan Edit -->
+    <form th:action="@{/invoice/{invoiceNumber}(invoiceNumber=${invoice.invoiceNumber.replace('/', '_')})}" th:object="${invoice}" method="GET" id="invoiceForm">
+        <input type="hidden" th:value="${invoice.invoiceId}" id="invoiceId" />
+        <a id="printButton" class="btn btn-primary" href="/">Print</a>
+        <th:block th:if="${invoice.status == 'Need Revision' || invoice.status == 'Waiting for Approver'}">
+            <a class="btn btn-primary" th:href="@{/invoice/{invoiceNumber}/edit(invoiceNumber=${invoice.invoiceNumber.replace('/','_')})}">Edit</a>
+        </th:block>
+        <th:block th:if="${invoice.status == 'Waiting for Approver'}">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addApproverModal">Assign Approver</button>
+        </th:block>
+    </form>
     <!-- </div> -->
     <div class="grid-container-invoice-logs">
         <!-- Bagian invoice -->
@@ -205,7 +207,8 @@
                                         <img class="card-img-top" th:src="@{'data:image/jpeg;base64,' + ${image}}" alt="signature-image" style="max-height=150px;">
                                     </div>
                                     <br>
-                                    <input class="form-control" type="text" th:value="${invoice.staffEmail}" readonly />
+                                    <input class="form-control" type="text" th:value="${invoice.staffEmail}" hidden />
+                                    <p class="card-text" th:text="${employee.first_name} + ' ' + ${employee.last_name}"></p>
                                     <br>
                                 </div>
                             </div>
