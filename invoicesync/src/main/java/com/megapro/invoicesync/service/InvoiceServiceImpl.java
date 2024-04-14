@@ -286,7 +286,9 @@ public class InvoiceServiceImpl implements InvoiceService{
         
         // Set rank of the approval based on the required flow
         approval.setRank(requiredFlow.getApprovalRank());
-        
+        if(approval.getRank() == 1) {
+            approval.setShown(true);
+        }
         approvalDb.save(approval);
     }
     
