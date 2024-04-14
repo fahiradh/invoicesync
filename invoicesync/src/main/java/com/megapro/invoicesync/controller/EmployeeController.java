@@ -30,8 +30,6 @@ import com.megapro.invoicesync.service.RoleService;
 import org.springframework.web.server.ResponseStatusException;
 
 
-
-
 @Controller
 public class EmployeeController {
     @Autowired
@@ -290,7 +288,7 @@ public class EmployeeController {
         model.addAttribute("successMessage", successMessage);
         model.addAttribute("errorMessage", errorMessage);
 
-        return "form-change-password";
+        return "account/form-change-password";
     }
 
     @PostMapping("/change-password")

@@ -98,7 +98,7 @@ public class InvoiceController {
         var customerDTO = new CreateCustomerRequestDTO();
         List<Customer> listCustomer = customerService.getAllCustomer();
         LocalDate date = invoiceDTO.getInvoiceDate();
-        // Employee employee = userService.findByEmail(email);
+        Employee employee = userService.findByEmail(email);
 
         model.addAttribute("email", email);
         model.addAttribute("role", role);
@@ -110,7 +110,7 @@ public class InvoiceController {
         model.addAttribute("invoiceDTO", invoiceDTO);
         model.addAttribute("successMessage", successMessage);
         model.addAttribute("errorMessage", errorMessage);
-        // model.addAttribute("employeeName", String.format("%s %s", employee.getFirst_name(), employee.getLast_name()));
+        model.addAttribute("employee", employee);
         return "invoice/form-create-invoice";
     }
 
@@ -165,6 +165,7 @@ public class InvoiceController {
         // Replace "ApproverRole" with the actual role name
         model.addAttribute("employees", employees);
         var date = invoiceDTO.getInvoiceDate();
+        Employee employee = userService.findByEmail(email);
 
         model.addAttribute("image", invoice.getSignature());
         model.addAttribute("status", invoice.getStatus());
@@ -175,6 +176,7 @@ public class InvoiceController {
         model.addAttribute("taxList", taxList);
         model.addAttribute("invoice", invoiceDTO);
         model.addAttribute("dateInvoice", invoiceService.parseDate(invoiceDTO.getInvoiceDate()));
+        model.addAttribute("employee", employee);
         return "invoice/view-detail-invoice";
     }
     
@@ -347,6 +349,7 @@ public class InvoiceController {
         UpdateInvoiceRequestDTO invoiceDTO = invoiceMapper.updateInvoiceToInvoiceDTO(invoice);
         List<Product> listProduct = invoiceService.getListProductInvoice(invoice);
         var date = invoice.getInvoiceDate();
+        Employee employee = userService.findByEmail(email);
 
         model.addAttribute("image", invoice.getSignature());
         model.addAttribute("listProduct", listProduct);
@@ -358,6 +361,7 @@ public class InvoiceController {
         model.addAttribute("email", email);
         model.addAttribute("invoiceDTO", invoiceDTO);
         model.addAttribute("currentSignature", invoice.getSignature());
+        model.addAttribute("employee", employee);
         return "invoice/form-edit-invoice";
     }
 

@@ -81,6 +81,9 @@ public class ApproveInvoiceController {
             }
             model.addAttribute("invoices", invoiceDTOList);
         }
+        model.addAttribute("email", email);
+        model.addAttribute("invoices", invoiceDTOList);
+
         return "approve-invoice/list-approval.html";
     }
     

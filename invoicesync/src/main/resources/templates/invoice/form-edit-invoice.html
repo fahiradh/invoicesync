@@ -185,7 +185,9 @@
                                     <br>
                                     <input type="file" id="base64String" name="base64String" accept="image/*">
                                     <input th:field="*{signature}" hidden/>
-                                    <input class="form-control" type="text" th:field="*{staffEmail}" readonly />
+                                    <br>
+                                    <input class="form-control" type="text" th:field="*{staffEmail}" hidden />
+                                    <p class="card-text" th:text="${employee.first_name} + ' ' + ${employee.last_name}"></p>
                                     <br>
                                 </div>
                             </div>

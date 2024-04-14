@@ -41,7 +41,7 @@
                             <div class="col">
                                 <table class="table table-borderless">
                                     <tr>
-                                        <td><p class="card-text mb-0">Customer</p></td>
+                                        <td><p class="card-text">Customer</p></td>
                                         <td>
                                             <select class="form-control" th:field="*{customerId}" id="customerName" onchange="updateCustomerContact()" >
                                                 <option value="">Choose customer</option>
@@ -54,11 +54,11 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td><p class="card-text mb-0">Contact</p></td>
+                                        <td><p class="card-text">Contact</p></td>
                                         <td><input class="form-control" type="text" th:text="${customerContact}" id="customerContact" readonly /></td>
                                     </tr>
                                     <tr>
-                                        <td><p class="card-text mb-0">Address</p></td>
+                                        <td><p class="card-text">Address</p></td>
                                         <td><input class="form-control" type="text" th:text="${customerAddress}" id="customerAddress" readonly /></td>
                                     </tr>
                                 </table>
@@ -66,11 +66,11 @@
                             <div class="col">
                                 <table class="table table-borderless">
                                     <tr>
-                                        <td><p class="card-text mb-0">Invoice Date</p></td>
+                                        <td><p class="card-text">Invoice Date</p></td>
                                         <td><input class="form-control" th:value="${date}" readonly /></td>
                                     </tr>
                                     <tr>
-                                        <td><p class="card-text mb-0">Due Date</p></td>
+                                        <td><p class="card-text">Due Date</p></td>
                                         <td><input class="form-control" type="date" th:field="*{dueDate}"/></td>
                                     </tr>
                                 </table>
@@ -111,15 +111,15 @@
                                     <p class="card-text">Payment Information</p>
                                     <table class="table table-borderless">
                                         <tr>
-                                            <td><p class="card-text mb-0">Bank Name</p></td>
+                                            <td><p class="card-text">Bank Name</p></td>
                                             <td><input class="form-control" type="text" th:field="*{bankName}" placeholder="Bank Name" /></td>
                                         </tr>
                                         <tr>
-                                            <td><p class="card-text mb-0">Account Number</p></td>
+                                            <td><p class="card-text">Account Number</p></td>
                                             <td><input class="form-control" type="text" th:field="*{accountNumber}" placeholder="Account Number"/></td>
                                         </tr>
                                         <tr>
-                                            <td><p class="card-text mb-0">Account Name</p></td>
+                                            <td><p class="card-text">Account Name</p></td>
                                             <td><input class="form-control" type="text" th:field="*{accountName}" placeholder="Account Name"/></td>
                                         </tr>
                                     </table>
@@ -130,17 +130,17 @@
                                 <div class="mb-4">
                                 <table class="table table-bordered-classic">
                                         <tr>
-                                            <td><p class="card-text mb-0">Subtotal</p></td>
+                                            <td><p class="card-text">Subtotal</p></td>
                                             <td>
                                                 <input class="form-control" type="number" th:field="*{subtotal}" disabled />
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td><p class="card-text mb-0">Discount (%)</p></td>
+                                            <td><p class="card-text">Discount (%)</p></td>
                                             <td><input class="form-control" type="number" th:field="*{totalDiscount}" oninput="calculateGrandTotal()"/></td>
                                         </tr>
                                         <tr>
-                                            <td><p class="card-text mb-0">Tax</p></td>
+                                            <td><p class="card-text">Tax</p></td>
                                             <td>
                                                 <div id="taxList">
                                                 </div>
@@ -149,14 +149,14 @@
                                         <tr>
                                         </tr>
                                         <tr>
-                                            <td><p class="card-text mb-0">Grand Total</p></td>
+                                            <td><p class="card-text">Grand Total</p></td>
                                             <td>
                                                 <input class="form-control" th:field="*{grandTotal}" type="number"  disabled />
         
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td><p class="card-text mb-0">Amount in Words</p></td>
+                                            <td><p class="card-text">Amount in Words</p></td>
                                             <td><input class="form-control" type="text" th:field="*{totalWords}" /></td>
                                         </tr> 
                                     </table>
@@ -193,7 +193,8 @@
                                         <input th:field="*{signature}" hidden/>
                                     </div>
                                     <br>
-                                    <input class="form-control" type="text" th:field="*{staffEmail}" readonly />
+                                    <input class="form-control" type="text" th:field="*{staffEmail}" hidden />
+                                    <p class="card-text" th:text="${employee.first_name} + ' ' + ${employee.last_name}"></p>
                                     <br>
                                 </div>
                             </div>
