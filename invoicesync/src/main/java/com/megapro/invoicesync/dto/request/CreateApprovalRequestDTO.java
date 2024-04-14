@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class CreateApprovalRequestDTO {
     private UUID employeeId;
     private UUID invoiceId;
-    private int approvalRank;
+    private int rank;
     private int cycle;
     private String approvalStatus;
     private String comment;
