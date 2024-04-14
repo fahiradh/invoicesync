@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 import java.util.List;
 
+import com.megapro.invoicesync.dto.response.ReadFileResponseDTO;
 import com.megapro.invoicesync.model.Tax;
 
 @Data
@@ -34,4 +35,5 @@ public class CreateInvoiceRequestDTO {
     private String productDocument;
     private String additionalDocument;
     private String staffEmail;
+    private List<ReadFileResponseDTO> filesDTO;
 }

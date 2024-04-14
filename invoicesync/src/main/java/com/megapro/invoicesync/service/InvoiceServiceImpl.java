@@ -297,7 +297,7 @@ public class InvoiceServiceImpl implements InvoiceService{
             attributeInvoice(invoice, selectedTaxIds);
             // invoiceDTO.setSignature(imageDataUrl);
             createInvoice(invoice, email);
-            res = "successMessage, Invoice created successfully!";
+            res = "successMessage, Invoice created successfully!," + invoice.getInvoiceId();
         }    
         return res;
     }

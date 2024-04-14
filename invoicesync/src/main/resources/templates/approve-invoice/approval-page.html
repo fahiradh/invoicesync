@@ -16,7 +16,7 @@
 
     <div class="container">
         <div class="card-body p-4">
-            <h4>Detail Invoice / <span class="invoice-number" th:text="${invoice.invoiceNumber}">Invoice #</span></h4>
+            <h4>Approval of Invoice / <span class="invoice-number" th:text="${invoice.invoiceNumber}">Invoice #</span></h4>
             <div class="modal fade" id="exampleModalCenter" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" style="display: none;">
                 <!-- Modal detail revisi -->
                 <div class="modal-dialog modal-dialog-centered">
@@ -25,7 +25,7 @@
                       <h1 class="modal-title fs-5" id="exampleModalCenterTitle">Revision Detail</h1>
                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <form action="/revision-invoice" method="post" th:object="${approvalDTO}">
+                    <form action="/revision-invoice" method="post" th:object="${approvalDTO}" enctype="multipart/form-data">
                         <div class="modal-body">
                                 <input class="form-control" type="hidden" th:field="*{approvalId}">
                                 <div class="mb-3">
@@ -50,10 +50,11 @@
                     <input class="form-control" type="hidden" th:field="*{approvalId}">
                     <button type="submit" class="btn btn-success">Approve</button>
                 </form>
-
-                <!-- <button class="btn btn-success" type="submit" formaction="@{/approve-invoice}">Approve</button> -->
-                <button class="btn btn-danger" type="submit" formaction="@{/reject-invoice}">Reject</button>
-                <!-- <button class="btn btn-warning" type="submit" formaction="@{/revision-invoice}">Need Revision</button> -->
+                <form action="/reject-invoice" method="post" th:object="${approvalDTO}" style="display: inline-block;">
+                    <input class="form-control" type="hidden" th:field="*{approvalId}">
+                    <button type="submit" class="btn btn-danger">Reject</button>
+                </form>
+                <!-- <button class="btn btn-danger" type="submit" formaction="@{/reject-invoice}">Reject</button> -->
                 <button class="btn btn-warning" type="submit" data-bs-toggle="modal" data-bs-target="#exampleModalCenter">
                     Need Revision
                 </button>
@@ -336,10 +337,13 @@
                                     padding: 10px;
                                     padding-top: 5px;">
                                 <span style="margin-bottom: 10px;"><b>Comment</b></span>
-                                <p th:text="${log.comment}">
-                                </p>
-                                <a href="https://documentcloud.adobe.com/spodintegration/index.html?locale=en-us" target="_blank">Read more</a>
-                               
+                                <p th:text="${log.comment}"></p>
+                                <div class="additional-document" style="margin-top: 10px;">
+                                    <span th:each="file: ${log.filesDTO}">
+                                        <a th:href="${file.fileUrl}" th:text="${file.fileName}" class="mb-2" style="font-size: smaller;"></a>
+                                        <p></p>
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>

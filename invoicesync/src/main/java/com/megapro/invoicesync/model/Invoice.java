@@ -93,4 +93,7 @@ public class Invoice {
     @OneToMany(mappedBy = "invoice")
     @OrderBy("approval_id ASC")
     private List<Approval> listApproval;
+
+    @OneToMany(mappedBy = "invoice")
+    private List<FileModel> invoiceFiles;
 }
