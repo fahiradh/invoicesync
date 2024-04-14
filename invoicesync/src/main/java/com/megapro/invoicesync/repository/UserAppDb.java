@@ -20,4 +20,6 @@ public interface UserAppDb extends JpaRepository<UserApp, UUID>{
     @Query("SELECT u FROM UserApp u WHERE u.role.role = :roleName")
     List<UserApp> findByRoleName(@Param("roleName") String roleName);
     boolean existsByEmail(String email);
+    @Query("SELECT u FROM UserApp u WHERE u.role.role IN :roleNames")
+    List<UserApp> findByRoleNames(@Param("roleNames") List<String> roleNames);
 }

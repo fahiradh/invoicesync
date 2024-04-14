@@ -1,6 +1,7 @@
 package com.megapro.invoicesync.service;
 
 import com.megapro.invoicesync.dto.request.CreateInvoiceRequestDTO;
+import com.megapro.invoicesync.dto.response.ApproverDisplay;
 import com.megapro.invoicesync.model.Invoice;
 import com.megapro.invoicesync.model.Product;
 
@@ -29,6 +30,7 @@ public interface InvoiceService {
     Invoice getInvoiceByInvoiceNumber(String invoiceNumber);
     String parseDate(LocalDate localDate);
     String checkValidity(CreateInvoiceRequestDTO invoiceDTO, List<Integer> selectedTaskIds, String email);
+    public List<ApproverDisplay> getApproverDisplaysForInvoice(Invoice invoice);
     Invoice updateInvoice(Invoice invoiceFromDTO);
     void addApproverToInvoice(UUID invoiceId, String email);
 }

@@ -154,19 +154,29 @@ public class ApproveInvoiceController {
 
     @PostMapping("/approve-invoice")
     public String approve(UpdateApprovalRequestDTO updateApprovalRequestDTO, RedirectAttributes redirectAttributes) {
-
+        
         var approval = approvalService.findApprovalByApprovalId(updateApprovalRequestDTO.getApprovalId());
         approval.setApprovalStatus("Approved");
         approval.setApprovalTime(LocalDate.now());
-        approvalService.saveApproval(approval);
-
+        
+        
         var invoice = approval.getInvoice();
-        invoice.setStatus("Approved");
+        var approvalList = invoice.getListApproval();
+        boolean isLastApproval = approval.equals(approvalList.get(approvalList.size() - 1));
+
+        if (isLastApproval) {
+            invoice.setStatus("Approved");
+        } else {
+            int currentApprovalIndex = approvalList.indexOf(approval);
+            var nextApproval = approvalList.get(currentApprovalIndex + 1);
+            nextApproval.setShown(true);
+            approvalService.saveApproval(nextApproval);
+        }
+
+        approvalService.saveApproval(approval);
         invoiceService.updateInvoice(invoice);
-
+        
         var invoiceNumber = approval.getInvoice().getInvoiceNumber().replace('/', '_');
-        System.out.println("Attempting to redirect to: /approval/" + invoiceNumber);
-
         redirectAttributes.addFlashAttribute("message", "Invoice Approved Successfully");
 
         return "redirect:/approval/" + invoiceNumber + "?approvalId=" + approval.getApprovalId();

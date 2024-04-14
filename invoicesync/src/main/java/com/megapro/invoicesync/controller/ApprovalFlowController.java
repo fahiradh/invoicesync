@@ -78,7 +78,7 @@ public class ApprovalFlowController {
         model.addAttribute("roles", roles);
         model.addAttribute("successMessage", successMessage);
         model.addAttribute("errorMessage", errorMessage);
-        return "approval-invoice/approval-hierarchy";
+        return "approve-invoice/approval-hierarchy";
     }
 
     @GetMapping("/reset-approval-flows")
