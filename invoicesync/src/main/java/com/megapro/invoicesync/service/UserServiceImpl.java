@@ -171,8 +171,10 @@ public class UserServiceImpl implements UserService{
         boolean cek = false;
 
         for (Employee emp : getAllEmployee()) {
-            if (emp.getNomorHp() == phoneNumber && emp.getEmail() != email) {
+            String empNomorHp = emp.getNomorHp();
+            if (empNomorHp != null && empNomorHp.equals(phoneNumber) && !emp.getEmail().equals(email)) {
                 cek = true;
+                break; 
             }
         }
         return cek;
