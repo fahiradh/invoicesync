@@ -132,12 +132,12 @@
                                         <tr>
                                             <td><p class="card-text">Subtotal</p></td>
                                             <td>
-                                                <input class="form-control" type="number" th:field="*{subtotal}" disabled />
+                                                <input name="subtotalInvoice" class="form-control" type="number" th:field="*{subtotal}" readonly />
                                             </td>
                                         </tr>
                                         <tr>
                                             <td><p class="card-text">Discount (%)</p></td>
-                                            <td><input class="form-control" type="number" th:field="*{totalDiscount}" oninput="calculateGrandTotal()"/></td>
+                                            <td><input name="totalDiscount" class="form-control" type="number" th:field="*{totalDiscount}" oninput="calculateGrandTotal()"/></td>
                                         </tr>
                                         <tr>
                                             <td><p class="card-text">Tax</p></td>
@@ -155,7 +155,7 @@
                                         <tr>
                                             <td><p class="card-text">Grand Total</p></td>
                                             <td>
-                                                <input class="form-control" th:field="*{grandTotal}" type="number"  disabled />
+                                                <input name="grandTotal" class="form-control" th:field="*{grandTotal}" type="number"  readonly />
         
                                             </td>
                                         </tr>
@@ -197,12 +197,12 @@
                                     </div>
                                     <br>
                                     <div class="drag-area">
-                                        <input type="file" id="base64String" name="base64String" accept="image/*" required>
+                                        <input type="file" id="base64String" name="base64String" accept="image/*">
                                         <input th:field="*{signature}" hidden/>
                                     </div>
                                     <br>
                                     <input class="form-control" type="text" th:field="*{staffEmail}" hidden />
-                                    <p class="card-text" th:text="${employee.first_name} + ' ' + ${employee.last_name}"></p>
+                                    <p class="card-text" th:text="'Created by: ' + ${employee.first_name} + ' ' + ${employee.last_name}"></p>
                                     <br>
                                 </div>
                             </div>

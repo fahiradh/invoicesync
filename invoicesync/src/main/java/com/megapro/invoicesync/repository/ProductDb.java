@@ -14,4 +14,5 @@ import java.util.UUID;
 @Transactional
 public interface ProductDb extends JpaRepository<Product, UUID>{
     List<Product> findByInvoice(Invoice invoice);
+    Product findByProductId(UUID productId);
 }

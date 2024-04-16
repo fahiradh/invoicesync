@@ -111,7 +111,6 @@ function fetchTaxes() {
             console.error('Error fetching taxes:', error);
         });
 }
-
 fetchTaxes();
 
 function getAllTableData() {
@@ -140,13 +139,24 @@ function updateSubtotal(priceInput, quantityInput, subtotalInput) {
 }
 
 function updateSubtotalInvoice() {
-    var subtotalElements = document.querySelectorAll('.subtotal');
+    var tableDataList = getAllTableData();
     var total = 0;
-    subtotalElements.forEach(element => {
-        total += parseFloat(element.value || 0);
+
+    tableDataList.forEach(rowData => {
+        total += parseFloat(rowData.totalPrice || 0);
     });
+
     document.querySelector('input[name="subtotal"]').value = total.toFixed(2);
 }
+
+// function updateSubtotalInvoice() {
+//     var subtotalElements = document.querySelectorAll('.subtotal');
+//     var total = 0;
+//     subtotalElements.forEach(element => {
+//         total += parseFloat(element.value || 0);
+//     });
+//     document.querySelector('input[name="subtotal"]').value = total.toFixed(2);
+// }
 
 function getSelectedTaxPercentage() {
     var array = []
@@ -184,7 +194,7 @@ function updateGrandTotalInvoice() {
 
     var total = subtotal + taxTotal;
 
-    document.querySelector('input[name="grandTotal"]').value = total;
+    document.querySelector('input[name="grandTotal"]').value = total.toFixed(2);
 }
 
 function updateRowNumbers(tableBody) {
@@ -312,4 +322,5 @@ function updateCustomerContact() {
 var closeModalButton = document.getElementById('closeModalButton');
 closeModalButton.addEventListener('click', function() {
     $('#errorModal').modal('hide');
+    $('#successModal').modal('hide');
 });

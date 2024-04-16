@@ -2,9 +2,7 @@ package com.megapro.invoicesync.restcontroller;
 
 import com.megapro.invoicesync.model.Employee;
 import com.megapro.invoicesync.model.Invoice;
-import com.megapro.invoicesync.model.Product;
 import com.megapro.invoicesync.service.InvoiceService;
-import com.megapro.invoicesync.service.ProductService;
 import com.megapro.invoicesync.service.UserService;
 import com.megapro.invoicesync.utils.PrintInvoice;
 
@@ -15,8 +13,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -39,7 +35,7 @@ public class PrintRestController {
         Invoice invoice = invoiceService.getInvoiceById(invoiceId);
         
         try {
-            String htmlTemplate = PrintInvoice.readHtmlTemplate("src/main/resources/data/template.html");
+            String htmlTemplate = PrintInvoice.readHtmlTemplate("data/template.html");
             String processedHtml = processInvoiceData(htmlTemplate, invoice);
             String processedProduct = processInvoiceProduct(processedHtml, invoice);
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

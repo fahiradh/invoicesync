@@ -138,7 +138,7 @@ public class InvoiceController {
                                 @RequestParam(value = "taxOption", required = false) List<Integer> selectedTaxIds,
                                 @ModelAttribute("successMessage") String successMessage,
                                 @ModelAttribute("errorMessage") String errorMessage,
-                                @RequestParam("base64String") MultipartFile imageDataUrl,
+                                @RequestParam(value = "base64String",required = false ) MultipartFile imageDataUrl,
                                 @RequestParam(value = "files", required = false) MultipartFile[] files) throws IOException{
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
@@ -202,6 +202,7 @@ public class InvoiceController {
         model.addAttribute("taxList", taxList);
         model.addAttribute("invoice", invoiceDTO);
         model.addAttribute("dateInvoice", invoiceService.parseDate(invoiceDTO.getInvoiceDate()));
+        model.addAttribute("employee", employee);
         List<ApproverDisplay> approverDisplays = invoiceService.getApproverDisplaysForInvoice(invoice);
         model.addAttribute("approverDisplays", approverDisplays);
         model.addAttribute("employee", employee);
@@ -403,7 +404,6 @@ public class InvoiceController {
         var date = invoice.getInvoiceDate();
         Employee employee = userService.findByEmail(email);
 
-        model.addAttribute("image", invoice.getSignature());
         model.addAttribute("listProduct", listProduct);
         model.addAttribute("role", role);
         model.addAttribute("date", String.format("%02d/%02d/%04d", date.getDayOfMonth(),  date.getMonth().getValue(), date.getYear()));
@@ -456,17 +456,37 @@ public class InvoiceController {
     }
     
     @PostMapping("/invoice/edit")
-    public String editInvoice(@ModelAttribute UpdateInvoiceRequestDTO invoiceDTO, Model model) {
+    public String editInvoice(@ModelAttribute UpdateInvoiceRequestDTO invoiceDTO, Model model,
+                            @RequestParam(value = "base64String",required = false ) MultipartFile imageDataUrl,
+                            RedirectAttributes redirectAttributes) throws IOException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         var user = userAppDb.findByEmail(email);
         String role = user.getRole().getRole();
+
+        if (imageDataUrl.getSize() != 0){
+            byte[] imageBytes = imageDataUrl.getBytes();
+            String bytesToString = invoiceService.translateByte(imageBytes);
+            invoiceDTO.setSignature(bytesToString);
+        }
+
+        // var check = invoiceService.checkValidityUpdate(invoiceDTO);
+        // var message = check.split(",");
+
+        // if (message[0].equals("errorMessage")){
+        //     redirectAttributes.addFlashAttribute(message[0], message[1]);
+        // } else{
         var invoiceFromDTO = invoiceMapper.updateInvoiceDTOToInvoice(invoiceDTO);
         var invoice = invoiceService.updateInvoice(invoiceFromDTO);
+        // redirectAttributes.addFlashAttribute(message[0], message[1]); 
+        // }
+
         String encodedInvoiceNumber = invoice.getInvoiceNumber().replace("/", "_");
+        // model.addAttribute("successMessage", successMessage);
+        // model.addAttribute("errorMessage", errorMessage);
         model.addAttribute("email", email);
         model.addAttribute("role", role);
+        model.addAttribute("image", invoice.getSignature());
         return String.format("redirect:/invoice/%s", encodedInvoiceNumber);
     }
-
 }
