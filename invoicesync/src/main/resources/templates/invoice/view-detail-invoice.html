@@ -208,7 +208,7 @@
                                     </div>
                                     <br>
                                     <input class="form-control" type="text" th:value="${invoice.staffEmail}" hidden />
-                                    <p class="card-text" th:text="${employee.first_name} + ' ' + ${employee.last_name}"></p>
+                                    <p class="card-text" th:text="'Created by: ' + ${employee.first_name} + ' ' + ${employee.last_name}"></p>
                                     <br>
                                 </div>
                             </div>

@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.megapro.invoicesync.dto.ProductMapper;
 import com.megapro.invoicesync.dto.request.CreateProductRequestDTO;
+import com.megapro.invoicesync.dto.request.UpdateProductRequestDTO;
 import com.megapro.invoicesync.model.Product;
 import com.megapro.invoicesync.service.InvoiceService;
 import com.megapro.invoicesync.service.ProductService;
@@ -17,8 +18,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.web.bind.annotation.GetMapping;
-
+import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -37,13 +39,9 @@ public class ProductRestController {
 
     @PostMapping("/create-product")
     public ResponseEntity<Product> createProduct(@RequestBody CreateProductRequestDTO productDTO) {
-        System.out.println("product price" + productDTO.getPrice());
-        System.out.println("product total price" + productDTO.getTotalPrice());
-
         var dummyInvoice = invoiceService.getDummyInvoice();
         var product = productMapper.createProductRequestToProduct(productDTO);
         product.setInvoice(dummyInvoice);
-        System.out.println("product created");
         double totalPrice = Double.parseDouble(productDTO.getTotalPrice());
         BigDecimal fixedPrice = BigDecimal.valueOf(totalPrice);
         product.setTotalPrice(fixedPrice);
@@ -51,18 +49,18 @@ public class ProductRestController {
         return ResponseEntity.ok(product);
     }
 
-    @PostMapping("/delete-product")
-    public ResponseEntity<Product> deleteProduct(@RequestBody CreateProductRequestDTO productDTO){
-        var product = productService.getProduct(productDTO);
+    @PostMapping("/product/{id}/delete")
+    public ResponseEntity<Product> deleteProduct(@PathVariable("id") String productId){
+        var product = productService.getProductById(UUID.fromString(productId));
         productService.delete(product);
-        System.out.println("DELETE DONE");
+        System.out.println("delete done");
         return ResponseEntity.ok(product);
     }
 
-    @GetMapping("/products")
-    public ResponseEntity<List<Product>> getAllProducts() {
-        var listProduct = productService.getAllProduct();
-        return ResponseEntity.ok(listProduct);
+    @PostMapping("/update-update")
+    public ResponseEntity<Product> updateProduct(@RequestBody UpdateProductRequestDTO productDTO){
+        var productFromDTO = productMapper.updateProductRequestToProduct(productDTO);
+        var product = productService.updateProduct(productFromDTO);
+        return ResponseEntity.ok(product);
     }
-    
 }

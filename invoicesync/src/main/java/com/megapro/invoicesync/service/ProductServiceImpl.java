@@ -12,6 +12,7 @@ import jakarta.transaction.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.math.BigDecimal;
 
 @Service
@@ -45,18 +46,34 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public Product getProduct(CreateProductRequestDTO productDTO) {
         List<Product> listProduct = getAllProduct();
-        double totalPrice = Double.parseDouble(productDTO.getTotalPrice());
-        double price = Double.parseDouble(productDTO.getPrice());
         for (Product p : listProduct){
             if (p.getDescription().equals(productDTO.getDescription())){
-                    return p;
-                }
+                return p;
+            }
         }
         return null;
     }
 
     @Override
     public void delete(Product product) {
+        product.setInvoice(null);
         productDb.delete(product);
+    }
+
+    @Override
+    public Product getProductById(UUID id) {
+        return productDb.findByProductId(id);
+    }
+
+    @Override
+    public Product updateProduct(Product productDTO) {
+        var product = getProductById(productDTO.getProductId());
+        product.setQuantity(productDTO.getQuantity());
+        product.setPrice(productDTO.getPrice());
+        product.setDescription(productDTO.getDescription());
+        double totalPrice = productDTO.getQuantity() * productDTO.getPrice().doubleValue();
+        product.setTotalPrice(BigDecimal.valueOf(totalPrice));
+        productDb.save(product);
+        return product;
     }
 }

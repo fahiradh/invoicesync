@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.megapro.invoicesync.dto.InvoiceMapper;
 import com.megapro.invoicesync.dto.request.CreateInvoiceRequestDTO;
+import com.megapro.invoicesync.dto.request.UpdateInvoiceRequestDTO;
 import com.megapro.invoicesync.dto.response.ApproverDisplay;
 import com.megapro.invoicesync.model.Approval;
 import com.megapro.invoicesync.model.ApprovalFlow;
@@ -127,7 +128,8 @@ public class InvoiceServiceImpl implements InvoiceService{
 
     private void calculateSubtotal(Invoice invoice){
         double total = 0;
-        for (Product p : invoice.getListProduct()){
+        var listInvoice = getListProductInvoice(invoice);
+        for (Product p : listInvoice){
             total += p.getTotalPrice().doubleValue();
         }
         invoice.setSubtotal(BigDecimal.valueOf(total));
@@ -143,7 +145,7 @@ public class InvoiceServiceImpl implements InvoiceService{
     private void calculateTax(Invoice invoice){
         double total = 0;
         for(Tax tax:invoice.getListTax()){
-            total += (tax.getTaxPercentage()*invoice.getGrandTotal().doubleValue()/100);
+            total += (tax.getTaxPercentage()*invoice.getGrandTotal().doubleValue()/100.0);
         }
         invoice.setTaxTotal(BigDecimal.valueOf(total));
     }
@@ -336,24 +338,33 @@ public class InvoiceServiceImpl implements InvoiceService{
         if (invoiceDTO.getCustomerId() == null){
             res = "errorMessage, Customer can't be empty";
         }
-        else if (invoiceDTO.getAccountName() == null || invoiceDTO.getAccountNumber() == null ||
-                invoiceDTO.getBankName() == null){
-            res = "errorMessage, Please provide the account information";
+        else if (invoiceDTO.getAccountName() == null || invoiceDTO.getBankName() == null){
+            res = "errorMessage, Please give the correct input for payment information";
+        }
+        else if (invoiceDTO.getAccountNumber() != null && !isNumeric(invoiceDTO.getAccountNumber())){
+            res = "errorMessage, Please give the correct input for payment information";
         }
         else if (invoiceDTO.getDueDate() == null){
             res = "errorMessage, Please select invoice due date";
         }
+        else if (invoiceDTO.getCity().isBlank() || isNumeric(invoiceDTO.getCity())){
+            res = "errorMessage, Please fill the city name";
+        }
+        else if (invoiceDTO.getTotalWords().isBlank()){
+            res = "errorMessage, Please fill the amount in words";
+        }
+        else if (invoiceDTO.getSignature().isEmpty()){
+            res = "errorMessage, Please upload your signature image";
+        }
         else {
             invoiceDTO.setStatus("Waiting for Approver");
-            System.out.println("customer id nya adalah " + invoiceDTO.getCustomerId());
             var customer = customerService.getCustomerById(invoiceDTO.getCustomerId());
-            System.out.println("total discount " + invoiceDTO.getTotalDiscount());
             var invoice = invoiceMapper.createInvoiceRequestToInvoice(invoiceDTO);
             invoice.setCustomer(customer);
             attributeInvoice(invoice, selectedTaxIds);
             // invoiceDTO.setSignature(imageDataUrl);
             createInvoice(invoice, email);
-            res = "successMessage, Invoice created successfully!," + invoice.getInvoiceId();
+            res = "successMessage, Invoice successfully created," + invoice.getInvoiceId();
         }    
         return res;
     }
@@ -391,12 +402,12 @@ public List<ApproverDisplay> getApproverDisplaysForInvoice(Invoice invoice) {
         .collect(Collectors.toList());
 }
 
-// ... rest of the service implementation ...
-
-
     @Override
     public Invoice updateInvoice(Invoice invoiceFromDTO) {
         Invoice invoice = getInvoiceById(invoiceFromDTO.getInvoiceId());
+        Invoice dummy = getDummyInvoice();
+        var listProduct = productService.getAllProductDummyInvoice(dummy);
+        List<Product> newListProduct= new ArrayList<>();        
         if (invoice != null){
             invoice.setAccountName(invoiceFromDTO.getAccountName());
             invoice.setAccountNumber(invoiceFromDTO.getAccountNumber());
@@ -405,9 +416,46 @@ public List<ApproverDisplay> getApproverDisplaysForInvoice(Invoice invoice) {
             invoice.setProductDocument(invoiceFromDTO.getProductDocument());
             invoice.setTotalDiscount(invoiceFromDTO.getTotalDiscount());
             invoice.setListProduct(invoiceFromDTO.getListProduct());
-            invoiceDb.save(invoice);
+            invoice.setSignature(invoiceFromDTO.getSignature());
+            invoice.setCity(invoiceFromDTO.getCity());
         }
+        if (invoiceFromDTO.getDueDate() != null){
+            invoice.setDueDate(invoiceFromDTO.getDueDate());
+        }
+        for (Product p : listProduct){
+            p.setInvoice(invoice);
+            newListProduct.add(p);
+        }
+        invoice.setListProduct(newListProduct);
+        calculateSubtotal(invoice);
+        calculateDiscount(invoice);
+        calculateTax(invoice);
+        calculateGrandTotal(invoice);
+        invoiceDb.save(invoice);
         return invoice;
+    }
+
+    public static boolean isNumeric(String str) {
+        try {
+            Double.valueOf(str);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public String checkValidityUpdate(UpdateInvoiceRequestDTO invoiceDTO){
+        String accountNumber = invoiceDTO.getAccountNumber();
+        String city = invoiceDTO.getCity();
+        String res = "";
+        if (!isNumeric(accountNumber)){
+            res = "errorMessage, Please input the correct account number";
+        }
+        else if (isNumeric(city)){
+            res = "errorMessage, Please input the correct city name";
+        }
+        return res;
     }
 }
 
