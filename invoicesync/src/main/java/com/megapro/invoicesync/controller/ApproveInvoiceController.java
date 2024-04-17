@@ -84,11 +84,10 @@ public class ApproveInvoiceController {
     
                 ReadInvoiceResponse invoiceDTO = invoiceMapper.readInvoiceToInvoiceResponse(invoice);
                 invoiceDTO.setApprovalId(approval.getApprovalId());
-                System.out.println("Ini approval id yang dibawa " + invoiceDTO.getApprovalId());
+                invoiceDTO.setApprovalStatus(approval.getApprovalStatus());;
                 invoiceDTOList.add(invoiceDTO);
             }
         }
-        model.addAttribute("email", email);
         model.addAttribute("invoices", invoiceDTOList);
 
         return "approve-invoice/list-approval.html";
@@ -129,7 +128,8 @@ public class ApproveInvoiceController {
         List<ReadApprovalResponseDTO> approvalLogs = new ArrayList<>();
         var approvalDTO = new UpdateApprovalRequestDTO();
         for(Approval approval:approvals){
-            if(approval.getApprovalStatus()==null || approval.getApprovalStatus().isEmpty()){
+            if(approval.getApprovalStatus().equals("Need Approval")){
+                System.out.println("Nama approval pertama " + approval.getEmployee().getEmail());
                 approvalDTO = approvalMapper.approvalToUpdateApprovalRequestDTO(approval);
                 break;
             }

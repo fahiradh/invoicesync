@@ -42,4 +42,5 @@ public class ReadInvoiceResponse {
     private String status;
     private String staffRole;
     private int approvalId;
+    private String approvalStatus;
 }

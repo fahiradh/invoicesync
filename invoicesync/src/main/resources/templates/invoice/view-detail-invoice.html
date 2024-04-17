@@ -25,7 +25,7 @@
         <th:block th:if="${(invoice.status == 'Need Revision' || invoice.status == 'Waiting for Approver') && emailPermission == true}">
             <a class="btn btn-primary" th:href="@{/invoice/{invoiceNumber}/edit(invoiceNumber=${invoice.invoiceNumber.replace('/','_')})}">Edit</a>
         </th:block>
-        <th:block th:if="${invoice.status == 'Waiting for Approver'}">
+        <th:block th:if="${invoice.status == 'Waiting for Approver' && emailPermission == true}">
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addApproverModal">Assign Approver</button>
         </th:block>
     </form>

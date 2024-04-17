@@ -11,6 +11,7 @@ import com.megapro.invoicesync.model.Invoice;
 import com.megapro.invoicesync.repository.ApprovalDb;
 import com.megapro.invoicesync.repository.ApprovalFlowDb;
 import com.megapro.invoicesync.repository.EmployeeDb;
+import com.megapro.invoicesync.repository.InvoiceDb;
 
 import java.util.Comparator;
 import java.util.List;
@@ -69,6 +70,9 @@ public class ApprovalFlowServiceImpl implements ApprovalFlowService {
     @Autowired
     InvoiceService invoiceService;
 
+    @Autowired
+    InvoiceDb invoiceDb;
+
     @Override
     public void saveApprover(List<CreateApprovalRequestDTO> createApprovalDTOList){
         for(CreateApprovalRequestDTO approvalDTO:createApprovalDTOList){
@@ -77,7 +81,11 @@ public class ApprovalFlowServiceImpl implements ApprovalFlowService {
             var invoice = invoiceService.getInvoiceById(approvalDTO.getInvoiceId());
             approval.setEmployee(employee);
             approval.setInvoice(invoice);
+            approval.setApprovalStatus("Need Approval");
             approvalDb.save(approval);
+            System.out.println("Hai ini masuk sini");
+            invoice.setStatus("Pending Approval");
+            invoiceDb.save(invoice);
         }
     }
 

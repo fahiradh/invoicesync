@@ -149,7 +149,7 @@ public class InvoiceController {
             var message = invoiceService.checkValidity(invoiceDTO, selectedTaxIds, email).split(",");
             var newInvoiceDTO = new CreateInvoiceRequestDTO();
 
-            if(!files[0].getOriginalFilename().equals("")){
+            if((!files[0].getOriginalFilename().equals("")) && !(message[0].equals("errorMessage"))){
                 fileService.save(files, UUID.fromString(message[2]));
             }
 
@@ -208,7 +208,7 @@ public class InvoiceController {
         var approvals = invoice.getListApproval();
         List<ReadApprovalResponseDTO> approvalLogs = new ArrayList<>();
         for(Approval approval:approvals){
-            if(approval.getApprovalStatus()==null || approval.getApprovalStatus().isEmpty()){
+            if(approval.getApprovalStatus().equals("Need Approval")){
                 break;
             }
             var filesLog = approval.getApprovalFiles();
@@ -334,7 +334,7 @@ public class InvoiceController {
                                                             .collect(Collectors.toList());
 
         model.addAttribute("invoices", myInvoiceDTOs);
-        return "my-invoices-view"; // Ganti dengan nama view Thymeleaf Anda
+        return "invoice/my-invoices-view";
     }
 
     @GetMapping("/invoices/division/{division}")

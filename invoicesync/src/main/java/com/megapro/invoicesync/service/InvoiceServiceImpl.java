@@ -221,6 +221,9 @@ public class InvoiceServiceImpl implements InvoiceService{
     
     
     public List<Invoice> retrieveInvoicesByEmailAndStatus(String email, String status) {
+        if(status == null || status.equals("")){
+            return invoiceDb.findByStaffEmail(email);
+        }
         return invoiceDb.findByStaffEmailAndStatus(email, status);
     }
 
@@ -231,7 +234,12 @@ public class InvoiceServiceImpl implements InvoiceService{
 
     @Override
     public List<Invoice> retrieveInvoicesByStatus(String status) {
-        return invoiceDb.findByStatus(status);
+        if(status == null || status == ""){
+            return invoiceDb.findAll();
+        } else {
+
+            return invoiceDb.findByStatus(status);
+        }
     }
 
     @Override
