@@ -302,8 +302,8 @@ public class InvoiceServiceImpl implements InvoiceService{
         approvalDb.save(approval);
 
         // Set status invoice jadi need Pending Approval
-        invoice.setStatus("Pending Approval");
-        invoiceDb.save(invoice);
+        // invoice.setStatus("Pending Approval");
+        // invoiceDb.save(invoice);
     }
     
     
