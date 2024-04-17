@@ -13,7 +13,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
 
 import com.megapro.invoicesync.dto.ApprovalMapper;
 import com.megapro.invoicesync.dto.CustomerMapper;
@@ -53,13 +52,10 @@ import com.megapro.invoicesync.model.UserApp;
 import com.megapro.invoicesync.repository.InvoiceDb;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
-import java.math.BigDecimal;
 import java.util.Arrays;
-import org.springframework.web.bind.annotation.RequestBody;
 
 
 @Controller

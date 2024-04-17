@@ -9,11 +9,11 @@
 </head>
 
 <body>
-    <nav th:if="${role == 'Finance Staff'} " th:replace="~{fragments/navbar-finance :: navbar-finance-staff(page='All-Invoices-List')}"></nav>
-    <nav th:if="${role == 'Finance Manager' or role == 'Finance Director'}" th:replace="~{fragments/navbar-finance :: navbar-finance-exc(page='All-Invoices-List')}"></nav>
-    <nav th:if="${role == 'Non-Finance Manager'} "th:replace="~{fragments/navbar-non-finance :: navbar-non-finance-manager(page='All-Invoices-List')}"></nav>
     <nav th:if="${role == 'Non-Finance Staff'}" th:replace="~{fragments/navbar-non-finance :: navbar-non-finance-staff(page = 'My-Invoice')}"></nav>
-    
+    <nav th:if="${role == 'Non-Finance Manager'}" th:replace="~{fragments/navbar-non-finance :: navbar-non-finance-manager(page='All-Invoices-List')}"></nav>
+    <nav th:if="${role == 'Finance Staff'}" th:replace="~{fragments/navbar-finance :: navbar-finance-staff(page='Approve-Invoice')}"></nav>
+    <nav th:if="${role == 'Finance Manager'}" th:replace="~{fragments/navbar-finance :: navbar-finance-exc(page='Approve-Invoice')}"></nav>
+
     <div class="container">
     <div class="header">
         <h4>Detail Invoice / <span class="invoice-number" th:text="${invoice.invoiceNumber}"></span></h4>
