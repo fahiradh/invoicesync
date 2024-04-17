@@ -50,7 +50,7 @@ public class Approval {
     private boolean shown = false;
 
     @Column(name="approval_status")
-    private String approvalStatus;
+    private String approvalStatus = "Pending Approval";
 
     @Column(name="comment")
     private String comment;

@@ -19,14 +19,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.megapro.invoicesync.dto.UserMapper;
 import com.megapro.invoicesync.dto.request.ChangePasswordRequestDTO;
-import com.megapro.invoicesync.dto.request.ChangePasswordRequestDTO;
 import com.megapro.invoicesync.dto.request.CreateEmployeeRequestDTO;
-import com.megapro.invoicesync.dto.request.CreateInvoiceRequestDTO;
-import com.megapro.invoicesync.model.Employee;
-import com.megapro.invoicesync.model.Invoice;
 import com.megapro.invoicesync.model.Role;
-import com.megapro.invoicesync.repository.EmployeeDb;
-import com.megapro.invoicesync.model.UserApp;
 import com.megapro.invoicesync.repository.EmployeeDb;
 import com.megapro.invoicesync.repository.UserAppDb;
 import com.megapro.invoicesync.service.UserService;
@@ -34,11 +28,7 @@ import com.megapro.invoicesync.service.UserService;
 import jakarta.validation.Valid;
 
 import com.megapro.invoicesync.service.RoleService;
-import org.springframework.web.server.ResponseStatusException;import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
 
 @Controller
 public class EmployeeController {
