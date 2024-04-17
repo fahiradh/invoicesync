@@ -15,48 +15,48 @@
     <nav th:if="${role == 'Finance Manager'}" th:replace="~{fragments/navbar-finance :: navbar-finance-exc(page='Approve-Invoice')}"></nav>
 
     <div class="container">
-        <div class="card-body p-4">
+        <div class="header">
             <h4>Approval of Invoice / <span class="invoice-number" th:text="${invoice.invoiceNumber}">Invoice #</span></h4>
-            <div class="modal fade" id="exampleModalCenter" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" style="display: none;">
-                <!-- Modal detail revisi -->
-                <div class="modal-dialog modal-dialog-centered">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h1 class="modal-title fs-5" id="exampleModalCenterTitle">Revision Detail</h1>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <form action="/revision-invoice" method="post" th:object="${approvalDTO}" enctype="multipart/form-data">
-                        <div class="modal-body">
-                                <input class="form-control" type="hidden" th:field="*{approvalId}">
-                                <div class="mb-3">
-                                <label for="message-text" class="col-form-label">Comment<span style="color: #E93D3D;">*</span></label>
-                                <textarea class="form-control" id="message-text" th:field="*{comment}"></textarea>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="files" class="col-form-label">Additional documents:</label>
-                                    <input class="form-control" type="file" id="files" name="files" multiple>
-                                </div>
+        </div>
+        <div class="modal fade" id="exampleModalCenter" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" style="display: none;">
+            <!-- Modal detail revisi -->
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalCenterTitle">Revision Detail</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="/revision-invoice" method="post" th:object="${approvalDTO}" enctype="multipart/form-data">
+                    <div class="modal-body">
+                            <input class="form-control" type="hidden" th:field="*{approvalId}">
+                            <div class="mb-3">
+                            <label for="message-text" class="col-form-label">Comment<span style="color: #E93D3D;">*</span></label>
+                            <textarea class="form-control" id="message-text" th:field="*{comment}"></textarea>
                             </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary">Revise</button>
+                            <div class="mb-3">
+                                <label for="files" class="col-form-label">Additional documents:</label>
+                                <input class="form-control" type="file" id="files" name="files" multiple>
                             </div>
                         </div>
-                    </form>
-                </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Revise</button>
+                        </div>
+                    </div>
+                </form>
             </div>
-            <div class="form-buttons" th:if="${status == null || status == ''}">
-                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#approveModal">
-                    Approve
-                  </button>
-                  <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#rejectModal">
-                    Reject
-                  </button>
-                <!-- <button class="btn btn-danger" type="submit" formaction="@{/reject-invoice}">Reject</button> -->
-                <button class="btn btn-warning" type="submit" data-bs-toggle="modal" data-bs-target="#exampleModalCenter">
-                    Need Revision
-                </button>
-            </div>
+        </div>
+        <div class="form-buttons" th:if="${status == 'Need Approval'}">
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#approveModal">
+                Approve
+            </button>
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#rejectModal">
+                Reject
+            </button>
+            <!-- <button class="btn btn-danger" type="submit" formaction="@{/reject-invoice}">Reject</button> -->
+            <button class="btn btn-warning" type="submit" data-bs-toggle="modal" data-bs-target="#exampleModalCenter">
+                Need Revision
+            </button>
         </div>
     <!-- </div> -->
     <div class="grid-container-invoice-logs">
@@ -211,44 +211,12 @@
 
                     <div class="row">
                         <div class="col-md-6">
-                            <div class="mb-4">
+                            <p class="card-text">Additional Document</p>
+                            <!-- <div class="mb-4">
                                 <p class="card-info">Please attach additional documents for approval.</p>
                                 <br>
                                 <p class="card-text">Additional Document</p>
-                                <input type="file" class="form-control" name="file"/>
-                                <input type="hidden" th:field="${invoice.additionalDocument}" readonly/>
-                            </div>
-                        </div>
-    
-                        <div class="col-md-6">
-                            <div class="mb-4">
-                                <p class="card-text">Signature</p>
-                                <div class="form-inline">
-                                    <div class="form-group mr-2">
-                                        <input class="form-control" type="text" th:field="${invoice.city}" readonly />
-                                    </div>
-                                    <div class="form-group">
-                                        <p class="card-text" th:text="', '+${invoice.invoiceDate}"></p>
-                                    </div>
-                                </div>
-                                <br>
-                                <input type="file" class="form-control" name="image"/>
-                                <input type="hidden" th:field="${image}" />
-                                <br>
-                            </div>
-                        </div>
-                    </div>
-                    <hr>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-4">
-                                <p class="card-info">Please attach additional documents for approval.</p>
-                                <br>
-                                <p class="card-text">Additional Document</p>
-                                <input type="file" class="form-control" name="file"/>
-                                <input type="hidden" th:value="${invoice.additionalDocument}" />
-                            </div>
+                            </div> -->
                         </div>
 
                             <div class="col-md-6">
