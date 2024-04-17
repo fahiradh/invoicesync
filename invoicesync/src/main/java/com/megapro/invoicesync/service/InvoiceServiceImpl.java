@@ -291,7 +291,7 @@ public class InvoiceServiceImpl implements InvoiceService{
         Approval approval = new Approval();
         approval.setEmployee(employee);
         approval.setInvoice(invoice);
-        approval.setApprovalStatus("Pending"); // Set the initial approval status
+        approval.setApprovalStatus("Need Approval"); // Set the initial approval status
         approval.setApprovalTime(LocalDate.now());
         
         // Set rank of the approval based on the required flow
@@ -300,6 +300,10 @@ public class InvoiceServiceImpl implements InvoiceService{
             approval.setShown(true);
         }
         approvalDb.save(approval);
+
+        // Set status invoice jadi need Pending Approval
+        invoice.setStatus("Pending Approval");
+        invoiceDb.save(invoice);
     }
     
     
