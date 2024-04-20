@@ -114,7 +114,7 @@ h4{
     border-color: #3F2685; 
 }
 
-.btn-signin:hover, .btn-signin:active, .btn-primary:hover, .btn-primary:active{
+.btn-signin:hover, .btn-signin:active, .btn-primary:hover, .btn-primary:active, .btn-primary:focus{
     background-color: #5d3ca4; 
     border-color: #5d3ca4; 
 }
@@ -169,7 +169,6 @@ h4{
 
 .form-control {
     border-radius: 0.7rem;
-    background-color: #EEF2F5;
 }
 
 .card-header {

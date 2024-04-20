@@ -40,6 +40,7 @@ dependencies {
     implementation 'org.xhtmlrenderer:flying-saucer-pdf:9.1.22'
     implementation 'com.itextpdf:itextpdf:5.5.13'
 	implementation 'commons-io:commons-io:2.11.0'
+	implementation 'javax.servlet:javax.servlet-api:4.0.1'
 }
 
 

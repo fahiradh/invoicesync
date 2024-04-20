@@ -12,6 +12,7 @@
     <nav th:replace="~{fragments/navbar-non-finance :: navbar-non-finance-staff(page = 'Create-Invoice')}"></nav>
     <div class="container">
     <form th:action="@{/create-invoice}" th:object="${invoiceDTO}" method="POST" enctype="multipart/form-data">
+    <span th:text="${invoiceDummyId}" id="invoiceDummyId" hidden></span>
     <div class="header">
         <h4>Create Invoice / <span class="invoice-number">Draft</span></h4>
     </div>
@@ -34,7 +35,7 @@
                     <div class="justify-content-center">
                         <div class="row" style="align-items:center;">
                             <div class="col">
-                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addCustomerModal">New Customer</button>
+                                <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#addCustomerModal">New Customer</button>
                             </div>
                         </div>
                         <div class="row">
@@ -82,10 +83,11 @@
                         <br>
 
                         <p class="card-text">Attach Product List (.xlsx)</p>
-                        <input type="file" class="form-control" id="document" name="document" style="width: 35%;"/>
-                        <input th:field="*{productDocument}" hidden/>
+                        <p>Please refer to <span id="openGuidelinesModal" class="guidelinseModal">this guidelines</span> for the document's format.</p>
+                        <input type="file" class="form-control" id="productDocument" name="productDocument"/>
                         <br>
 
+                        <button id="addRowInvoice" class="btn btn-primary mb-3" type="button">Add Row</button>
                         <table class="table table-bordered">
                             <thead class="bg-dark text-white">
                                 <tr>
@@ -99,7 +101,6 @@
                             </thead> 
                             <tbody id="invoiceTableBody">
                             </tbody>
-                            <button id="addRowInvoice" class="btn btn-primary" type="button">Add Row</button>
                         </table>
                         <p class="card-info">Please click the check button if the product details are correct.</p>
 
@@ -219,44 +220,6 @@
         </div>  
     </div>
     </div>
-    <!-- Modal untuk Pesan Sukses -->
-    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalLabel">Success</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p id="successMessage"></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal untuk Pesan Error -->
-    <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalLabel">Error</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeModalButton">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p id="errorMessage"></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div class="modal fade" id="addCustomerModal" tabindex="-1" role="dialog" aria-labelledby="addCustomerModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -284,29 +247,80 @@
             </div>
         </div>
     </div>
-    <!-- Existing HTML code -->
-    
-    <script src="/js/scripts/invoice-script.js"></script>
 
+    <!-- Modal untuk Pesan Sukses -->
+    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel">Success</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeModalButton">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p id="successMessage"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal untuk Pesan Error -->
+    <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel">Error</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeModalButton">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p id="errorMessage"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="guidelinesModal" class="modal">
+        <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Add Product from Document Guidelines</h2>
+        <p>1. Your file must be .xls or .xlsx</p>
+        <p>2. Make sure there are minimun 3 headers (Description, Quantity, and Price)</p>
+        </div>
+    </div>
+
+    <script src="/js/scripts/modal.js"></script>
+    <script src="/js/scripts/create-invoice.js"></script>
     <script th:inline="javascript">
-    /*<![CDATA[*/
-    $(document).ready(function() {
-      var closeModalButton = document.getElementById('closeModalButton');
-      closeModalButton.addEventListener('click', function() {
-          $('#errorModal').modal('hide');
-      });
-      var successMessage = /*[[${successMessage}]]*/ null;
-      var errorMessage = /*[[${errorMessage}]]*/ null;
-      // Memeriksa jika ada pesan untuk ditampilkan
-      if (successMessage && successMessage !== '') {
-          $("#successMessage").text(successMessage); // Mengatur teks pesan sukses
-          $("#successModal").modal('show'); // Menampilkan modal sukses
-      } else if (errorMessage && errorMessage !== '') {
-          $("#errorMessage").text(errorMessage); // Mengatur teks pesan error
-          $("#errorModal").modal('show'); // Menampilkan modal error
-      }
-    });
-    /*]]>*/
-  </script>
+        $(document).ready(function() {
+            var successMessage = /*[[${successMessage}]]*/ null;
+            var errorMessage = /*[[${errorMessage}]]*/ null;
+        
+            if (successMessage && successMessage !== '') {
+                $("#successMessage").text(successMessage);
+                $("#successModal").modal('show');
+            } else if (errorMessage && errorMessage !== '') {
+                $("#errorMessage").text(errorMessage);
+                $("#errorModal").modal('show');
+            }
+        });
+        
+        var closeModalButton = document.getElementById('closeModalButton');
+        if (closeModalButton) {
+            closeModalButton.addEventListener('click', function() {
+                $('#errorModal').modal('hide');
+                $('#successModal').modal('hide');
+            });
+        }        
+    </script>
 </body>
 </html>

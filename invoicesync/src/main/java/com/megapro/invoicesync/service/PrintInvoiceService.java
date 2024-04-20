@@ -1,4 +1,4 @@
-package com.megapro.invoicesync.utils;
+package com.megapro.invoicesync.service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -7,13 +7,12 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class PrintInvoice {
+public class PrintInvoiceService {
 
     public static void generatePdf(ByteArrayOutputStream outputStream, String htmlContent) throws IOException {
         String tempHtmlFileName = "temp.html";
         String outputPdfFileName = "output.pdf";
 
-        // Tulis HTML ke file sementara
         try (java.io.FileWriter fileWriter = new java.io.FileWriter(tempHtmlFileName)) {
             fileWriter.write(htmlContent);
         }
@@ -38,14 +37,11 @@ public class PrintInvoice {
             }
         }
 
-        // Hapus file sementara
         new File(tempHtmlFileName).delete();
         new File(outputPdfFileName).delete();
     }
 
     public static String readHtmlTemplate(String templatePath) throws IOException {
-        // System.out.println("============");
-        // System.out.println(templatePath);
         byte[] encodedHtml = Files.readAllBytes(Paths.get(templatePath));
         return new String(encodedHtml, StandardCharsets.UTF_8);
     }

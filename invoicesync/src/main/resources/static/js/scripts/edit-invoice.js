@@ -1,77 +1,3 @@
-// const dragText = dropArea.querySelector("header");
-// const fileInput = document.getElementById("imageUrl");
-// const browseFileLink = document.getElementById("browseFileLink");
-
-// browseFileLink.addEventListener("click", function(event) {
-//     event.preventDefault();
-//     fileInput.click();
-// });
-
-// fileInput.addEventListener("change", function(){
-//     file = this.files[0];
-//     dropArea.classList.add("active");
-//     showFile();
-// });
-
-// dropArea.addEventListener("dragover", (event)=>{
-//     event.preventDefault();
-//     dropArea.classList.add("active");
-//     dragText.textContent = "Release to Upload File";
-// });
-
-// dropArea.addEventListener("dragleave", ()=>{
-//     dropArea.classList.remove("active");
-//     dragText.textContent = "Drag & Drop to Upload File";
-// });
-
-// dropArea.addEventListener("drop", (event)=>{
-//     event.preventDefault();
-//     file = event.dataTransfer.files[0];
-//     showFile();
-//     checkImage();
-// });
-
-// function checkImage(){
-//     console.log("eaaa");
-//     console.log(document.getElementById('imageSignature').value);
-// }
-
-// function showFile(){
-//     let fileType = file.type;
-//     let validExtensions = ["image/jpeg", "image/jpg", "image/png"];
-//     if (validExtensions.includes(fileType)){
-//         let fileReader = new FileReader();
-//         fileReader.onload = ()=>{
-//             let fileUrl = fileReader.result;
-//             let imgTag = `<img src="${fileUrl}" alt="signature-image">`;
-//             dropArea.innerHTML = imgTag;
-//         }
-//         fileReader.readAsDataURL(file);
-//     }else{
-//         alert("This is not an image file!");
-//         dropArea.classList.remove("active");
-//         dragText.textContent = "Drag & Drop to Upload File"
-//     }
-// }
-
-// document.getElementById('image').addEventListener('change', function() {
-//     const file = this.files[0];
-//     const dropArea = document.querySelector(".drag-area");
-//     if (file) {
-//         const reader = new FileReader();
-//         reader.onload = function(e) {
-//            const base64String = e.target.result;
-//             var img =  `<img id="previewImage" src="${base64String}" alt="Preview Image" style="max-height: 150px;"></img>`;
-//             dropArea.innerHTML = img;
-//             console.log(base64String);
-//             document.getElementById('base64String').value = base64String;
-//             // setValue(base64String);
-//         };
-//         reader.readAsDataURL(file);
-//     }
-// });
-
-
 // Ambil data tax dari backend
 var taxes = [];
 function fetchTaxes() {
@@ -113,50 +39,30 @@ function fetchTaxes() {
 }
 fetchTaxes();
 
-function getAllTableData() {
-    var tableBody = document.getElementById("invoiceTableBody");
-    var tableDataList = [];
-
-    for (var i = 0; i < tableBody.rows.length; i++) {
-        var row = tableBody.rows[i];
-        var rowData = {};
-        rowData.description = row.cells[1].querySelector('input[name="productDescription"]').value;
-        rowData.quantity = row.cells[2].querySelector('input[name="productQuantity"]').value;
-        rowData.price = row.cells[3].querySelector('input[name="productPrice"]').value;
-        rowData.totalPrice = row.cells[4].querySelector('input[name="productSubtotal"]').value;
-
-        tableDataList.push(rowData);
-    }
-
-    return tableDataList;
-}
-
-function updateSubtotal(priceInput, quantityInput, subtotalInput) {
-    var price = parseFloat(priceInput.value);
-    var quantity = parseInt(quantityInput.value);
-    var total = price * quantity;
-    subtotalInput.value = total.toFixed(2);
-}
-
-function updateSubtotalInvoice() {
-    var tableDataList = getAllTableData();
-    var total = 0;
-
-    tableDataList.forEach(rowData => {
-        total += parseFloat(rowData.totalPrice || 0);
+var updateDeleteIcons = document.querySelectorAll('.update-delete-icon');
+updateDeleteIcons.forEach(function(icon) {
+    icon.addEventListener('click', function() {
+        var productId = this.closest('tr').id;
+        fetch('/api/v1/product/' + productId + '/delete', {
+            method: 'POST'
+        })
+        .then(function(response) {
+            if (!response.ok) {
+                throw new Error('Error deleting product:', response.status);
+            }
+            console.log('Product deleted successfully');
+            var productRow = document.getElementById(productId);
+            if (productRow) {
+                productRow.remove();
+            }
+            getAllProduct();
+        })
+        .catch(function(error) {
+            console.error(error);
+        });
     });
+});
 
-    document.querySelector('input[name="subtotal"]').value = total.toFixed(2);
-}
-
-// function updateSubtotalInvoice() {
-//     var subtotalElements = document.querySelectorAll('.subtotal');
-//     var total = 0;
-//     subtotalElements.forEach(element => {
-//         total += parseFloat(element.value || 0);
-//     });
-//     document.querySelector('input[name="subtotal"]').value = total.toFixed(2);
-// }
 
 function getSelectedTaxPercentage() {
     var array = []
@@ -172,21 +78,40 @@ function getSelectedTaxPercentage() {
     return array;
 }
 
+function updateSubtotal(priceInput, quantityInput, subtotalInput) {
+    var price = parseFloat(priceInput.value);
+    var quantity = parseInt(quantityInput.value);
+    var total = price * quantity;
+    subtotalInput.value = total.toFixed(2);
+}
+
+document.getElementById('totalDiscount').addEventListener('input', function() {
+    updateDiscount();
+    countTaxes();
+    updateGrandTotalInvoice();
+});
+
+function updateDiscount(){
+    var discount = parseFloat(document.getElementById('totalDiscount').value || 0);
+    var subtotal = parseFloat(document.querySelector('input[name="subtotal"]').value);
+    var currentGrandTotal = subtotal - ((discount/100.0)*subtotal);
+    document.querySelector('input[name="grandTotal"]').value = currentGrandTotal.toFixed(2);
+}
+
 async function countTaxes() {
     var selectedTaxPercentage = getSelectedTaxPercentage();
-    var amount = document.getElementById("subtotal").value;
+    var amount = document.getElementById("grandTotal").value;
     var taxTotal = 0;
 
     selectedTaxPercentage.forEach(tax => {
         taxTotal += (tax*amount/100)
     })
-
     document.querySelector('input[name="taxTotal"]').value = taxTotal.toFixed(2);
 }
 
 
 function updateGrandTotalInvoice() {
-    var subtotalElement = document.querySelector('input[name="subtotal"]').value;
+    var subtotalElement = document.querySelector('input[name="grandTotal"]').value;
     var subtotal = parseFloat(subtotalElement || 0);
 
     var taxTotalElement = document.querySelector('input[name="taxTotal"]').value;
@@ -197,20 +122,14 @@ function updateGrandTotalInvoice() {
     document.querySelector('input[name="grandTotal"]').value = total.toFixed(2);
 }
 
-function updateRowNumbers(tableBody) {
-    var rows = tableBody.querySelectorAll('tr');
-    for (var i = 0; i < rows.length; i++) {
-        var cells = rows[i].querySelectorAll('td');
-        cells[0].innerHTML = i + 1;
-    }
-}
 
-function calculateGrandTotal() {
-    var subtotal = parseFloat(document.getElementById('subtotal').value);
-    var totalDiscount = parseFloat(document.getElementById('totalDiscount').value);
-    var grandTotal = subtotal - (subtotal * (totalDiscount / 100));
-    document.getElementById('grandTotal').value = grandTotal.toFixed(2);
-}
+// function updateRowNumbers(tableBody) {
+//     var rows = tableBody.querySelectorAll('tr');
+//     for (var i = 0; i < rows.length; i++) {
+//         var cells = rows[i].querySelectorAll('td');
+//         cells[0].innerHTML = i + 1;
+//     }
+// }
 
 document.getElementById("addRowInvoice").addEventListener("click", function() {
     var tableBody = document.getElementById("invoiceTableBody");
@@ -239,29 +158,37 @@ document.getElementById("addRowInvoice").addEventListener("click", function() {
 
     quantityInput.addEventListener('change', function() {
         updateSubtotal(priceInput, this, subtotalInput);
-        updateSubtotalInvoice();
-        countTaxes();
-        updateGrandTotalInvoice();
     });
 
     priceInput.addEventListener('change', function() {
         updateSubtotal(this, quantityInput, subtotalInput);
-        updateSubtotalInvoice();
-        countTaxes();
-        updateGrandTotalInvoice();
     });
 
     var deleteIcon = cellAction.querySelector('.delete-icon');
     deleteIcon.addEventListener('click', function() {
         tableBody.removeChild(newRow);
-        updateRowNumbers(tableBody);
-        updateSubtotalInvoice();
-        countTaxes();
-        updateGrandTotalInvoice();
+
     });
 
+    // var deleteIcon = cellAction.querySelector('.delete-icon');
+    // deleteIcon.addEventListener('click', function() {
+    //     var productId = newRow.getAttribute('data-product-id');
+    //     if (productId !== null){
+    //         deleteProduct(productId, newRow);
+    //     }
+    //     else{
+    //         tableBody.removeChild(newRow);
+    //     }
+    // });
+
     var checkIcon = cellAction.querySelector('.check-icon');
-    checkIcon.addEventListener('click', handleCheckClick);
+    checkIcon.addEventListener('click', function() {
+        var inputs = newRow.querySelectorAll('input[type="text"], input[type="number"]');
+        inputs.forEach(function(input) {
+            input.disabled = true;
+        });
+        handleCheckClick(this);
+    });
 });
 
 document.getElementById("taxList").addEventListener("click", function(){
@@ -269,8 +196,19 @@ document.getElementById("taxList").addEventListener("click", function(){
     updateGrandTotalInvoice();
 })
 
-function handleCheckClick() {
-    var checkIcon = this;
+document.getElementById("invoiceTableBody").addEventListener("change", function(event) {
+    var target = event.target;
+    if (target.matches('input[name="productQuantity"]') || target.matches('input[name="productPrice"]')) {
+        var row = target.closest('tr');
+        var quantityInput = row.querySelector('input[name="productQuantity"]');
+        var priceInput = row.querySelector('input[name="productPrice"]');
+        var subtotalInput = row.querySelector('input[name="productSubtotal"]');
+        updateSubtotal(priceInput, quantityInput, subtotalInput);
+    }
+});
+
+function handleCheckClick(checkIcon) {
+    var invoiceId = document.getElementById("invoiceId").value;
     var cellAction = checkIcon.parentElement;
     var tableRow = cellAction.parentElement;
     var cellDescription = tableRow.cells[1].querySelector('input[name="productDescription"]');
@@ -282,10 +220,10 @@ function handleCheckClick() {
         description: cellDescription.value,
         quantity: cellQuantity.value,
         price: cellPrice.value,
-        totalPrice: cellTotalPrice.value
+        totalPrice: cellTotalPrice.value,
     };
 
-    fetch('/api/v1/create-product', {
+    fetch('/api/v1/create-product/'+invoiceId, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -299,6 +237,7 @@ function handleCheckClick() {
         } else {
             console.error('Failed');
         }
+        getAllProduct();
     })
     .catch(error => {
         console.error('Error creating product:', error);
@@ -324,3 +263,31 @@ closeModalButton.addEventListener('click', function() {
     $('#errorModal').modal('hide');
     $('#successModal').modal('hide');
 });
+
+function getAllProduct() {
+    var invoiceId = document.getElementById("invoiceId").value;  
+    console.log("invoice id: " + invoiceId);
+    
+    fetch('/api/v1/invoice/product/' + invoiceId, {
+        method: 'GET'
+    })
+    .then(function(response) {
+        if (!response.ok) {
+            throw new Error('Error fetching products: ' + response.status);
+        }
+        return response.json();
+    })
+    .then(function(products) {
+        var subtotal = 0;
+        products.forEach(function(product) {
+            subtotal += parseFloat(product.totalPrice);
+        });
+        document.querySelector('input[name="subtotal"]').value = subtotal.toFixed(2);
+        updateDiscount()
+        countTaxes();
+        updateGrandTotalInvoice();
+    })
+    .catch(function(error) {
+        console.error('Error:', error);
+    });
+}

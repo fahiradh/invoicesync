@@ -25,6 +25,7 @@ import com.megapro.invoicesync.dto.request.UpdateInvoiceRequestDTO;
 import com.megapro.invoicesync.repository.UserAppDb;
 import com.megapro.invoicesync.service.ApprovalService;
 import com.megapro.invoicesync.service.CustomerService;
+import com.megapro.invoicesync.service.ExcelService;
 import com.megapro.invoicesync.service.FilesStorageService;
 import com.megapro.invoicesync.service.InvoiceService;
 import com.megapro.invoicesync.service.TaxService;
@@ -88,6 +89,9 @@ public class InvoiceController {
     UserService userService;
 
     @Autowired
+    ExcelService excelService;
+
+    @Autowired
     private ApprovalService approvalService;
 
     @Autowired
@@ -113,6 +117,7 @@ public class InvoiceController {
         List<Customer> listCustomer = customerService.getAllCustomer();
         LocalDate date = invoiceDTO.getInvoiceDate();
         Employee employee = userService.findByEmail(email);
+        var invoiceDummyId = invoiceService.getDummyInvoice().getInvoiceId();
 
         model.addAttribute("email", email);
         model.addAttribute("role", role);
@@ -125,6 +130,7 @@ public class InvoiceController {
         model.addAttribute("successMessage", successMessage);
         model.addAttribute("errorMessage", errorMessage);
         model.addAttribute("employee", employee);
+        model.addAttribute("invoiceDummyId", invoiceDummyId);
         return "invoice/form-create-invoice";
     }
 
@@ -134,7 +140,7 @@ public class InvoiceController {
                                 @RequestParam(value = "taxOption", required = false) List<Integer> selectedTaxIds,
                                 @ModelAttribute("successMessage") String successMessage,
                                 @ModelAttribute("errorMessage") String errorMessage,
-                                @RequestParam(value = "base64String",required = false ) MultipartFile imageDataUrl,
+                                @RequestParam(value = "base64String",required = false) MultipartFile imageDataUrl,
                                 @RequestParam(value = "files", required = false) MultipartFile[] files) throws IOException{
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
@@ -189,6 +195,16 @@ public class InvoiceController {
 
         var emailPermission = email.equals(invoice.getStaffEmail());
 
+        var files = fileService.findByFileInvoice(invoice);
+        List<ReadFileResponseDTO> documents = new ArrayList<>();
+        for (FileModel addedFile : files){
+            if (addedFile != null){
+                var addedFileDTO = fileMapper.fileModelToReadFileResponseDTO(addedFile);
+                documents.add(addedFileDTO);
+            }
+        }
+
+        model.addAttribute("documents", documents);
         model.addAttribute("image", invoice.getSignature());
         model.addAttribute("status", invoice.getStatus());
         model.addAttribute("email", email);

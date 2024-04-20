@@ -2,6 +2,7 @@ package com.megapro.invoicesync.service;
 
 import java.util.UUID;
 import java.util.stream.Stream;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.megapro.invoicesync.dto.FileMapper;
 import com.megapro.invoicesync.model.FileModel;
+import com.megapro.invoicesync.model.Invoice;
 import com.megapro.invoicesync.repository.FileDb;
 
 @Service
@@ -57,6 +59,11 @@ public class FilesStorageServiceImpl implements FilesStorageService {
     @Override
     public Stream<FileModel> findAll() {
         return fileDb.findAll().stream();
+    }
+
+    @Override 
+    public List<FileModel> findByFileInvoice(Invoice invoice){
+        return fileDb.findByInvoice(invoice);
     }
     
 }

@@ -370,14 +370,23 @@ public class InvoiceServiceImpl implements InvoiceService{
         }
         else {
             invoiceDTO.setStatus("Waiting for Approver");
-            var customer = customerService.getCustomerById(invoiceDTO.getCustomerId());
-            var invoice = invoiceMapper.createInvoiceRequestToInvoice(invoiceDTO);
-            invoice.setCustomer(customer);
-            attributeInvoice(invoice, selectedTaxIds);
-            // invoiceDTO.setSignature(imageDataUrl);
-            createInvoice(invoice, email);
-            res = "successMessage, Invoice successfully created," + invoice.getInvoiceId();
+            res = "successMessage, Invoice successfully created";
         }    
+
+        var mes = res.split(",");
+        if (mes[0].equals("errorMessage")){
+            List<Product> listProduct = productService.getAllProductDummyInvoice(getDummyInvoice());
+            for (Product p : listProduct){
+                productService.delete(p);
+            }
+            return res;
+        }
+        var customer = customerService.getCustomerById(invoiceDTO.getCustomerId());
+        var invoice = invoiceMapper.createInvoiceRequestToInvoice(invoiceDTO);
+        invoice.setCustomer(customer);
+        attributeInvoice(invoice, selectedTaxIds);
+        createInvoice(invoice, email);
+        res += ","+invoice.getInvoiceId();
         return res;
     }
 
@@ -423,9 +432,9 @@ public List<ApproverDisplay> getApproverDisplaysForInvoice(Invoice invoice) {
         if (invoice != null){
             invoice.setAccountName(invoiceFromDTO.getAccountName());
             invoice.setAccountNumber(invoiceFromDTO.getAccountNumber());
-            invoice.setAdditionalDocument(invoiceFromDTO.getAdditionalDocument());
+            // invoice.setAdditionalDocument(invoiceFromDTO.getAdditionalDocument());
             invoice.setBankName(invoiceFromDTO.getBankName());
-            invoice.setProductDocument(invoiceFromDTO.getProductDocument());
+            // invoice.setProductDocument(invoiceFromDTO.getProductDocument());
             invoice.setTotalDiscount(invoiceFromDTO.getTotalDiscount());
             invoice.setListProduct(invoiceFromDTO.getListProduct());
             invoice.setSignature(invoiceFromDTO.getSignature());

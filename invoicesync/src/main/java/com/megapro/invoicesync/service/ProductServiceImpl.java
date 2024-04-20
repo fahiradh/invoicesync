@@ -71,9 +71,20 @@ public class ProductServiceImpl implements ProductService{
         product.setQuantity(productDTO.getQuantity());
         product.setPrice(productDTO.getPrice());
         product.setDescription(productDTO.getDescription());
-        double totalPrice = productDTO.getQuantity() * productDTO.getPrice().doubleValue();
+        double totalPrice = productDTO.getQuantity().doubleValue() * productDTO.getPrice().doubleValue();
         product.setTotalPrice(BigDecimal.valueOf(totalPrice));
         productDb.save(product);
         return product;
+    }
+
+    @Override
+    public List<Product> getProductByInvoice(String id) {
+        List<Product> listProduct = new ArrayList<>();
+        for (Product p : getAllProduct()){
+            if (p.getInvoice().getInvoiceId().toString().equals(id)){
+                listProduct.add(p);
+            }
+        }
+        return listProduct;
     }
 }

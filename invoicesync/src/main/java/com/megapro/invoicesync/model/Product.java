@@ -22,7 +22,7 @@ public class Product {
     private String description;
 
     @Column(name="quantity")
-    private int quantity;
+    private BigDecimal quantity;
 
     @Column(name="price")
     private BigDecimal price;
@@ -30,7 +30,7 @@ public class Product {
     @Column(name="total_price")
     private BigDecimal totalPrice;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "invoice_id")
     private Invoice invoice;
 }

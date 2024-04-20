@@ -78,12 +78,9 @@
                         </div>
                         
                         <hr>
-                        <p class="card-info">Please attach document or input the fields below to add product list.</p>
-                        <br>
     
                         <p class="card-text">Attach Product List (.xlsx)</p>
-                        <input type="file" class="form-control" id="file" name="file" accept=".xlsx" style="width: 35%;">
-                        <input th:field="${invoice.productDocument}" hidden/>
+                        <input type="file" class="form-control" id="file" name="file" accept=".xlsx"/>
                         <br>
     
                         <table class="table table-bordered">
@@ -183,11 +180,18 @@
                     <div class="row">
                         <div class="col">
                             <div class="mb-4">
-                                <p class="card-info">Please attach additional documents for approval.</p>
-                                <br>
                                 <p class="card-text">Additional Document</p>
+                                <div class="additional-document" style="margin-top: 10px;">
+                                    <span th:each="file: ${documents}">
+                                        <i class="fa fa-file fa-lg" aria-hidden="true"></i>
+                                        <a th:href="${file.fileUrl}" th:text="${file.fileName}" class="mb-2"></a>
+                                        <p></p>
+                                    </span>
+                                </div>
+                                <!-- 
                                 <input type="file" class="form-control" name="file"/>
                                 <input type="hidden" th:value="${invoice.additionalDocument}" />
+                                -->
                             </div>
                         </div>
 
@@ -389,7 +393,6 @@ $(document).ready(function() {
 /*]]>*/
 
 </script>
-    <script src="/js/scripts/print-script.js"></script>
-    
+<script src="/js/scripts/print-invoice.js"></script>
 </body>
 </html>
