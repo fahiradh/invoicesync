@@ -32,8 +32,8 @@ public class CreateInvoiceRequestDTO {
     private String accountName;
     private String status;
     private UUID customerId;
-    private String productDocument;
-    private String additionalDocument;
+    // private String productDocument;
+    // private String additionalDocument;
     private String staffEmail;
     private List<ReadFileResponseDTO> filesDTO;
 }

@@ -14,4 +14,5 @@ public interface ProductService {
     void delete(Product product);
     Product getProductById(UUID id);
     Product updateProduct(Product productDTO);
+    List<Product> getProductByInvoice(String id);
 }

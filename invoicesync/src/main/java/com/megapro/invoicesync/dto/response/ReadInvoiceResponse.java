@@ -28,7 +28,7 @@ public class ReadInvoiceResponse {
     private LocalDate dueDate;
     private String totalWords;
     private String city;
-    private String productDocument;
+    // private String productDocument;
     private BigDecimal subtotal;
     private int totalDiscount;
     private List<Tax> listTax;
@@ -37,7 +37,7 @@ public class ReadInvoiceResponse {
     private String accountNumber;
     private String bankName;
     private String accountName;
-    private String additionalDocument;
+    // private String additionalDocument;
     private Customer customer;
     private String status;
     private String staffRole;

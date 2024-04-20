@@ -45,8 +45,8 @@ public class Invoice {
     @Column(name="city")
     private String city;
 
-    @Column(name="product_document")
-    private String productDocument;
+    // @Column(name="product_document")
+    // private String productDocument;
 
     @Column(name="subtotal")
     private BigDecimal subtotal;
@@ -74,8 +74,8 @@ public class Invoice {
     @Column(name="account_name")
     private String accountName;
 
-    @Column(name="additional_document")
-    private String additionalDocument;
+    // @Column(name="additional_document")
+    // private String additionalDocument;
 
     // @OneToMany(mappedBy="asApprover", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
     // private List<Employee> asApprover;

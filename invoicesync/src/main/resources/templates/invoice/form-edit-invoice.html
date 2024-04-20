@@ -12,7 +12,7 @@
     <nav th:replace="~{fragments/navbar-non-finance :: navbar-non-finance-staff(page = 'My-Invoice')}"></nav>
     <div class="container">
     <form th:action="@{/invoice/edit}" th:object="${invoiceDTO}" method="POST" enctype="multipart/form-data">
-    <input th:field="${invoiceDTO.invoiceId}" hidden/>
+    <input th:field="${invoiceDTO.invoiceId}" id="invoiceId" hidden/>
     <div class="header">
         <h4>Edit Invoice / <span class="invoice-number" th:text="*{invoiceNumber}"></span></h4>
     </div>
@@ -69,8 +69,7 @@
                         <br>
 
                         <p class="card-text">Attach Product List (.xlsx)</p>
-                        <input type="file" class="form-control" id="document" name="document" style="width: 35%;"/>
-                        <input th:field="*{productDocument}" hidden/>
+                        <input type="file" class="form-control" id="document" name="document"/>
                         <br>
 
                         <table class="table table-bordered">
@@ -96,7 +95,7 @@
                                     </td>
                                 </tr>
                             </tbody>
-                            <button id="addRowInvoice" class="btn btn-primary" type="button">Add Row</button>
+                            <button id="addRowInvoice" class="btn btn-primary mb-3" type="button">Add Row</button>
                         </table>
                         <p class="card-info">Please click the check button if the product details are correct.</p>
 
@@ -193,8 +192,7 @@
                                     <input type="file" id="base64String" name="base64String" accept="image/*">
                                     <input th:field="*{signature}" hidden/>
                                     <input class="form-control" type="text" th:field="*{staffEmail}" hidden />
-                                    <br>
-                                    <p class="card-text" th:text="'Created by: ' + ${employee.first_name} + ' ' + ${employee.last_name}"></p>
+                                    <p class="card-text mt-3" th:text="'Created by: ' + ${employee.first_name} + ' ' + ${employee.last_name}"></p>
                                     <br>
                                 </div>
                             </div>
@@ -251,29 +249,25 @@
         </div>
     </div>
     
-    <script src="/js/scripts/invoice-script.js"></script>
-    <script src="/js/scripts/product-script.js"></script>
+    <script src="/js/scripts/edit-invoice.js"></script>
 
     <script th:inline="javascript">
-    /*<![CDATA[*/
-    $(document).ready(function() {
-      var closeModalButton = document.getElementById('closeModalButton');
-      closeModalButton.addEventListener('click', function() {
-          $('#errorModal').modal('hide');
-          $('#successModal').modal('hide');
-      });
-      var successMessage = /*[[${successMessage}]]*/ null;
-      var errorMessage = /*[[${errorMessage}]]*/ null;
-      // Memeriksa jika ada pesan untuk ditampilkan
-      if (successMessage && successMessage !== '') {
-          $("#successMessage").text(successMessage); // Mengatur teks pesan sukses
-          $("#successModal").modal('show'); // Menampilkan modal sukses
-      } else if (errorMessage && errorMessage !== '') {
-          $("#errorMessage").text(errorMessage); // Mengatur teks pesan error
-          $("#errorModal").modal('show'); // Menampilkan modal error
-      }
-    });
-    /*]]>*/
-  </script>
+        $(document).ready(function() {
+        var closeModalButton = document.getElementById('closeModalButton');
+        closeModalButton.addEventListener('click', function() {
+            $('#errorModal').modal('hide');
+            $('#successModal').modal('hide');
+        });
+        var successMessage = /*[[${successMessage}]]*/ null;
+        var errorMessage = /*[[${errorMessage}]]*/ null;
+        if (successMessage && successMessage !== '') {
+            $("#successMessage").text(successMessage);
+            $("#successModal").modal('show');
+        } else if (errorMessage && errorMessage !== '') {
+            $("#errorMessage").text(errorMessage);
+            $("#errorModal").modal('show');
+        }
+        });
+    </script>
 </body>
 </html>

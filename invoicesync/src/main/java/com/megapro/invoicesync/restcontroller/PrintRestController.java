@@ -1,10 +1,14 @@
 package com.megapro.invoicesync.restcontroller;
 
+import com.lowagie.text.DocumentException;
 import com.megapro.invoicesync.model.Employee;
 import com.megapro.invoicesync.model.Invoice;
 import com.megapro.invoicesync.service.InvoiceService;
+import com.megapro.invoicesync.service.PrintInvoiceService;
+import com.megapro.invoicesync.service.PrintService;
 import com.megapro.invoicesync.service.UserService;
-import com.megapro.invoicesync.utils.PrintInvoice;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -18,7 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.UUID;
 
 @RestController
@@ -30,16 +35,30 @@ public class PrintRestController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    PrintService printService;
+
+    @GetMapping("/pdf/generate")
+    public void generatePDF(HttpServletResponse response) throws IOException, DocumentException {
+        response.setContentType("application/pdf");
+        // DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd:hh:mm:ss");
+        // String currentDateTime = dateFormatter.format(new Date());
+        String headerKey = "Content-Disposition";
+        String headerValue = "invoice.pdf";
+        response.setHeader(headerKey, headerValue);
+        printService.export(response);
+    }
+
     @GetMapping("/download-invoice/{invoiceId}")
     public ResponseEntity<byte[]> generatePdf(@PathVariable("invoiceId") UUID invoiceId) {
         Invoice invoice = invoiceService.getInvoiceById(invoiceId);
         
         try {
-            String htmlTemplate = PrintInvoice.readHtmlTemplate("data/template.html");
+            String htmlTemplate = PrintInvoiceService.readHtmlTemplate("src/main/resources/templates/data/template.html");
             String processedHtml = processInvoiceData(htmlTemplate, invoice);
             String processedProduct = processInvoiceProduct(processedHtml, invoice);
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            PrintInvoice.generatePdf(outputStream, processedProduct);
+            PrintInvoiceService.generatePdf(outputStream, processedProduct);
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_PDF);
