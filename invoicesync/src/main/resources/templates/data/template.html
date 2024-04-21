@@ -5,29 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Invoice</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
         .invoice {
             width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
+            margin: 2px;
+            padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
         }
-        .invoice-header h1 {
-        color: #3F2685;
-                }
-                .invoice-header h2 {
-                    font-size: 24px;
-                    margin-bottom: 10px;
-                }
-                .invoice-date{
-        text-align: right;
+        .flex-table {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .invoice-body {
-            margin-bottom: 2px;
+        .flex-column {
+            flex: 1;
+        }
+        .invoice-status {
+            display: inline-block;
+            background-color: grey;
+            padding: 3px 10px;
+            border-radius: 20px;
+            color: #fff;
+            text-transform: uppercase;
+            float: right;
+        }
+        .invoice-header h1 {
+            color: #3F2685;
+            margin-bottom: 0;
+        }
+        .invoice-header h2 {
+            font-size: 24px;
+            margin-top: 5px;
+            margin-bottom: 0;
+        }
+        .invoice-date{
+            text-align: right;
         }
         .invoice-table {
             width: 100%;
@@ -50,14 +62,6 @@
         }
         .invoice-signature{
             text-align: right;
-        }
-        .invoice-status{
-                    background-color: grey;
-                    display: inline-block;
-                    padding: 1px 10px;
-                    border-radius: 20px;
-                    color: #fff;
-                    text-transform: uppercase;
         }
         .invoice-logo-brand {
             max-width: 100px;
@@ -86,32 +90,32 @@
 </head>
 <body>
     <div class="invoice">
-        <a href="https://ibb.co/x7QFVcj"><img src="https://i.ibb.co/KrHKCQq/LOGO-KRIDA-TECH-PANJANG.webp" alt="LOGO-KRIDA-TECH-PANJANG" border="0" style="height:100px;"></a>
         <br>
         <div class="flex-table">
             <div class="flex-column">
                 <div class="invoice-header">
-                <h1>INVOICE</h1>
-                <h2>{invoiceNumber}</h2>
+                    <h1>INVOICE</h1>
+                    <h2 th:text="${invoiceNumber}"></h2>
                 </div>
             </div>
             <div class="flex-column">
                 <div class="invoice-status">
-                    <p>{status}</p>
+                    <p th:text="${status}"></p>
                 </div>
             </div>
-        </div>
+        </div>        
   <div class="invoice-date">
-   <p>Invoice Date: {invoiceDate}</p>
-   <p>Due Date: {dueDate}<p>
+   <p th:text="'Invoice Date: '+ ${invoiceDate}"</p>
+   <p th:text="'Due Date: '+ ${dueDate}"<p>
   </div>
         <div class="invoice-body">
-   <p><b>Customer</b></p>
-   <p>{customerName}</p>
-   <p>{customerAddress}</p>
-   <p>Contact: {customerContact}</p>
-   <p>Telp: {customerPhone}</p>
-   <br>
+        <p><b>Customer Information</b></p>
+        <p th:text="${customer}"></p>
+        <p th:text="'Name: ' + ${customerName}"></p>
+        <p th:text="'Address: '+ ${customerAddress}"></p>
+        <p th:text="'Contact: '+ ${customerContact}"></p>
+        <p th:text="'Telp: ' + ${customerPhone}"></p>
+        <br>
             <table class="invoice-table">
                 <thead>
                     <tr>
@@ -122,7 +126,15 @@
                         <th>Total</th>
                     </tr>
                 </thead>
-                <tbody class="list-product"></tbody>
+                <tbody>
+                    <tr th:each="product, iterationStatus: ${listProduct}">
+                        <td th:text="${iterationStatus.count}">#</td>
+                        <td th:text="${product.description}"></td>
+                        <td th:text="${product.quantity}"></td>
+                        <td th:text="${product.price}"></td>
+                        <td th:text="${product.totalPrice}"></td>
+                    </tr>
+                </tbody>
             </table>
             <br>
             <div class="flex-table">
@@ -132,23 +144,23 @@
                         <tbody>
                         <tr>
                             <td>Subtotal</td>
-                            <td>{subtotal}</td>
+                            <td th:text="${subtotal}"></td>
                         </tr>
                         <tr>
                             <td>Discount (%)</td>
-                            <td>{totalDiscount}</td>
+                            <td th:text="${totalDiscount}"></td>
                         </tr>
                         <tr>
                             <td>Taxes</td>
-                            <td>{taxes}</td>
+                            <td th:text="${taxes}"></td>
                         </tr>
                         <tr>
                             <td>Grand Total</td>
-                            <td>{grandTotal}</td>
+                            <td th:text="${grandTotal}"></td>
                         </tr>
                         <tr>
                             <td>Total Amount</td>
-                            <td>{totalWords}</td>
+                            <td th:text="${totalWords}"></td>
                         </tr>
                         </tbody>
                     </table>
@@ -156,12 +168,19 @@
             </div>
         </div>
         <p><b>Payment Information</b></p>
-        <p>{accountNumber} {bankName} a/n {accountName}</p>
-        <br>
+        <p th:text="${bankName} + ' ' + ${accountNumber} + ' a/n ' + ${accountName}"></p>
+        <p><b>Additional Document</b></p>
+        <div class="additional-document">
+            <span th:each="file: ${documents}">
+                <i class="fa fa-file fa-lg" aria-hidden="true"></i>
+                <a th:href="${file.fileUrl}" th:text="${file.fileName}" class="mb-2"></a>
+                <p></p>
+            </span>
+        </div>
         <div class="invoice-signature">
-            <p>{city}, {invoiceDate}</p>
-            <img src="{signature}" alt="" style="max-height: fit-content; max-width: 300px;" />
-            <p text-align="center">{employeeName}</p>
+            <p th:text="${city} + ', ' + ${invoiceDate}"></p>
+            <img th:src="${signature}" alt="" style="max-height: fit-content; max-width: 300px;" />
+            <p text-align="center" th:text="'Created by: ' + ${employeeName}"></p>
         </div>
     </div>
 </body>

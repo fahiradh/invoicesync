@@ -1,32 +1,92 @@
 package com.megapro.invoicesync.service;
 
-import com.lowagie.text.*;
-import com.lowagie.text.pdf.PdfWriter;
-import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.ArrayList;
+import com.megapro.invoicesync.dto.FileMapper;
+import com.megapro.invoicesync.dto.response.ReadFileResponseDTO;
+import com.megapro.invoicesync.model.Employee;
+import com.megapro.invoicesync.model.FileModel;
+import com.megapro.invoicesync.model.Invoice;
+import com.megapro.invoicesync.model.Product;
+
 import org.springframework.stereotype.Service;
 import java.io.IOException;
 
+import com.itextpdf.html2pdf.HtmlConverter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring6.SpringTemplateEngine;
+
+import java.io.ByteArrayOutputStream;
+
 @Service
 public class PrintService {
-    public void export(HttpServletResponse response) throws IOException, DocumentException {
-        Document document = new Document(PageSize.A4);
-        PdfWriter.getInstance(document, response.getOutputStream());
+    @Autowired
+    private SpringTemplateEngine templateEngine;
 
-        document.open();
-        Font fontTitle = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
-        fontTitle.setSize(18);
+    @Autowired
+    private InvoiceService invoiceService;
 
-        Paragraph paragraph = new Paragraph("This is a title.", fontTitle);
-        paragraph.setAlignment(Paragraph.ALIGN_CENTER);
+    @Autowired
+    private UserService userService;
 
-        Font fontParagraph = FontFactory.getFont(FontFactory.HELVETICA);
-        fontParagraph.setSize(12);
+    @Autowired
+    private FilesStorageService fileService;
 
-        Paragraph paragraph2 = new Paragraph("This is a paragraph.", fontParagraph);
-        paragraph2.setAlignment(Paragraph.ALIGN_LEFT);
+    @Autowired
+    private FileMapper fileMapper;
 
-        document.add(paragraph);
-        document.add(paragraph2);
-        document.close();
+    public byte[] generateInvoice(Invoice invoice) throws IOException {
+        Context context = new Context();
+        String invoiceDate = invoiceService.parseDate(invoice.getInvoiceDate());
+        String dueDate = invoiceService.parseDate(invoice.getDueDate());
+        Employee employee = userService.findByEmail(invoice.getStaffEmail());
+        String employeeName = String.format("%s %s", employee.getFirst_name(), employee.getLast_name());
+        String grandTotal = String.format("Rp%,.2f", invoice.getGrandTotal());
+        String subtotal = String.format("Rp%,.2f", invoice.getSubtotal());
+        List<Product> listProduct = invoiceService.getListProductInvoice(invoice);
+        var files = fileService.findByFileInvoice(invoice);
+        List<ReadFileResponseDTO> documents = new ArrayList<>();
+        for (FileModel addedFile : files){
+            if (addedFile != null){
+                var addedFileDTO = fileMapper.fileModelToReadFileResponseDTO(addedFile);
+                documents.add(addedFileDTO);
+            }
+        }
+        context.setVariable("invoiceNumber", invoice.getInvoiceNumber());
+        context.setVariable("customerName", invoice.getCustomer().getName());
+        context.setVariable("customerAddress", invoice.getCustomer().getAddress());
+        context.setVariable("customerPhone", invoice.getCustomer().getPhone());
+        context.setVariable("customerContact", invoice.getCustomer().getContact());
+        context.setVariable("dueDate", dueDate);
+        context.setVariable("invoiceDate", invoiceDate);
+        context.setVariable("subtotal", subtotal);
+        context.setVariable("taxes", invoice.getTaxTotal().toString());
+        context.setVariable("grandTotal", grandTotal);
+        context.setVariable("totalDiscount", String.valueOf(invoice.getTotalDiscount()));
+        context.setVariable("status", invoice.getStatus());
+        context.setVariable("totalWords", invoice.getTotalWords());
+        context.setVariable("accountNumber", invoice.getAccountNumber());
+        context.setVariable("accountName", invoice.getAccountName());
+        context.setVariable("bankName", invoice.getBankName());
+        context.setVariable("city", invoice.getCity());
+        context.setVariable("signature", "data:image/jpeg;base64,"+invoice.getSignature());
+        context.setVariable("employeeName", employeeName);
+        context.setVariable("listProduct", listProduct);
+        context.setVariable("documents", documents);
+
+        String processedHtml = templateEngine.process("data/template", context);
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+        // ConverterProperties converterProperties = new ConverterProperties();
+        // converterProperties.setBaseUri(baseUri);
+
+        HtmlConverter.convertToPdf(processedHtml, stream);
+
+        byte[] bytes = stream.toByteArray();
+        stream.flush();
+
+        return bytes;
     }
 }

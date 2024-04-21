@@ -3,20 +3,21 @@ document.getElementById("printButton").addEventListener("click", function(event)
     generatePdf();
 });
 
-function generatePdf() {
+function generatePdf(){
     var inv = document.getElementById("invoiceId").value;
-    fetch('/api/v1/download-invoice/'+inv, {
+
+    fetch('/api/v1/invoice/'+inv+'/download',{
         method: 'GET'
     })
     .then(response => {
-        if (!response.ok) {
+        if (!response.ok){
             throw new Error('Failed to generate PDF');
         }
         return response.blob();
     })
     .then(blob => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
+        var url = window.URL.createObjectURL(blob);
+        var a = document.createElement('a');
         a.href = url;
         a.download = 'invoice.pdf';
         document.body.appendChild(a);
@@ -24,6 +25,6 @@ function generatePdf() {
         window.URL.revokeObjectURL(url);
     })
     .catch(error => {
-        console.error('Error generating PDF:', error);
+        console.error('Failed to generate PDF:', error);
     });
 }
