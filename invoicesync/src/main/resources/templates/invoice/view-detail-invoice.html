@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
   <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
-  <title>InvoiceSync</title>
+  <title>Detail Invoice | InvoiceSync</title>
 </head>
 
 <body>
@@ -15,13 +15,13 @@
     <nav th:if="${role == 'Finance Manager'}" th:replace="~{fragments/navbar-finance :: navbar-finance-exc(page='Approve-Invoice')}"></nav>
 
     <div class="container">
-    <div class="header">
-        <h4>Detail Invoice / <span class="invoice-number" th:text="${invoice.invoiceNumber}"></span></h4>
+    <div class="card-title">
+        <h2>Detail Invoice</h2>
     </div>
     <!-- Tombol Print dan Edit -->
     <form th:action="@{/invoice/{invoiceNumber}(invoiceNumber=${invoice.invoiceNumber.replace('/', '_')})}" th:object="${invoice}" method="GET" id="invoiceForm">
         <input type="hidden" th:value="${invoice.invoiceId}" id="invoiceId" />
-        <a id="printButton" class="btn btn-primary" href="/">Print</a>
+        <a id="printButton" class="btn btn-primary" href="/">Download</a>
         <th:block th:if="${(invoice.status == 'Need Revision' || invoice.status == 'Waiting for Approver') && emailPermission == true}">
             <a class="btn btn-primary" th:href="@{/invoice/{invoiceNumber}/edit(invoiceNumber=${invoice.invoiceNumber.replace('/','_')})}">Edit</a>
         </th:block>
@@ -80,7 +80,7 @@
                         <hr>
     
                         <p class="card-text">Attach Product List (.xlsx)</p>
-                        <input type="file" class="form-control" id="file" name="file" accept=".xlsx"/>
+                        <input type="file" class="form-control" id="file" name="file" accept=".xlsx" disabled/>
                         <br>
     
                         <table class="table table-bordered">
@@ -183,7 +183,7 @@
                                 <p class="card-text">Additional Document</p>
                                 <div class="additional-document" style="margin-top: 10px;">
                                     <span th:each="file: ${documents}">
-                                        <i class="fa fa-file fa-lg" aria-hidden="true"></i>
+                                        <i class="fa fa-file-alt fa-lg" aria-hidden="true"></i>
                                         <a th:href="${file.fileUrl}" th:text="${file.fileName}" class="mb-2"></a>
                                         <p></p>
                                     </span>
@@ -213,7 +213,6 @@
                                     <br>
                                     <input class="form-control" type="text" th:value="${invoice.staffEmail}" hidden />
                                     <p class="card-text" th:text="'Created by: ' + ${employee.first_name} + ' ' + ${employee.last_name}"></p>
-                                    <br>
                                 </div>
                             </div>
                         </div>

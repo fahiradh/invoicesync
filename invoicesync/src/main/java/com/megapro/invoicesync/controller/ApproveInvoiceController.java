@@ -32,6 +32,7 @@ import com.megapro.invoicesync.service.ApprovalService;
 import com.megapro.invoicesync.service.FilesStorageService;
 import com.megapro.invoicesync.service.InvoiceService;
 import com.megapro.invoicesync.service.TaxService;
+import com.megapro.invoicesync.service.UserService;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -67,6 +68,9 @@ public class ApproveInvoiceController {
 
     @Autowired
     FileMapper fileMapper;
+
+    @Autowired
+    UserService userService;
 
     @GetMapping("/approval")
     public String approveInvoicePage(Model model) {
@@ -147,9 +151,22 @@ public class ApproveInvoiceController {
             approvalLog.setFilesDTO(filesDTO);
             approvalLogs.add(approvalLog);
         }
+        
+        var files = fileService.findByFileInvoice(invoice);
+        List<ReadFileResponseDTO> documents = new ArrayList<>();
+        for (FileModel addedFile : files){
+            if (addedFile != null){
+                var addedFileDTO = fileMapper.fileModelToReadFileResponseDTO(addedFile);
+                documents.add(addedFileDTO);
+            }
+        }
 
+        var employee = userService.findByEmail(email);
+
+        model.addAttribute("documents", documents);
         model.addAttribute("approvalDTO", approvalDTO);
         model.addAttribute("approvalLogs", approvalLogs);
+        model.addAttribute("employee", employee);
 
         return "approve-invoice/approval-page.html";
     }

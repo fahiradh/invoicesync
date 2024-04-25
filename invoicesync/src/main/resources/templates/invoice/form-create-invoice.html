@@ -5,17 +5,17 @@
   <meta charset="UTF-8" />
   <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
   <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
-  <title>InvoiceSync</title>
+  <title>Create Invoice | InvoiceSync</title>
 </head>
 
 <body>
     <nav th:replace="~{fragments/navbar-non-finance :: navbar-non-finance-staff(page = 'Create-Invoice')}"></nav>
     <div class="container">
+    <div class="card-title">
+        <h2>Create Invoice</h2>
+    </div>
     <form th:action="@{/create-invoice}" th:object="${invoiceDTO}" method="POST" enctype="multipart/form-data">
     <span th:text="${invoiceDummyId}" id="invoiceDummyId" hidden></span>
-    <div class="header">
-        <h4>Create Invoice / <span class="invoice-number">Draft</span></h4>
-    </div>
     <a class="btn btn-danger" href="/home">Cancel</a> 
     <button class="btn btn-primary" type="submit">Save</button>
     <div class="grid-container-invoice-logs">
@@ -83,7 +83,7 @@
                         <br>
 
                         <p class="card-text">Attach Product List (.xlsx)</p>
-                        <p>Please refer to <span id="openGuidelinesModal" class="guidelinseModal">this guidelines</span> for the document's format.</p>
+                        <p>Please refer to <span id="openGuidelinesModal" class="guidelinseModal">these guidelines</span> for the document's format.</p>
                         <input type="file" class="form-control" id="productDocument" name="productDocument"/>
                         <br>
 
@@ -176,7 +176,7 @@
                                     <p class="card-info">Please attach additional documents for approval.</p>
                                     <br>
                                     <div class="mb-3">
-                                        <label for="files" class="col-form-label">Additional documents:</label>
+                                        <p for="files" class="card-text">Additional Documents</p>
                                         <input class="form-control" type="file" id="files" name="files" multiple>
                                     </div>
                                     <!-- <p class="card-text">Additional Document</p>
@@ -204,19 +204,22 @@
                                     <br>
                                     <input class="form-control" type="text" th:field="*{staffEmail}" hidden />
                                     <p class="card-text" th:text="'Created by: ' + ${employee.first_name} + ' ' + ${employee.last_name}"></p>
-                                    <br>
                                 </div>
                             </div>
                         </div>
-                        </form>
                     </div>
                     </div>
                 </div>
             </div>
         </div>
+        </form>
         <div class="grid-container-invoice-logs-child">
-            <h3 style="text-align:center;">Approval Log<h3>
-            <hr>
+            <div class="container-logs">
+                <div class="container title" style="text-align: center; margin-bottom: 0;">
+                    <h3>Approval Log</h3>
+                </div>
+                <hr>
+            </div>
         </div>  
     </div>
     </div>

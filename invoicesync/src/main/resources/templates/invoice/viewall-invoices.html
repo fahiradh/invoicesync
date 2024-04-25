@@ -4,43 +4,8 @@
     <meta charset="UTF-8">
     <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
     <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
-    <title>Invoice History</title>
+    <title>Invoices | InvoiceSync</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <style>
-        .table-custom {
-            border-radius: 10px;
-            overflow: hidden;
-            margin-top: 20px;
-        }
-        .table-custom thead {
-            background-color: #3F2685;
-            color: white;
-        }
-        .table-custom th, .table-custom td {
-            border: none;
-            text-align: center;        /* Teks rata tengah horizontal */
-            vertical-align: middle;  
-        }
-        .table-custom tbody tr {
-            background-color: #E3E6F0;
-        }
-        .table-custom tbody tr:nth-of-type(even) {
-            background-color: #fff;
-        }
-        .status-approved {
-            color: green;
-        }
-        .status-rejected {
-            color: red;
-        }
-        .table-title {
-            font-size: 24px;
-            color: #3F2685;
-            margin-bottom: 16px;
-            font-weight: bold;
-        }
-    </style>
 </head>
 <body>
     <nav th:if="${role == 'Finance Staff'} " th:replace="~{fragments/navbar-finance :: navbar-finance-staff(page='All-Invoices-List')}"></nav>
@@ -52,8 +17,9 @@
             <h2>Invoice History</h2>
         </div>
         <div class="card-borderless">
-            <div class="card-body p-4">
-                <form class="row g-3" th:action="@{/invoices}" method="GET">
+            <div class="card-body">
+                <p>Click on the invoice number to view the details.</p>
+                <form class="row align-items-center" th:action="@{/invoices}" method="GET">
                     <div class="col-auto">
                         <label for="filterDropdown" >Filter:</label>
                     </div>
