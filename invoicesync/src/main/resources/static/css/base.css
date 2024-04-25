@@ -7,9 +7,9 @@ html, body {
 }
 
 h2, .flow-box strong{
-  color:#3F2685;
-  font-size:xx-large;
-  font-weight: 600;
+    color:#3F2685;
+    font-size:xx-large;
+    font-weight: 600;
 }
 
 h3{
@@ -31,22 +31,13 @@ h4{
     justify-content: center;
     margin: auto;
     max-width: 1200px;
-    padding-top: 3%;
-    padding-bottom:3%;
+    padding-top:5%;
+    padding-bottom:5%;
 }
 
 .grid-child {
     padding: 5px;
     border: 1px solid #000;
-}
-
-.container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    margin: auto;
-    max-width: 1200px;
-    padding-top: 20px;
 }
 
 .container-title{
@@ -109,14 +100,24 @@ h4{
 }
 
 /* Sign-in Button */
-.btn-signin, .btn-primary {
+.btn-primary, .btn-signin {
     background-color: #3F2685; 
-    border-color: #3F2685; 
+    border-color: #3F2685;
+    color: white;
 }
 
-.btn-signin:hover, .btn-signin:active, .btn-primary:hover, .btn-primary:active, .btn-primary:focus{
+.btn-primary:hover,
+.btn-primary:focus {
     background-color: #5d3ca4; 
-    border-color: #5d3ca4; 
+    border-color: #5d3ca4;
+    box-shadow: 0 0 0 .2rem rgb(104 37 200 / 50%);
+}
+
+.btn-primary:active,
+.btn-primary.active,
+.show > .btn-primary.dropdown-toggle {
+    background-color: #5722ca; 
+    border-color: #5722ca;
 }
 
 /* Sequence */
@@ -234,24 +235,9 @@ h4{
     margin-bottom: 16px;
     font-weight: bold;
 }
-.btn-primary {
-    background-color: #3f2685; /* Purple color */
-    border-color: #3f2685; /* Border color same as background */
-    color: white; /* White text color */
-}
 
 .theme-color {
     color: #3F2685;
-}
-
-.btn-purple {
-    background-color: #3F2685;
-    border-color: #3F2685;
-}
-
-.btn-purple:hover {
-    background-color: #5d3ca4;
-    border-color: #5d3ca4;
 }
 
 /* Added CSS for button text color */

@@ -5,17 +5,17 @@
   <meta charset="UTF-8" />
   <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
   <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
-  <title>InvoiceSync</title>
+  <title>Edit Invoice | InvoiceSync</title>
 </head>
 
 <body>
     <nav th:replace="~{fragments/navbar-non-finance :: navbar-non-finance-staff(page = 'My-Invoice')}"></nav>
     <div class="container">
+    <div class="card-title">
+        <h2>Edit Invoice</h2>
+    </div>
     <form th:action="@{/invoice/edit}" th:object="${invoiceDTO}" method="POST" enctype="multipart/form-data">
     <input th:field="${invoiceDTO.invoiceId}" id="invoiceId" hidden/>
-    <div class="header">
-        <h4>Edit Invoice / <span class="invoice-number" th:text="*{invoiceNumber}"></span></h4>
-    </div>
     <a class="btn btn-danger" href="/home">Cancel</a> 
     <button class="btn btn-primary" type="submit">Save</button>
     <div class="grid-container-invoice-logs">
@@ -193,7 +193,6 @@
                                     <input th:field="*{signature}" hidden/>
                                     <input class="form-control" type="text" th:field="*{staffEmail}" hidden />
                                     <p class="card-text mt-3" th:text="'Created by: ' + ${employee.first_name} + ' ' + ${employee.last_name}"></p>
-                                    <br>
                                 </div>
                             </div>
                         </div>
