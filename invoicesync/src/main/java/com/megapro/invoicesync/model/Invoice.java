@@ -83,8 +83,8 @@ public class Invoice {
     @OneToMany(mappedBy = "productId", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
     private List<Product> listProduct;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name="customer_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id", referencedColumnName = "customer_id")
     private Customer customer;
 
     @Column(name="status")
@@ -96,4 +96,7 @@ public class Invoice {
 
     @OneToMany(mappedBy = "invoice")
     private List<FileModel> invoiceFiles;
+
+    @Column(name = "payment_date")
+    private LocalDate paymentDate;
 }

@@ -69,8 +69,6 @@ public class PageController {
         }
     }
 
-
-
     @GetMapping("/login")
     public String loginPage(){
         return "auth/login.html";

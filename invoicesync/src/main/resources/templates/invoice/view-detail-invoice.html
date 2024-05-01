@@ -232,7 +232,7 @@
                 <div class="grid-container-logs" th:each="log: ${approvalLogs}">
                     <div class="grid-container log mb-3">
                         <div class="left">
-                            <img src="" alt="" class="rounded-photo log default-photo">
+                            <img th:src="'data:image/jpeg;base64,' + ${imageBase64}" class="rounded-photo log default-photo">
                         </div>
                         <div class="name">
                             <b><p th:text="${log.employeeName}"></p></b>
