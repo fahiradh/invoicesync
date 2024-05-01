@@ -5,25 +5,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
   <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
-  <style>
-    .center-text {
-        text-align: center;
-        margin-top: 100px;
-    }
-  </style>
   <title>Home | InvoiceSync</title>
 </head>
 <body>
     <nav th:replace="~{fragments/navbar-finance :: navbar-finance-exc(page='Home')}"></nav>
 
-  <div class="container">
+  <!-- <div class="container">
     <div class="row">
         <div class="col">
             <h1 th:if="${showModal}" class="center-text theme-color">Halo, <span th:text="${email}"></span></h1>
             <h1 th:unless="${showModal}" class="center-text theme-color">Halo, <span th:text="${employee.first_name} + ' ' + ${employee.last_name}"></span></h1>
         </div>
     </div>
-  </div>
+  </div> -->
+  <div class="container">
+    <!-- Welcome and summary cards -->
+    <div class="row">
+        <div class="col-12 mb-4" th:replace="~{dashboard/welcome-card :: welcome}"></div>
+    </div>
+
+    <!-- Revenue graph -->
+    <div class="row">
+        <div class="col-12 mb-4" th:replace="~{dashboard/finance-director/revenue :: graph}"></div>
+    </div>
+
+    <!-- Pie charts for different metrics -->
+    <div class="row">
+        <div class="col-md-4 mb-4" th:replace="~{dashboard/finance-director/top-customers :: pieChart}"></div>
+        <div class="col-md-4 mb-4" th:replace="~{dashboard/finance-director/top-products :: pieChart}"></div>
+        <div class="col-md-4 mb-4" th:replace="~{dashboard/finance-director/invoice-status-ratio :: pieChart}"></div>
+    </div>
+</div>
 
   <!-- Modal -->
   <div id="myModal" class="modal">

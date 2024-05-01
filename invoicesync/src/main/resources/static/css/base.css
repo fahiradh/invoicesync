@@ -23,16 +23,37 @@ h4{
     color: #5C5C77;
 }
 
-/* Container */
+/* Navbar */
+.nav-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: black;
+    padding: 10px;
+}
 
+.nav-link img {
+    margin-right: 5px;
+}
+
+.active {
+    font-weight: bold;
+}
+
+/* Container */
 .container{
     display: flex;
     flex-direction: column;
     justify-content: center;
     margin: auto;
     max-width: 1200px;
-    padding-top:5%;
-    padding-bottom:5%;
+    padding-top:3%;
+    padding-bottom:3%;
+}
+
+.grid-child {
+    padding: 5px;
+    border: 1px solid #000;
 }
 
 .grid-child {
@@ -465,4 +486,29 @@ h4{
 .button-profile-page a {
     margin-left: 10%;
     margin-right: 10%;
+}
+
+
+/* Dashboard */
+.dashboard-col {
+    border: 2px solid #EEF2F5;
+    border-radius: 0.7rem;
+    padding: 20px;
+}
+
+.dashboard-row {
+    margin-bottom: 15px;
+}
+
+.dashboard-col-middle{
+    border: 2px solid #EEF2F5;
+    border-radius: 0.7rem;
+    padding: 20px;
+    margin-left: 15px;
+    margin-right: 15px;
+}
+
+.dashborad-content{
+    max-width: 400px;
+    max-height: 300px;
 }

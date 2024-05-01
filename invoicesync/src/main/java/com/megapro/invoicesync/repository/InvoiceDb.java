@@ -24,6 +24,19 @@ public interface InvoiceDb extends JpaRepository<Invoice, UUID>{
     @Query("SELECT i FROM Invoice i JOIN Employee e ON i.staffEmail = e.email JOIN Role r ON e.role = r WHERE r.role LIKE %:roleName% AND i.status = :status")
     List<Invoice> findByEmployeeRoleNameAndStatus(String roleName, String status);
     Optional<Invoice> findByInvoiceNumber(String invoiceNumber);
+
+    @Query("SELECT EXTRACT(MONTH FROM i.paymentDate) as month, SUM(i.grandTotal - i.taxTotal) as netRevenue " +
+       "FROM Invoice i " +
+       "WHERE i.status = 'Paid' " +
+       "GROUP BY EXTRACT(MONTH FROM i.paymentDate) " +
+       "ORDER BY month")
+    List<Object[]> findMonthlyRevenue();
+
+    @Query("SELECT i.status, COUNT(i) AS count " +
+           "FROM Invoice i " +
+           "WHERE i.status IN ('Paid', 'Approved') " +
+           "GROUP BY i.status")
+    List<Object[]> findInvoiceCountsByStatus();
     
 }
 

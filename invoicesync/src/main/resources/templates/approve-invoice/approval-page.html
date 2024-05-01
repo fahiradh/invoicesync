@@ -365,6 +365,50 @@
         </div>
         </div>
     </div>
+
+    <!-- Approve Modal -->
+    <div class="modal fade" id="approveModal" tabindex="-1" aria-labelledby="approveModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="approveModalLabel">Confirm Approval</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            Are you sure you want to approve this invoice?
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <form action="/approve-invoice" method="post" th:object="${approvalDTO}" style="display: inline-block;">
+                <input class="form-control" type="hidden" th:field="*{approvalId}">
+                <button type="submit" class="btn btn-success">Approve</button>
+            </form>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <!-- Reject Modal -->
+    <div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="rejectModalLabel">Confirm Rejection</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            Are you sure you want to reject this invoice?
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <form action="/reject-invoice" method="post" th:object="${approvalDTO}" style="display: inline-block;">
+                <input class="form-control" type="hidden" th:field="*{approvalId}">
+                <button type="submit" class="btn btn-danger">Reject</button>
+            </form>
+            </div>
+        </div>
+        </div>
+    </div>
 </div>   
 </body>
 </html>

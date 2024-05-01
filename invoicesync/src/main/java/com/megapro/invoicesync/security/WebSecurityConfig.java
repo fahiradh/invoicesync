@@ -23,6 +23,7 @@ public class WebSecurityConfig {
         http 
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
+                .requestMatchers(new AntPathRequestMatcher("/assets/**")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/css/**")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/js/**")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/login")).permitAll()
@@ -39,6 +40,9 @@ public class WebSecurityConfig {
                 .requestMatchers(new AntPathRequestMatcher("/add-approval-flow")).hasAnyAuthority("Admin")
                 .requestMatchers(new AntPathRequestMatcher("/invoices")).hasAnyAuthority("Finance Director", "Finance Staff", "Finance Manager", "Non-Finance Manager")
                 .requestMatchers(new AntPathRequestMatcher("/approve-invoice")).hasAnyAuthority("Finance Director", "Finance Staff", "Finance Manager", "Non-Finance Manager")
+                .requestMatchers(new AntPathRequestMatcher("/revenue")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/top-customers","/top-products")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/invoice-ratio")).permitAll()
                 .anyRequest().authenticated())
             
             .formLogin((form) -> form
