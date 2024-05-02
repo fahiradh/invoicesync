@@ -57,6 +57,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 import java.util.Arrays;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 
 @Controller
@@ -501,4 +503,82 @@ public class InvoiceController {
         model.addAttribute("image", invoice.getSignature());
         return String.format("redirect:/invoice/%s", encodedInvoiceNumber);
     }
+
+    @GetMapping("/invoice/{invoiceNumber}/mark-as-paid")
+    public String statusPaid(@PathVariable("invoiceNumber") String encodedInvoiceNumber, Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        var user = userAppDb.findByEmail(email);
+        String role = user.getRole().getRole();
+        String invoiceNumber = encodedInvoiceNumber.replace('_', '/');
+
+        var invoice = invoiceService.getInvoiceByInvoiceNumber(invoiceNumber);
+        invoice.setStatus("Paid");
+        invoice.setPaymentDate(LocalDate.now());
+
+        List<Product> listProduct = invoiceService.getListProductInvoice(invoice);
+        List<Tax> taxList = taxService.findAllTaxes();
+        var invoiceDTO = invoiceMapper.readInvoiceToInvoiceResponse(invoice);
+        List<String> rolesToFind = Arrays.asList("Finance Manager", "Finance Director", "Finance Staff");
+        List<UserApp> employees = userAppDb.findByRoleNames(rolesToFind);
+        List<Approval> approvers = approvalService.findApproversByInvoice(invoice);
+        model.addAttribute("approvers", approvers);
+        // Replace "ApproverRole" with the actual role name
+        model.addAttribute("employees", employees);
+        var date = invoiceDTO.getInvoiceDate();
+        Employee employee = userService.findByEmail(email);
+
+        var emailPermission = email.equals(invoice.getStaffEmail());
+
+        var files = fileService.findByFileInvoice(invoice);
+        List<ReadFileResponseDTO> documents = new ArrayList<>();
+        for (FileModel addedFile : files){
+            if (addedFile != null){
+                var addedFileDTO = fileMapper.fileModelToReadFileResponseDTO(addedFile);
+                documents.add(addedFileDTO);
+            }
+        }
+
+        model.addAttribute("documents", documents);
+        model.addAttribute("image", invoice.getSignature());
+        model.addAttribute("status", invoice.getStatus());
+        model.addAttribute("email", email);
+        model.addAttribute("role", role);
+        model.addAttribute("listProduct", listProduct);
+        model.addAttribute("date", String.format("%02d/%02d/%04d", date.getDayOfMonth(),  date.getMonth().getValue(), date.getYear()));
+        model.addAttribute("taxList", taxList);
+        model.addAttribute("invoice", invoiceDTO);
+        model.addAttribute("dateInvoice", invoiceService.parseDate(invoiceDTO.getInvoiceDate()));
+        model.addAttribute("employee", employee);
+        List<ApproverDisplay> approverDisplays = invoiceService.getApproverDisplaysForInvoice(invoice);
+        model.addAttribute("approverDisplays", approverDisplays);
+        model.addAttribute("employee", employee);
+        model.addAttribute("emailPermission", emailPermission);
+
+        // Bagian logs
+        var approvals = invoice.getListApproval();
+        List<ReadApprovalResponseDTO> approvalLogs = new ArrayList<>();
+        for(Approval approval:approvals){
+            if(approval.getApprovalStatus().equals("Need Approval")){
+                break;
+            }
+            var filesLog = approval.getApprovalFiles();
+            List<ReadFileResponseDTO> filesDTO = new ArrayList<>();
+            if(filesLog != null || filesLog.size()!=0){
+                for(FileModel fileModel : filesLog){
+                    var fileDTO = fileMapper.fileModelToReadFileResponseDTO(fileModel);
+                    filesDTO.add(fileDTO);
+                }
+            }
+            var approvalLog = approvalMapper.approvalToReadApprovalResponseDTO(approval);
+            approvalLog.setFilesDTO(filesDTO);
+            approvalLogs.add(approvalLog);
+        }
+
+        model.addAttribute("approvalLogs", approvalLogs);
+
+        return "invoice/view-detail-invoice";
+
+    }
+    
 }
