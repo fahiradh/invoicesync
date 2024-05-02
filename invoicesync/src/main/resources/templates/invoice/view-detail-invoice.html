@@ -22,6 +22,9 @@
     <form th:action="@{/invoice/{invoiceNumber}(invoiceNumber=${invoice.invoiceNumber.replace('/', '_')})}" th:object="${invoice}" method="GET" id="invoiceForm">
         <input type="hidden" th:value="${invoice.invoiceId}" id="invoiceId" />
         <a id="printButton" class="btn btn-primary" href="/">Download</a>
+        <th:block th:if="${invoice.status == 'Approved' && role == 'Finance Staff'}">
+            <a type="button" class="btn btn-primary" href="#" th:attr="onclick=|preparePaid('${invoice.invoiceNumber.replace('/','_')}')|">Mark as Paid</a>
+        </th:block>
         <th:block th:if="${(invoice.status == 'Need Revision' || invoice.status == 'Waiting for Approver') && emailPermission == true}">
             <a class="btn btn-primary" th:href="@{/invoice/{invoiceNumber}/edit(invoiceNumber=${invoice.invoiceNumber.replace('/','_')})}">Edit</a>
         </th:block>
@@ -245,6 +248,15 @@
                         </div>
                         <div class="status">
                             <!-- Status Approved -->
+                            <div th:if="${log.approvalStatus == 'Paid'}"
+                                class="oval-status" style="background-color: #3066be;">
+                                <p style="
+                                    font-size: smaller;
+                                    color: whitesmoke;
+                                    "><b>Paid</b></p>
+                            </div>
+
+                            <!-- Status Approved -->
                             <div th:if="${log.approvalStatus == 'Approved'}"
                                 class="oval-status" style="background-color: #3B9C8F;">
                                 <p style="
@@ -357,6 +369,34 @@
         </div>
     </div>
 </div>
+
+ <!-- Modal confirmation -->
+<div class="modal fade" id="confirmPaidModal" tabindex="-1" role="dialog" aria-labelledby="confirmPaidModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmPaidModalLabel">Confirm Change Status</h5>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to change this invoice status to "Paid"?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <a id="paidLink" href="#" class="btn btn-primary">Change</a>
+            </div>
+        </div>
+    </div>
+</div> 
+
+<script th:inline="javascript">
+    function preparePaid(invoiceNumber) {
+        console.log(invoiceNumber)
+        var toPaid= '/invoice/' + invoiceNumber + '/mark-as-paid';
+        $('#paidLink').attr('href', toPaid);
+        $('#confirmPaidModal').modal('show');
+        
+    }
+</script>  
   
 
 <!-- Rest of your existing HTML including the Add Approver Modal -->
