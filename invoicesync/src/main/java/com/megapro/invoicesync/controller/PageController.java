@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import com.megapro.invoicesync.dto.request.CreateUserAppRequestDTO;
 import com.megapro.invoicesync.repository.EmployeeDb;
 import com.megapro.invoicesync.repository.UserAppDb;
+import com.megapro.invoicesync.service.DashboardService;
+
+import java.util.List;
 
 @Controller
 public class PageController {
@@ -19,6 +22,16 @@ public class PageController {
 
     @Autowired
     EmployeeDb employeeDb;
+
+    @Autowired
+    DashboardService dashboardService;
+
+    @GetMapping("/top-products")
+    public String topProducts(Model model) {
+        List<Object[]> topProducts = dashboardService.getTopProductsByQuantityOrdered();
+        model.addAttribute("topProducts", topProducts);
+        return "dashboard/finance-director/top-products.html";
+    }
 
     @GetMapping("/home")
     public String home(Model model){
@@ -35,7 +48,7 @@ public class PageController {
         model.addAttribute("role", role);
         model.addAttribute("division", division);
         model.addAttribute("employee", employee);
-
+        
         if (role.equals("Non-Finance Staff")) {
             if (employee.getFirst_name() == null) {
                 model.addAttribute("showModal", "true");
@@ -63,6 +76,14 @@ public class PageController {
             } else {
                 model.addAttribute("showModal", "false");
             }
+            var invoicePaidAmount = dashboardService.getInvoicePaidAmount();
+            var invoiceUnpaidAmount = dashboardService.getInvoiceUnpaidAmount();
+            var invoiceOverdueAmount = dashboardService.getInvoiceOverdueAmount();
+
+            model.addAttribute("invoicePaidAmount", invoicePaidAmount);
+            model.addAttribute("invoiceUnpaidAmount", invoiceUnpaidAmount);
+            model.addAttribute("invoiceOverdueAmount", invoiceOverdueAmount);
+
             return "home/home-exc-finance.html";
         } else {
             return "home/home-admin.html";
