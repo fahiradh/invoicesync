@@ -5,6 +5,7 @@ import com.megapro.invoicesync.dto.request.UpdateInvoiceRequestDTO;
 import com.megapro.invoicesync.dto.response.ApproverDisplay;
 import com.megapro.invoicesync.model.Invoice;
 import com.megapro.invoicesync.model.Product;
+import com.megapro.invoicesync.model.UserApp;
 
 import java.util.List;
 import java.util.UUID;
@@ -34,4 +35,5 @@ public interface InvoiceService {
     public List<ApproverDisplay> getApproverDisplaysForInvoice(Invoice invoice);
     Invoice updateInvoice(Invoice invoiceFromDTO);
     void addApproverToInvoice(UUID invoiceId, String email);
+    public List<UserApp> getEligibleApproversForInvoice(Invoice invoice);
 }

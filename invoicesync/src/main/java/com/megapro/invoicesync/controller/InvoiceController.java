@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -186,8 +187,8 @@ public class InvoiceController {
         List<Product> listProduct = invoiceService.getListProductInvoice(invoice);
         List<Tax> taxList = taxService.findAllTaxes();
         var invoiceDTO = invoiceMapper.readInvoiceToInvoiceResponse(invoice);
-        List<String> rolesToFind = Arrays.asList("Finance Manager", "Finance Director", "Finance Staff");
-        List<UserApp> employees = userAppDb.findByRoleNames(rolesToFind);
+        List<UserApp> employees = invoiceService.getEligibleApproversForInvoice(invoice);
+        model.addAttribute("employees", employees);
         List<Approval> approvers = approvalService.findApproversByInvoice(invoice);
         model.addAttribute("approvers", approvers);
         // Replace "ApproverRole" with the actual role name
@@ -206,6 +207,8 @@ public class InvoiceController {
             }
         }
 
+        List<ApproverDisplay> approverDisplays = invoiceService.getApproverDisplaysForInvoice(invoice);
+        model.addAttribute("approverDisplays", approverDisplays);
         model.addAttribute("documents", documents);
         model.addAttribute("image", invoice.getSignature());
         model.addAttribute("status", invoice.getStatus());
@@ -217,8 +220,6 @@ public class InvoiceController {
         model.addAttribute("invoice", invoiceDTO);
         model.addAttribute("dateInvoice", invoiceService.parseDate(invoiceDTO.getInvoiceDate()));
         model.addAttribute("employee", employee);
-        List<ApproverDisplay> approverDisplays = invoiceService.getApproverDisplaysForInvoice(invoice);
-        model.addAttribute("approverDisplays", approverDisplays);
         model.addAttribute("employee", employee);
         model.addAttribute("emailPermission", emailPermission);
 
@@ -452,22 +453,22 @@ public class InvoiceController {
     
     @PostMapping("/invoice/{invoiceNumber}/add-approver")
     public String addApprover(@PathVariable("invoiceNumber") String invoiceNumber,
-                              @RequestParam("approverEmail") String approverEmail,
+                              @RequestParam Map<String, String> allParams,
                               RedirectAttributes redirectAttributes) {
-        try {
-            String decodedInvoiceNumber = invoiceNumber.replace('_', '/');
-            Invoice invoice = invoiceService.getInvoiceByInvoiceNumber(decodedInvoiceNumber);
-            
-            invoiceService.addApproverToInvoice(invoice.getInvoiceId(), approverEmail);
-            
-            redirectAttributes.addFlashAttribute("success", "Approver successfully added.");
-        } catch (IllegalStateException ex) {
-            redirectAttributes.addFlashAttribute("error", ex.getMessage());
-        } catch (Exception ex) {
-            redirectAttributes.addFlashAttribute("error", "Failed to add approver: " + ex.getMessage());
-        }
+        String decodedInvoiceNumber = invoiceNumber.replace('_', '/');
+        Invoice invoice = invoiceService.getInvoiceByInvoiceNumber(decodedInvoiceNumber);
+        
+        // Example of handling multiple potential approvers
+        allParams.forEach((key, value) -> {
+            if (key.startsWith("approverEmail") && !value.isEmpty()) {
+                invoiceService.addApproverToInvoice(invoice.getInvoiceId(), value);
+            }
+        });
+        
+        redirectAttributes.addFlashAttribute("success", "Approvers successfully added.");
         return "redirect:/invoice/" + invoiceNumber.replace('/', '_');
     }
+    
     
     @PostMapping("/invoice/edit")
     public String editInvoice(@ModelAttribute UpdateInvoiceRequestDTO invoiceDTO, Model model,

@@ -51,6 +51,7 @@
   </style>
 </head>
 <body>
+  <nav th:replace="~{fragments/navbar-admin :: navbar-admin}"></nav>
   <div class="container">
     <h2 class="text-violet">Approval Hierarchy Management</h2>
     <div class="card input-card-custom mt-4 mb-5">
@@ -58,7 +59,7 @@
         <form th:action="@{/add-approval-flow}" th:object="${approvalFlow}" method="post">
           <div class="row mb-4">
             <div class="col">
-              <input type="text" class="form-control" placeholder="Minimal Nominal" th:field="*{nominalRange}">
+              <input type="number" class="form-control" placeholder="Minimal Nominal" th:field="*{nominalRange}" min="1" required>
             </div>
             <div class="col">
               <select class="form-select" th:field="*{approverRole}">
@@ -69,7 +70,7 @@
             <div class="col-auto">
               <button type="submit" class="btn btn-primary">ADD</button>
               <!-- Setelah tombol ADD -->
-              <button type="button" class="btn btn-secondary" th:onclick="'window.location.href=\'' + @{/reset-approval-flows} + '\''">Reset</button>
+              <button type="button" class="btn btn-danger" id="resetButton">Reset</button>
             </div>
           </div>
         </form>
@@ -128,6 +129,28 @@
   </div>
 </div>
 
+<!-- Confirmation Modal for Resetting Approval Flows -->
+<div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="confirmationModalLabel">Confirm Reset</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+          <div class="modal-body">
+              Are you sure you want to reset all approval flows? This action cannot be undone.
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+              <button type="button" class="btn btn-danger" id="confirmResetButton">Reset</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.9.3/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -147,5 +170,26 @@
     });
     /*]]>*/
   </script>  
+<script th:inline="javascript">
+  /*<![CDATA[*/
+  $(document).ready(function() {
+      var resetUrl = /*[[@{/reset-approval-flows}]]*/ 'resetUrl'; // Thymeleaf resolves the correct URL
+
+      // When the Reset button is clicked
+      $('#resetButton').on('click', function() {
+          // Show the confirmation modal
+          $('#confirmationModal').modal('show');
+      });
+
+      // When the Confirm Reset button in the modal is clicked
+      $('#confirmResetButton').on('click', function() {
+          // Redirect to the reset URL
+          window.location.href = resetUrl;
+      });
+  });
+  /*]]>*/
+</script>
+
+
 </body>
 </html>
