@@ -16,9 +16,9 @@ public class CacheRefreshScheduler {
     private CacheManager cacheManager;
 
     @SuppressWarnings("null")
-    @Scheduled(fixedRate = 3600000) // Every hour
+    @Scheduled(fixedRate = 3600000) 
     public void refreshCache() {
-        cacheManager.getCache("invoiceCounts").clear(); // Clear specific cache
-        dashboardService.getInvoiceCountsByStatus(); // Refresh data
+        cacheManager.getCache("invoiceCounts").clear(); 
+        dashboardService.getInvoiceCountsByStatus();
     }
 }

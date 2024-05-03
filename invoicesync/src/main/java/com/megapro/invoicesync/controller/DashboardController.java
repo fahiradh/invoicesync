@@ -9,15 +9,21 @@ import java.time.format.TextStyle;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.megapro.invoicesync.dto.response.InvoiceStatusCountDTO;
+import com.megapro.invoicesync.dto.response.TopCustomerDTO;
+import com.megapro.invoicesync.dto.response.TopProductDTO;
 import com.megapro.invoicesync.service.DashboardService;
 import com.megapro.invoicesync.util.classes.Revenue;
 
 
-@Controller
+@RestController
 public class DashboardController {
 
     @Autowired
@@ -25,8 +31,9 @@ public class DashboardController {
 
     // Dashboard direktur //
 
-    @GetMapping("/revenue")
-    public String showRevenueChart(Model model) {
+    @GetMapping("/api/dashboard/revenue")
+    @ResponseBody
+    public ResponseEntity<List<Revenue>> getMonthlyRevenue() {
         List<Object[]> revenueData = dashboardService.getMonthlyRevenue();
         BigDecimal[] monthlyRevenue = new BigDecimal[12]; 
         Arrays.fill(monthlyRevenue, BigDecimal.ZERO); 
@@ -41,33 +48,49 @@ public class DashboardController {
             String month = Month.of(i + 1).getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
             revenues.add(new Revenue(month, monthlyRevenue[i]));
         }
-        model.addAttribute("revenues", revenues);
-        return "dashboard/finance-director/revenue.html";
-    }
-
-    @GetMapping("/top-customers")
-    public String showTopCustomers(Model model) {
-        List<Object[]> topCustomers = dashboardService.getTopCustomersByInvoiceCount();
-        model.addAttribute("topCustomers", topCustomers);
-        return "dashboard/finance-director/top-customers.html";
-    }
-
-    @GetMapping("/top-products")
-    public String showTopProducts(Model model) {
-        List<Object[]> topProducts = dashboardService.getTopProductsByQuantityOrdered();
-        model.addAttribute("topProducts", topProducts);
-        return "dashboard/finance-director/top-products.html";
-    }
-
-    @GetMapping("/invoice-ratio")
-    public String showInvoiceRatio(Model model) {
-        List<Object[]> invoiceStatusCounts = dashboardService.getInvoiceCountsByStatus();
-        model.addAttribute("invoiceStatusCounts", invoiceStatusCounts);
-        return "dashboard/finance-director/invoice-status-ratio.html";
+        return new ResponseEntity<>(revenues, HttpStatus.OK);
     }
     
+    @GetMapping("api/dashboard/top-customers")
+    @ResponseBody
+    public ResponseEntity<List<TopCustomerDTO>> showTopCustomers(Model model) {
+        List<Object[]> topCustomersData = dashboardService.getTopCustomersByInvoiceCount();
+        List<TopCustomerDTO> topCustomers = new ArrayList<>();
 
+        for (Object[] data : topCustomersData) {
+            String customerName = (String) data[0];
+            Long invoiceCount = (Long) data[1];
+            topCustomers.add(new TopCustomerDTO(customerName, invoiceCount));
+        }
+        return new ResponseEntity<>(topCustomers, HttpStatus.OK);
+    }
 
+    @GetMapping("api/dashboard/top-products")
+    @ResponseBody
+    public ResponseEntity<List<TopProductDTO>> showTopProducts(Model model) {
+        List<Object[]> topProductsData = dashboardService.getTopProductsByQuantityOrdered();
+        List<TopProductDTO> topProducts = new ArrayList<>();
+
+        for (Object[] data : topProductsData) {
+            String productName = (String) data[0];
+            BigDecimal invoiceCount = (BigDecimal) data[1];
+            topProducts.add(new TopProductDTO(productName, invoiceCount));
+        }
+        return new ResponseEntity<>(topProducts, HttpStatus.OK);
+    }
     
+    @GetMapping("api/dashboard/invoice-ratio")
+    @ResponseBody
+    public ResponseEntity<List<InvoiceStatusCountDTO>> showInvoiceRatio(Model model) {
+        List<Object[]> invoiceStatusCountsData = dashboardService.getInvoiceCountsByStatus();
+        List<InvoiceStatusCountDTO> invoiceStatusCounts = new ArrayList<>();
+
+        for (Object[] data : invoiceStatusCountsData) {
+            String status = (String) data[0];
+            Long invoiceCount = (Long) data[1];
+            invoiceStatusCounts.add(new InvoiceStatusCountDTO(status, invoiceCount));
+        }
+        return new ResponseEntity<>(invoiceStatusCounts, HttpStatus.OK);
+    }
     
 }

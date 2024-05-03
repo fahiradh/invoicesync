@@ -1,9 +1,10 @@
 package com.megapro.invoicesync.service;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.megapro.invoicesync.repository.CustomerDb;
@@ -27,7 +28,6 @@ public class DashboardServiceImpl implements DashboardService {
         return invoiceDb.findMonthlyRevenue();
     }
 
-    @Cacheable("invoiceStatusCounts")
     @Override
     public List<Object[]> getInvoiceCountsByStatus() {
         return invoiceDb.findInvoiceCountsByStatus();
@@ -41,5 +41,20 @@ public class DashboardServiceImpl implements DashboardService {
     @Override
     public List<Object[]> getTopProductsByQuantityOrdered() {
         return productDb.findTopProductsByQuantityOrdered();
+    }
+
+    @Override
+    public BigDecimal getInvoicePaidAmount() {
+        return invoiceDb.findTotalPaidAmount();
+    }
+
+    @Override
+    public BigDecimal getInvoiceUnpaidAmount() {
+        return invoiceDb.findTotalUnpaidAmount();
+    }
+
+    @Override
+    public BigDecimal getInvoiceOverdueAmount() {
+        return invoiceDb.findTotalOverdueAmount(LocalDate.now());
     }
 }
