@@ -24,7 +24,6 @@ public class ApprovalFlowServiceImpl implements ApprovalFlowService {
     private ApprovalFlowDb approvalFlowDb;
 
     @Override
-    
     public void createApprovalFlow(ApprovalFlow approvalFlow) throws IllegalArgumentException {
         // Cek apakah ada approval flow yang sudah ada
         List<ApprovalFlow> existingFlows = approvalFlowDb.findAll();
@@ -32,6 +31,14 @@ public class ApprovalFlowServiceImpl implements ApprovalFlowService {
         // Sort existing flows berdasarkan nominal range secara ascending
         existingFlows.sort(Comparator.comparingLong(ApprovalFlow::getNominalRange));
         
+        if (approvalFlow.getNominalRange() <= 0) {
+            throw new IllegalArgumentException("The nominal value must be positive.");
+        }
+        // Check if the employee is already included in any previous flows
+        if (existingFlows.stream().anyMatch(flow -> flow.getApproverRole().equals(approvalFlow.getApproverRole()))) {
+            throw new IllegalArgumentException("Employee for the role " + approvalFlow.getApproverRole() + " has already been assigned to a previous flow.");
+        }
+
         // Jika ada existing flow, pastikan nominal baru lebih besar dari nominal terakhir
         if (!existingFlows.isEmpty()) {
             ApprovalFlow lastFlow = existingFlows.get(existingFlows.size() - 1);

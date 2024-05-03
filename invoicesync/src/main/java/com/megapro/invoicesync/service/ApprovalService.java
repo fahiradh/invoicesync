@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.megapro.invoicesync.model.Approval;
 import com.megapro.invoicesync.model.Invoice;
+import com.megapro.invoicesync.model.UserApp;
 
 public interface ApprovalService {
     public List<Approval> findApproversByInvoice(Invoice invoice);

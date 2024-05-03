@@ -317,28 +317,28 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
+<!-- Add Approver Modal -->
                 <div class="modal-body">
-                    <!-- The action URL should point to the controller method that handles adding an approver -->
-                    <form th:action="@{/invoice/{invoiceNumber}/add-approver(invoiceNumber=${invoice.invoiceNumber.replace('/', '_')})}" method="post">
-                        <!-- form inputs -->
+                <form th:action="@{/invoice/{invoiceNumber}/add-approver(invoiceNumber=${invoice.invoiceNumber.replace('/', '_')})}" method="post">
+                    <div th:each="approverDisplay : ${approverDisplays}">
                         <div class="form-group">
-                            <label for="approverName">Approver Name</label>
-                            <select class="form-control" id="approverName" name="approverEmail">
+                            <label th:for="${'approverName' + approverDisplay.role}" th:text="${'Approver for ' + approverDisplay.role}">Approver Name</label>
+                            <select th:id="${'approverName' + approverDisplay.role}" class="form-control" th:name="${'approverEmail' + approverDisplay.role}">
                                 <option value="">Select Approver</option>
-                                <!-- Iterate over employees and display first and last names -->
-                                <option th:each="employee : ${employees}" 
-                                        th:value="${employee.email}" 
+                                <option th:each="employee : ${approverDisplay.approvers}"
+                                        th:value="${employee.email}"
                                         th:text="${employee.first_name + ' ' + employee.last_name}">
                                 </option>
-                            </select>                        
+                            </select>
                         </div>
-                        <div class="form-group">
-                            <!-- Include hidden field to hold the invoice number or ID -->
-                            <input type="hidden" name="invoiceNumber" th:value="${invoice.invoiceNumber}" />
-                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="hidden" name="invoiceNumber" th:value="${invoice.invoiceNumber}" />
                         <button type="submit" class="btn btn-primary">Add</button>
-                    </form>
+                    </div>
+                </form>
                 </div>
+
             </div>
         </div>
     </div>
