@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.megapro.invoicesync.model.Approval;
 import com.megapro.invoicesync.model.Invoice;
+import com.megapro.invoicesync.model.UserApp;
+
 import java. util.List;
 
 @Transactional
@@ -51,5 +53,11 @@ public class ApprovalServiceImpl implements ApprovalService{
     @Override
     public void saveApproval(Approval approval) {
         approvalDb.save(approval);
+    }
+
+    @Override
+    public List<UserApp> getEligibleApproversForInvoice(Invoice invoice) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getEligibleApproversForInvoice'");
     }
 }

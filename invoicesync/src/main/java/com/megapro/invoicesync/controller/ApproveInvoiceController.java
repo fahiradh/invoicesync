@@ -31,6 +31,7 @@ import com.megapro.invoicesync.repository.UserAppDb;
 import com.megapro.invoicesync.service.ApprovalService;
 import com.megapro.invoicesync.service.FilesStorageService;
 import com.megapro.invoicesync.service.InvoiceService;
+import com.megapro.invoicesync.service.NotificationService;
 import com.megapro.invoicesync.service.TaxService;
 import com.megapro.invoicesync.service.UserService;
 
@@ -70,6 +71,9 @@ public class ApproveInvoiceController {
     FileMapper fileMapper;
 
     @Autowired
+    NotificationService notificationService;
+
+    @Autowired
     UserService userService;
 
     @GetMapping("/approval")
@@ -92,8 +96,11 @@ public class ApproveInvoiceController {
                 invoiceDTOList.add(invoiceDTO);
             }
         }
-        model.addAttribute("email", email);
         model.addAttribute("invoices", invoiceDTOList);
+
+        // Notification
+        var notifications = notificationService.getEmployeeNotification(employee);
+        model.addAttribute("notifications", notifications);
 
         return "approve-invoice/list-approval.html";
     }
@@ -168,6 +175,10 @@ public class ApproveInvoiceController {
         model.addAttribute("approvalLogs", approvalLogs);
         model.addAttribute("employee", employee);
 
+        // Notification
+        var notifications = notificationService.getEmployeeNotification(employee);
+        model.addAttribute("notifications", notifications);
+
         return "approve-invoice/approval-page.html";
     }
 
@@ -186,11 +197,19 @@ public class ApproveInvoiceController {
         if (isLastApproval) {
             invoice.setStatus("Approved");
             invoice.setApprovedDate(LocalDate.now());
+            invoiceService.save(invoice);
+
+            // Notification
+            var invoiceMaker = invoice.getStaffEmail();
+            notificationService.generateInvoiceMakerNotification(invoiceMaker, invoice.getInvoiceId());
         } else {
             int currentApprovalIndex = approvalList.indexOf(approval);
             var nextApproval = approvalList.get(currentApprovalIndex + 1);
             nextApproval.setShown(true);
-            approvalService.saveApproval(nextApproval);
+
+            // Notification
+            var approverEmail = approval.getEmployee().getEmail();
+            notificationService.generateInvoiceApproverNotification(approverEmail,invoice.getInvoiceId());
         }
 
         approvalService.saveApproval(approval);
@@ -218,6 +237,10 @@ public class ApproveInvoiceController {
         invoice.setStatus("Need Revision");
         invoiceService.updateInvoice(invoice);
 
+        // Notification
+        var invoiceMaker = invoice.getStaffEmail();
+        notificationService.generateInvoiceMakerNotification(invoiceMaker, invoice.getInvoiceId());
+
         var invoiceNumber = approval.getInvoice().getInvoiceNumber().replace('/', '_');
         
         return "redirect:/approval/"+invoiceNumber+"?approvalId="+updateApprovalDTO.getApprovalId();
@@ -233,6 +256,10 @@ public class ApproveInvoiceController {
         var invoice = approval.getInvoice();
         invoice.setStatus("Rejected");
         invoiceService.updateInvoice(invoice);
+
+        // Notification
+        var invoiceMaker = invoice.getStaffEmail();
+        notificationService.generateInvoiceMakerNotification(invoiceMaker, invoice.getInvoiceId());
 
         var invoiceNumber = approval.getInvoice().getInvoiceNumber().replace('/', '_');
         

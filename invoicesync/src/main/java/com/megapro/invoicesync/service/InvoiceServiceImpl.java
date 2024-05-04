@@ -268,7 +268,6 @@ public class InvoiceServiceImpl implements InvoiceService{
 
 
 
-
 @Override
 public void addApproverToInvoice(UUID invoiceId, String approverEmail) {
     Invoice invoice = invoiceDb.findById(invoiceId)
@@ -281,7 +280,7 @@ public void addApproverToInvoice(UUID invoiceId, String approverEmail) {
     }
 
     List<ApprovalFlow> applicableFlows = approvalFlowDb.findAllByOrderByNominalRangeAsc().stream()
-        .filter(flow -> invoice.getGrandTotal().compareTo(BigDecimal.valueOf(flow.getNominalRange())) >= 0)
+        .filter(flow -> invoice.getGrandTotal().compareTo(BigDecimal.valueOf(flow.getNominalRange())) <= 0)
         .collect(Collectors.toList());
 
     if (applicableFlows.isEmpty()) {
@@ -377,7 +376,7 @@ public List<UserApp> getEligibleApproversForInvoice(Invoice invoice) {
     public List<ApproverDisplay> getApproverDisplaysForInvoice(Invoice invoice) {
         BigDecimal total = invoice.getGrandTotal();
         List<ApprovalFlow> applicableFlows = approvalFlowDb.findAllByOrderByNominalRangeAsc().stream()
-            .filter(flow -> total.compareTo(BigDecimal.valueOf(flow.getNominalRange())) >= 0)
+            .filter(flow -> total.compareTo(BigDecimal.valueOf(flow.getNominalRange())) <= 0)
             .collect(Collectors.toList());
     
         return applicableFlows.stream().map(flow -> {
@@ -440,6 +439,11 @@ public List<UserApp> getEligibleApproversForInvoice(Invoice invoice) {
             res = "errorMessage, Please input the correct city name";
         }
         return res;
+    }
+
+    @Override
+    public void save(Invoice invoice){
+        invoiceDb.save(invoice);
     }
 }
 

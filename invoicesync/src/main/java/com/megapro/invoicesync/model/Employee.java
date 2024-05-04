@@ -8,6 +8,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Lob;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -55,7 +56,10 @@ public class Employee extends UserApp {
     @Column(name = "image")
     private byte[] image;
 
-
     @OneToMany(mappedBy = "employee")
     private List<Approval> listApproval;
+
+    @OneToMany(mappedBy = "employee")
+    @OrderBy("notificationId DESC")
+    private List<Notification> listNotifications;
 }

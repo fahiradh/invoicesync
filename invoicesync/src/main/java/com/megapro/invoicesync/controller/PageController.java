@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import com.megapro.invoicesync.dto.request.CreateUserAppRequestDTO;
 import com.megapro.invoicesync.repository.EmployeeDb;
 import com.megapro.invoicesync.repository.UserAppDb;
+import com.megapro.invoicesync.service.NotificationService;
 import com.megapro.invoicesync.service.DashboardService;
 
 import java.util.List;
@@ -22,6 +23,9 @@ public class PageController {
 
     @Autowired
     EmployeeDb employeeDb;
+
+    @Autowired
+    NotificationService notificationService;
 
     @Autowired
     DashboardService dashboardService;
@@ -48,7 +52,13 @@ public class PageController {
         model.addAttribute("role", role);
         model.addAttribute("division", division);
         model.addAttribute("employee", employee);
-        
+
+        if(!role.equals("Admin")){
+            // Notification
+            var notifications = notificationService.getEmployeeNotification(employee);
+            model.addAttribute("notifications", notifications);
+        }
+
         if (role.equals("Non-Finance Staff")) {
             if (employee.getFirst_name() == null) {
                 model.addAttribute("showModal", "true");

@@ -15,7 +15,7 @@
     <div class="card-borderless mt-4">
       <div class="card-title">
         <h1 th:if="${showModal}" class="center-text theme-color">Halo, <span th:text="${email}"></span></h1>
-        <h1 th:unless="${showModal}" class="center-text theme-color">Halo, <span th:text="${employee.first_name} + ' ' + ${employee.last_name}"></span></h1>
+        <h1 th:unless="${showModal}" class="center-text theme-color">Haloo, <span th:text="${employee.first_name} + ' ' + ${employee.last_name}"></span></h1>
       </div>
     </div>
   </div>
@@ -34,18 +34,33 @@
     </div>
   </div>
 
-  <!-- JavaScript code to handle modal display -->
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.9.3/dist/umd/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-  <script>
+  <!-- <script>
 
     var showModal = "[[${showModal}]]";
 
     if (showModal == "true") {
         document.getElementById('myModal').style.display = 'block';
     }
-  </script>
+
+    $(document).ready(function(){
+        var down = false;
+        $('#bell').click(function(e){
+          
+            var color = $(this).text();
+            if(down){
+                
+                $('#box').css('height','0px');
+                $('#box').css('opacity','0');
+                down = false;
+            }else{
+                
+                $('#box').css('height','auto');
+                $('#box').css('opacity','1');
+                down = true;
+            }
+        });
+            });
+  </script> -->
 
 </body>
 </html>

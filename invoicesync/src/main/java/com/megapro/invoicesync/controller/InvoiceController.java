@@ -29,6 +29,7 @@ import com.megapro.invoicesync.service.CustomerService;
 import com.megapro.invoicesync.service.ExcelService;
 import com.megapro.invoicesync.service.FilesStorageService;
 import com.megapro.invoicesync.service.InvoiceService;
+import com.megapro.invoicesync.service.NotificationService;
 import com.megapro.invoicesync.service.TaxService;
 import com.megapro.invoicesync.service.UserService;
 
@@ -106,6 +107,9 @@ public class InvoiceController {
     @Autowired
     private ApprovalMapper approvalMapper;
 
+    @Autowired
+    private NotificationService notificationService;
+
     @GetMapping(value="/create-invoice")
     public String formCreateInvoice(Model model, @ModelAttribute("successMessage") String successMessage, 
                                     @ModelAttribute("errorMessage") String errorMessage){
@@ -121,6 +125,10 @@ public class InvoiceController {
         LocalDate date = invoiceDTO.getInvoiceDate();
         Employee employee = userService.findByEmail(email);
         var invoiceDummyId = invoiceService.getDummyInvoice().getInvoiceId();
+
+        // Notification
+        var notifications = notificationService.getEmployeeNotification(employee);
+        model.addAttribute("notifications", notifications);
 
         model.addAttribute("email", email);
         model.addAttribute("role", role);
@@ -167,6 +175,7 @@ public class InvoiceController {
             model.addAttribute("invoiceDTO", newInvoiceDTO);
             model.addAttribute("successMessage", successMessage);
             model.addAttribute("errorMessage", errorMessage);
+            
             redirectAttributes.addFlashAttribute(message[0], message[1]);
         } catch (IOException e){
             String mess = "Failed";
@@ -243,6 +252,10 @@ public class InvoiceController {
             approvalLogs.add(approvalLog);
         }
 
+        // Notification
+        var notifications = notificationService.getEmployeeNotification(employee);
+        model.addAttribute("notifications", notifications);
+
         model.addAttribute("approvalLogs", approvalLogs);
 
         return "invoice/view-detail-invoice";
@@ -279,6 +292,11 @@ public class InvoiceController {
             invoiceDTOList.add(invoiceDTO);
         }
 
+        // Notification
+        var employee = userService.findByEmail(email);
+        var notifications = notificationService.getEmployeeNotification(employee);
+        model.addAttribute("notifications", notifications);
+
         model.addAttribute("invoices", invoiceDTOList);
         return "invoice/viewall-invoices";
     }
@@ -309,6 +327,11 @@ public class InvoiceController {
             invoiceDTOList.add(invoiceDTO);
         }
 
+        // Notification
+        var employee = userService.findByEmail(email);
+        var notifications = notificationService.getEmployeeNotification(employee);
+        model.addAttribute("notifications", notifications);
+
         model.addAttribute("invoices", invoiceDTOList);
         return "invoice/viewall-invoices";
     }
@@ -330,6 +353,12 @@ public class InvoiceController {
             var invoiceDTO = invoiceMapper.readInvoiceToInvoiceResponse(invoice);
             invoices.add(invoiceDTO);
         }
+
+        // Notification
+        var employee = userService.findByEmail(email);
+        var notifications = notificationService.getEmployeeNotification(employee);
+        model.addAttribute("notifications", notifications);
+
         model.addAttribute("invoices", invoices);
         return "invoice/my-invoices-view"; // Ganti dengan nama view Thymeleaf Anda
     }
@@ -351,6 +380,11 @@ public class InvoiceController {
         List<ReadInvoiceResponse> myInvoiceDTOs = myInvoices.stream()
                                                             .map(invoice -> invoiceMapper.readInvoiceToInvoiceResponse(invoice))
                                                             .collect(Collectors.toList());
+
+        // Notification
+        var employee = userService.findByEmail(email);
+        var notifications = notificationService.getEmployeeNotification(employee);
+        model.addAttribute("notifications", notifications);
 
         model.addAttribute("invoices", myInvoiceDTOs);
         return "invoice/my-invoices-view";
@@ -375,6 +409,11 @@ public class InvoiceController {
 
         model.addAttribute("invoices", invoiceDTOList);
         model.addAttribute("division", requestedDivision); // Ganti role dengan division
+
+        // Notification
+        var employee = userService.findByEmail(email);
+        var notifications = notificationService.getEmployeeNotification(employee);
+        model.addAttribute("notifications", notifications);
         
         return "invoice/viewall-invoices-division";
     }
@@ -400,6 +439,11 @@ public class InvoiceController {
 
         model.addAttribute("invoices", invoiceDTOList);
         model.addAttribute("division", requestedDivision);
+
+        // Notification
+        var employee = userService.findByEmail(email);
+        var notifications = notificationService.getEmployeeNotification(employee);
+        model.addAttribute("notifications", notifications);
         
         return "invoice/viewall-invoices-division";
     }
@@ -429,6 +473,11 @@ public class InvoiceController {
         model.addAttribute("invoiceDTO", invoiceDTO);
         model.addAttribute("currentSignature", invoice.getSignature());
         model.addAttribute("employee", employee);
+
+        // Notification
+        var notifications = notificationService.getEmployeeNotification(employee);
+        model.addAttribute("notifications", notifications);
+
         return "invoice/form-edit-invoice";
     }
 
@@ -464,6 +513,13 @@ public class InvoiceController {
                     invoiceService.addApproverToInvoice(invoice.getInvoiceId(), value);
                 }
             });
+
+            invoice.setStatus("Pending Approval");
+            invoiceDb.save(invoice);
+
+            // Generate Notifications
+            var firstApprover = invoice.getListApproval().get(0).getEmployee();
+            notificationService.generateInvoiceApproverNotification(firstApprover.getEmail(), invoice.getInvoiceId());
     
             redirectAttributes.addFlashAttribute("success", "Approvers successfully added.");
         } catch (IllegalStateException | IllegalArgumentException e) {
@@ -585,6 +641,10 @@ public class InvoiceController {
         }
 
         model.addAttribute("approvalLogs", approvalLogs);
+
+        // Notification
+        var notifications = notificationService.getEmployeeNotification(employee);
+        model.addAttribute("notifications", notifications);
 
         return "invoice/view-detail-invoice";
 

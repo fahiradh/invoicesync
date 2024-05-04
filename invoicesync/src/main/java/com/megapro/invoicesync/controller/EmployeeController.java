@@ -24,6 +24,7 @@ import com.megapro.invoicesync.dto.request.CreateEmployeeRequestDTO;
 import com.megapro.invoicesync.dto.request.CreateInvoiceRequestDTO;
 import com.megapro.invoicesync.model.Employee;
 import com.megapro.invoicesync.model.Invoice;
+import com.megapro.invoicesync.model.Notification;
 import com.megapro.invoicesync.model.Role;
 import com.megapro.invoicesync.repository.EmployeeDb;
 import com.megapro.invoicesync.model.UserApp;
@@ -33,6 +34,7 @@ import com.megapro.invoicesync.service.UserService;
 
 import jakarta.validation.Valid;
 
+import com.megapro.invoicesync.service.NotificationService;
 import com.megapro.invoicesync.service.RoleService;
 import org.springframework.web.server.ResponseStatusException;import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
@@ -57,6 +59,9 @@ public class EmployeeController {
 
     @Autowired
     EmployeeDb employeeDb;
+
+    @Autowired
+    NotificationService notificationService;
     
 
     @GetMapping("/create-account")
@@ -183,6 +188,9 @@ public class EmployeeController {
         model.addAttribute("role", role);
         model.addAttribute("email", email);
 
+        // Notification
+        var notifications = notificationService.getEmployeeNotification(employee);
+        model.addAttribute("notifications", notifications);
 
         return "home/profile-page.html";
     }
@@ -213,6 +221,10 @@ public class EmployeeController {
         model.addAttribute("employeeDTO", employeeDT0);
         model.addAttribute("employee", employee);
         model.addAttribute("role", role);
+
+        // Notification
+        var notifications = notificationService.getEmployeeNotification(employee);
+        model.addAttribute("notifications", notifications);
 
         return "home/edit-profile-page.html";
     }
@@ -299,6 +311,11 @@ public class EmployeeController {
         model.addAttribute("role", role);
         model.addAttribute("successMessage", successMessage);
         model.addAttribute("errorMessage", errorMessage);
+
+        // Notification
+        var employee = employeeDb.findByEmail(email);
+        var notifications = notificationService.getEmployeeNotification(employee);
+        model.addAttribute("notifications", notifications);
 
         return "account/form-change-password";
     }
