@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.Base64;
-
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -299,7 +297,7 @@ public void addApproverToInvoice(UUID invoiceId, String approverEmail) {
     if (existingApprovals.size() < applicableFlows.size()) {
         String requiredRole = applicableFlows.get(existingApprovals.size()).getApproverRole();
         if (!employee.getRole().getRole().equals(requiredRole)) {
-            throw new IllegalArgumentException("The approver must have the role: " + requiredRole + " for this rank.");
+            throw new IllegalArgumentException("The approver must have the role " + requiredRole + " for this rank.");
         }
     }
 

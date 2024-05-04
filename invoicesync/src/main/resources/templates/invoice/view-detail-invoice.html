@@ -387,6 +387,27 @@
         </div>
     </div>
 </div> 
+<!-- Error Modal -->
+<div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="errorModalLabel">Error</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p th:text="${error}">An unexpected error occurred. Please try again later.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
 <script th:inline="javascript">
     function preparePaid(invoiceNumber) {
@@ -432,6 +453,18 @@ $(document).ready(function() {
 /*]]>*/
 
 </script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    $(document).ready(function() {
+        var errorMessage = /*[[${error}]]*/ 'default error message if not null';
+        if (errorMessage && errorMessage !== 'default error message if not null') {
+            $('#errorModal').modal('show'); // Display the modal if there is an error message
+        }
+    });
+    /*]]>*/
+    </script>
+    
+    
 <script src="/js/scripts/print-invoice.js"></script>
 </body>
 </html>
