@@ -455,19 +455,27 @@ public class InvoiceController {
     public String addApprover(@PathVariable("invoiceNumber") String invoiceNumber,
                               @RequestParam Map<String, String> allParams,
                               RedirectAttributes redirectAttributes) {
-        String decodedInvoiceNumber = invoiceNumber.replace('_', '/');
-        Invoice invoice = invoiceService.getInvoiceByInvoiceNumber(decodedInvoiceNumber);
-        
-        // Example of handling multiple potential approvers
-        allParams.forEach((key, value) -> {
-            if (key.startsWith("approverEmail") && !value.isEmpty()) {
-                invoiceService.addApproverToInvoice(invoice.getInvoiceId(), value);
-            }
-        });
-        
-        redirectAttributes.addFlashAttribute("success", "Approvers successfully added.");
+        try {
+            String decodedInvoiceNumber = invoiceNumber.replace('_', '/');
+            Invoice invoice = invoiceService.getInvoiceByInvoiceNumber(decodedInvoiceNumber);
+    
+            allParams.forEach((key, value) -> {
+                if (key.startsWith("approverEmail") && !value.isEmpty()) {
+                    invoiceService.addApproverToInvoice(invoice.getInvoiceId(), value);
+                }
+            });
+    
+            redirectAttributes.addFlashAttribute("success", "Approvers successfully added.");
+        } catch (IllegalStateException | IllegalArgumentException e) {
+            String simplifiedMessage = e.getMessage().replaceAll("java\\.lang\\.(IllegalArgumentException|IllegalStateException): ", "");
+            redirectAttributes.addFlashAttribute("error", simplifiedMessage);
+        } catch (Exception e) {
+            // Catch all other exceptions that you might not have foreseen.
+            redirectAttributes.addFlashAttribute("error", "An unexpected error occurred. Please try again.");
+        }
         return "redirect:/invoice/" + invoiceNumber.replace('/', '_');
     }
+    
     
     
     @PostMapping("/invoice/edit")
