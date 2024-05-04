@@ -35,9 +35,24 @@
                     </li>
                     <li class="nav-item">
                         <a th:classappend="${page == 'My-Invoice'} ? active : ''" class="nav-link" th:href="@{/my-invoices}">
-                            <img src="https://cdn.hugeicons.com/icons/invoice-01-stroke-rounded.svg" alt="invoice-01" width="24" height="24" />
+                            <img src="https://cdn.hugeicons.com/icons/invoice-01-stroke-rounded.svg" alt="invoice-01" width="24" height="24"/>
                             My Invoices
                         </a>
+                    </li>
+                    <li class="nav-item">
+                        <div class="icon nav-link" id="bell">
+                            <img src="https://cdn.hugeicons.com/icons/notification-01-solid-rounded.svg" alt="notification-01"/>
+                        </div>
+                        <div class="notifications" id="box">
+                            <h2>Notifications</h2>
+                            <div th:each="notif: ${notifications}">
+                                <div class="notifications-item">
+                                    <div class="text">
+                                        <p th:text="${notif.content}"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </li>
                     <li class="nav-item dropdown">
                         <a th:classappend="${page == 'Profile'} ? active : ''" class="nav-link mx-2 dropdown-toggle nav-profile" th:href="@{#}" id="navbarDropdownMenuLink" role="button"
@@ -51,12 +66,39 @@
                                 <form th:action="@{/logout}" method="post" class="logout-form">
                                   <button type="submit" class="dropdown-item" style="border: none; background: none; cursor: pointer;">Logout</button>
                                 </form>
-                              </li>
+                            </li>
                         </ul>
                     </li>
                 </ul>
             </div>
         </div>
+        <script>
+
+            var showModal = "[[${showModal}]]";
+        
+            if (showModal == "true") {
+                document.getElementById('myModal').style.display = 'block';
+            }
+        
+            $(document).ready(function(){
+                var down = false;
+                $('#bell').click(function(e){
+                  
+                    var color = $(this).text();
+                    if(down){
+                        
+                        $('#box').css('height','0px');
+                        $('#box').css('opacity','0');
+                        down = false;
+                    }else{
+                        
+                        $('#box').css('height','auto');
+                        $('#box').css('opacity','1');
+                        down = true;
+                    }
+                });
+                    });
+        </script>
     </nav>
 
     <nav th:fragment="navbar-non-finance-manager" th:if="${role == 'Non-Finance Manager'}" class="navbar navbar-expand-lg navbar-bg  p-3">
@@ -72,14 +114,38 @@
             <div class=" collapse navbar-collapse" id="navbarNavDropdown">
                 <ul class="navbar-nav ms-auto ">
                     <li class="nav-item">
-                        <a th:classappend="${page == 'Home'} ? active : ''" class="nav-link mx-2" th:href="@{/home}">Home</a>
+                        <a th:classappend="${page == 'Home'} ? active : ''" class="nav-link mx-2" th:href="@{/home}">
+                            <img src="https://cdn.hugeicons.com/icons/dashboard-square-01-stroke-rounded.svg" alt="dashboard-square-01" width="24" height="24" />
+                            Home
+                        </a>
                     </li>
                     <li class="nav-item">
                         <!-- TODO : Add th:href -->
-                        <a th:classappend="${page == 'Approve-Invoice'} ? active : ''" class="nav-link mx-2" th:href="@{/approval}">Approve Invoice</a> 
+                        <a th:classappend="${page == 'Approve-Invoice'} ? active : ''" class="nav-link mx-2" th:href="@{/approval}">
+                            <img src="https://cdn.hugeicons.com/icons/checkmark-square-04-stroke-rounded.svg" alt="checkmark-square-04" width="24" height="24" />
+                            Approve Invoice
+                        </a> 
                     </li>
                     <li class="nav-item">
-                        <a th:classappend="${page == 'All-Invoices-List'} ? active : ''" class="nav-link mx-2" th:href="@{/invoices}">All Invoice List</a> 
+                        <a th:classappend="${page == 'All-Invoices-List'} ? active : ''" class="nav-link mx-2" th:href="@{/invoices}">
+                            <img src="https://cdn.hugeicons.com/icons/invoice-01-stroke-rounded.svg" alt="invoice-01" width="24" height="24" />
+                            All Invoice List
+                        </a> 
+                    </li>
+                    <li class="nav-item">
+                        <div class="icon nav-link" id="bell">
+                            <img src="https://cdn.hugeicons.com/icons/notification-01-solid-rounded.svg" alt="notification-01"/>
+                        </div>
+                        <div class="notifications" id="box">
+                            <h2>Notifications</h2>
+                            <div th:each="notif: ${notifications}">
+                                <div class="notifications-item">
+                                    <div class="text">
+                                        <p th:text="${notif.content}"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link mx-2 dropdown-toggle nav-profile" href="#" id="navbarDropdownMenuLink" role="button"
@@ -99,7 +165,35 @@
                 </ul>
             </div>
         </div>
+        <script>
+
+            var showModal = "[[${showModal}]]";
+        
+            if (showModal == "true") {
+                document.getElementById('myModal').style.display = 'block';
+            }
+        
+            $(document).ready(function(){
+                var down = false;
+                $('#bell').click(function(e){
+                  
+                    var color = $(this).text();
+                    if(down){
+                        
+                        $('#box').css('height','0px');
+                        $('#box').css('opacity','0');
+                        down = false;
+                    }else{
+                        
+                        $('#box').css('height','auto');
+                        $('#box').css('opacity','1');
+                        down = true;
+                    }
+                });
+                    });
+        </script>
     </nav>
+
 </body>
 
 </html>

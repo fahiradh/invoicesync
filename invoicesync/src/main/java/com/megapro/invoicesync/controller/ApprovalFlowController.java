@@ -15,8 +15,10 @@ import com.megapro.invoicesync.dto.ApprovalFlowMapper;
 import com.megapro.invoicesync.dto.request.CreateApprovalFlowRequest;
 import com.megapro.invoicesync.model.ApprovalFlow;
 import com.megapro.invoicesync.model.Role;
+import com.megapro.invoicesync.repository.EmployeeDb;
 import com.megapro.invoicesync.repository.UserAppDb;
 import com.megapro.invoicesync.service.ApprovalFlowService;
+import com.megapro.invoicesync.service.NotificationService;
 import com.megapro.invoicesync.service.RoleService;
 
 import jakarta.validation.Valid;
@@ -59,6 +61,7 @@ public class ApprovalFlowController {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
             return "redirect:/approval-flows";
         }
+
         return "redirect:/approval-flows";
     }
     
@@ -78,6 +81,7 @@ public class ApprovalFlowController {
         model.addAttribute("roles", roles);
         model.addAttribute("successMessage", successMessage);
         model.addAttribute("errorMessage", errorMessage);
+        
         return "approve-invoice/approval-hierarchy";
     }
 

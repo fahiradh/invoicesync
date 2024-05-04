@@ -151,7 +151,7 @@
                                                     <input class="form-check-input" type="checkbox" 
                                                         value="${tax.taxId}" 
                                                         id="${tax.taxId}" 
-                                                        th:checked="${#lists.contains(taxList.![taxId], tax.taxId)}" disabled>
+                                                        th:checked="${#lists.contains(invoice.listTax.![taxId], tax.taxId)}" disabled>
                                                     <label class="form-check-label" for="${tax.taxId}" th:text="${tax.taxName}">
                                                     </label>
                                                 </div>
@@ -235,7 +235,7 @@
                 <div class="grid-container-logs" th:each="log: ${approvalLogs}">
                     <div class="grid-container log mb-3">
                         <div class="left">
-                            <img th:src="'data:image/jpeg;base64,' + ${imageBase64}" class="rounded-photo log default-photo">
+                            <img th:src="${employee.base64Photo}" class="rounded-photo log default-photo">
                         </div>
                         <div class="name">
                             <b><p th:text="${log.employeeName}"></p></b>
@@ -317,7 +317,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-<!-- Add Approver Modal -->
+                <!-- Add Approver Modal -->
                 <div class="modal-body">
                 <form th:action="@{/invoice/{invoiceNumber}/add-approver(invoiceNumber=${invoice.invoiceNumber.replace('/', '_')})}" method="post">
                     <div th:each="approverDisplay : ${approverDisplays}">

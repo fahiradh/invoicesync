@@ -36,4 +36,5 @@ public interface InvoiceService {
     Invoice updateInvoice(Invoice invoiceFromDTO);
     void addApproverToInvoice(UUID invoiceId, String email);
     public List<UserApp> getEligibleApproversForInvoice(Invoice invoice);
+    public void save(Invoice invoice);
 }

@@ -8,7 +8,9 @@ import org.springframework.ui.Model;
 
 import com.megapro.invoicesync.dto.TaxMapper;
 import com.megapro.invoicesync.dto.request.CreateTaxRequestDTO;
+import com.megapro.invoicesync.repository.EmployeeDb;
 import com.megapro.invoicesync.repository.UserAppDb;
+import com.megapro.invoicesync.service.NotificationService;
 import com.megapro.invoicesync.service.TaxService;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +28,12 @@ public class TaxController {
     @Autowired
     UserAppDb userAppDb;
 
+    @Autowired
+    EmployeeDb employeeDb;
+
+    @Autowired
+    NotificationService notificationService;
+
     @GetMapping("/tax")
     public String viewTax(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -41,6 +49,12 @@ public class TaxController {
         model.addAttribute("taxes", taxes);
         
         model.addAttribute("email", email);
+
+        // Notification
+        var employee = employeeDb.findByEmail(email);
+        var notifications = notificationService.getEmployeeNotification(employee);
+        model.addAttribute("notifications", notifications);
+
         return "tax/tax";
     }
     
