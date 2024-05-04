@@ -99,4 +99,7 @@ public class Invoice {
 
     @Column(name = "payment_date")
     private LocalDate paymentDate;
+
+    @Column(name = "approved_date")
+    private LocalDate approvedDate;
 }
