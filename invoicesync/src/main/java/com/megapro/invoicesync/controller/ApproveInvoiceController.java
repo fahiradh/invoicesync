@@ -185,6 +185,7 @@ public class ApproveInvoiceController {
 
         if (isLastApproval) {
             invoice.setStatus("Approved");
+            invoice.setApprovedDate(LocalDate.now());
         } else {
             int currentApprovalIndex = approvalList.indexOf(approval);
             var nextApproval = approvalList.get(currentApprovalIndex + 1);

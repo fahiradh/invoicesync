@@ -69,6 +69,10 @@ public class PageController {
             } else {
                 model.addAttribute("showModal", "false");
             }
+            var countApproved  = dashboardService.totalInvoiceApproved(email);
+            var countWaitingApproval = dashboardService.totalInvoiceWaitingApproved(email);
+            model.addAttribute("countApproved", countApproved);
+            model.addAttribute("countWaitingApproval", countWaitingApproval);
             return "home/home-exc-non-finance.html";
         } else if (role.equals("Finance Manager") || role.equals("Finance Director") ) {
             if (employee.getFirst_name() == null) {
