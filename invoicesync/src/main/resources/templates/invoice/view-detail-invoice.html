@@ -31,7 +31,7 @@
         <th:block th:if="${invoice.status == 'Waiting for Approver' && emailPermission == true}">
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addApproverModal">Assign Approver</button>
         </th:block>
-        <button type="button" class="btn btn-primary" data-toggle="modal" id="approverModal" onclick="showApprover()">See Approver</button>
+        <button type="button" class="btn btn-primary" data-toggle="modal" id="seeApproversBtn">See Approver</button>
     </form>
     <!-- </div> -->
     <div class="grid-container-invoice-logs">
@@ -305,7 +305,7 @@
                 </div>
             </div>
         </div>
-        <div class="card">
+        <!-- <div class="card">
             <div class="card-body">
                 <table class="table table-custom" id="approversTable">
                     <thead>
@@ -322,7 +322,7 @@
                     </tbody>
                 </table>
             </div>
-        </div>
+        </div> -->
     </div>
     </div>
     </div>
@@ -372,23 +372,21 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="card">
-                        <div class="card-body">
-                            <table class="table table-custom" id="approversTable">
-                                <thead>
-                                    <tr>
-                                        <th>No</th>
-                                        <th>Approver</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr th:each="approver, iterStat : ${approvers}">
-                                        <td th:text="${iterStat.count}"></td>
-                                        <td th:text="${approver.employee.first_name + ' ' + approver.employee.last_name}"></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                    <div class="card-body">
+                        <table class="table table-custom" id="approversTable">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Approver</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="approver, iterStat : ${approvers}">
+                                    <td th:text="${iterStat.count}"></td>
+                                    <td th:text="${approver.employee.first_name + ' ' + approver.employee.last_name}"></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -399,9 +397,9 @@
     </div>
 
 
- <!-- Approver List Section -->
+ <!-- Approver List Section
  <div class="container">
-    <div class="card" style="width: 100%;"> <!-- Set the width to 100% of the container -->
+    <div class="card" style="width: 100%;"> <!-- Set the width to 100% of the container 
         <div class="card-header">
             <h5 class="card-title">Approvers</h5>
         </div>
@@ -414,7 +412,6 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Iteration over approvers -->
                     <tr th:each="approver, iterStat : ${approvers}">
                         <td th:text="${iterStat.count}"></td>
                         <td th:text="${approver.employee.first_name + ' ' + approver.employee.last_name}"></td>
@@ -424,7 +421,7 @@
         </div>
     </div>
 </div>
-
+-->
  <!-- Modal confirmation -->
 <div class="modal fade" id="confirmPaidModal" tabindex="-1" role="dialog" aria-labelledby="confirmPaidModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -473,6 +470,13 @@
     }
 </script> 
   
+<script>
+    $(document).ready(function() {
+        $('#seeApproversBtn').click(function() {
+            $('#approverModal').modal('show');
+        });
+    });
+</script>
 
 <!-- Rest of your existing HTML including the Add Approver Modal -->
 <script>
