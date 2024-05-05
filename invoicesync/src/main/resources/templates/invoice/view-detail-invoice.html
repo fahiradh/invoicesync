@@ -305,6 +305,24 @@
                 </div>
             </div>
         </div>
+        <div class="card">
+            <div class="card-body">
+                <table class="table table-custom" id="approversTable">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Approver</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="approver, iterStat : ${approvers}">
+                            <td th:text="${iterStat.count}"></td>
+                            <td th:text="${approver.employee.first_name + ' ' + approver.employee.last_name}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
     </div>
     </div>
@@ -452,10 +470,6 @@
         var toPaid= '/invoice/' + invoiceNumber + '/mark-as-paid';
         $('#paidLink').attr('href', toPaid);
         $('#confirmPaidModal').modal('show');
-    }
-
-    function showApprover(){
-        $('#approverModal').modal('show');
     }
 </script> 
   
