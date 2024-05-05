@@ -15,7 +15,7 @@
     <div class="card-borderless mt-4">
       <div class="card-title">
         <h1 th:if="${showModal}" class="center-text theme-color">Halo, <span th:text="${email}"></span></h1>
-        <h1 th:unless="${showModal}" class="center-text theme-color">Haloo, <span th:text="${employee.first_name} + ' ' + ${employee.last_name}"></span></h1>
+        <h1 th:unless="${showModal}" class="center-text theme-color">Halo, <span th:text="${employee.first_name} + ' ' + ${employee.last_name}"></span></h1>
       </div>
     </div>
   </div>
@@ -34,14 +34,15 @@
     </div>
   </div>
 
-  <!-- <script>
-
+  <script>
     var showModal = "[[${showModal}]]";
 
     if (showModal == "true") {
         document.getElementById('myModal').style.display = 'block';
     }
+  </script>
 
+  <!--
     $(document).ready(function(){
         var down = false;
         $('#bell').click(function(e){

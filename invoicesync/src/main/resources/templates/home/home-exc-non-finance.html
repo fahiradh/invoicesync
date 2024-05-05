@@ -41,7 +41,7 @@
 
   <div class="container">
     <div class="row dashboard-row">
-        <div class="col dashboard-col shadow-lg p-3" style="background-color: #3f2685;">
+        <div class="col dashboard-col p-3" style="background-color: #3f2685;">
           <div class="card-title text-left">
             <h3 th:if="${showModal}" class="center-text theme-color">Halo, <span th:text="${email}"></span></h3>
             <h4 th:unless="${showModal}" class="text-left text-white">Welcome to InvoiceSync, <span th:text="${employee.first_name} + ' ' + ${employee.last_name}"></span></h4>
@@ -51,13 +51,13 @@
     </div>
 
     <div class="row dashboard-row">
-        <div class="col dashboard-col">
+        <div class="col dashboard-col-left">
             <div class="dashboard-content">
               <h4>Total Approved Invoice</h4>
                 <h5 id="totApprovedInvoice" th:text="${countApproved} + ' ' + 'Invoice(s)'" class="theme-color"></h5>
             </div>
         </div>
-        <div class="col dashboard-col-middle">
+        <div class="col dashboard-col">
             <div class="dashboard-content">
               <h4>Total Invoice Need Approval</h4>
                 <h5 id="totInvoiceNeedApproval;" th:text="${countWaitingApproval} + ' ' +'Invoice(s)'" class="theme-color"></h5>
@@ -66,7 +66,7 @@
     </div>
 
     <div class="row dashboard-row">
-      <div class="col dashboard-col shadow">
+      <div class="col dashboard-col">
           <div class="dashboard-content">
               <h4 class="text-center">Outbound Invoices</h4>
               <div id="bar_chart"></div>

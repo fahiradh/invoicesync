@@ -61,7 +61,7 @@
 
   <div class="container">
     <div class="row dashboard-row">
-        <div class="col dashboard-col shadow-lg p-3" style="background-color: #3f2685;">
+        <div class="col dashboard-col p-3" style="background-color: #3f2685;">
           <div class="card-title text-left">
             <h3 th:if="${showModal}" class="center-text theme-color">Halo, <span th:text="${email}"></span></h3>
             <h4 th:unless="${showModal}" class="text-left text-white">Welcome to InvoiceSync, <span th:text="${employee.first_name} + ' ' + ${employee.last_name}"></span></h4>
@@ -71,13 +71,13 @@
     </div>
 
     <div class="row dashboard-row">
-      <div class="col dashboard-col">
+      <div class="col dashboard-col-left">
           <div class="dashboard-content">
               <h4 class="text-center">Latest Invoice Made</h4>
               <div id="latest_invoice_table" style="height: 150px;"></div>
           </div>
       </div>
-      <div class="col dashboard-col-middle">
+      <div class="col dashboard-col">
           <div class="dashboard-content">
               <h4 class="text-center">Invoice Due Soon</h4>
               <div id="due_invoice_table" style="height: 150px;"></div>
@@ -86,7 +86,7 @@
     </div>
 
     <div class="row dashboard-row">
-      <div class="col dashboard-col shadow">
+      <div class="col dashboard-col">
           <div class="dashboard-content">
               <h4 class="text-center">Total Tax Gain</h4>
               <div id="line_chart"></div>
@@ -95,13 +95,13 @@
     </div>
 
     <div class="row dashboard-row">
-      <div class="col dashboard-col">
+      <div class="col dashboard-col-left">
           <div class="dashboard-content">
               <h4 class="text-center">All Invoice Status</h4>
               <div id="pie_chart" style="height: 250px;"></div>
           </div>
       </div>
-      <div class="col dashboard-col-middle">
+      <div class="col dashboard-col">
           <div class="dashboard-content">
               <h4 class="text-center">Invoices with Status Paid and Approved (not yet paid)</h4>
               <div id="bar_chart" style="height: 250px;"></div>

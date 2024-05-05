@@ -122,15 +122,6 @@ function updateGrandTotalInvoice() {
     document.querySelector('input[name="grandTotal"]').value = total.toFixed(2);
 }
 
-
-// function updateRowNumbers(tableBody) {
-//     var rows = tableBody.querySelectorAll('tr');
-//     for (var i = 0; i < rows.length; i++) {
-//         var cells = rows[i].querySelectorAll('td');
-//         cells[0].innerHTML = i + 1;
-//     }
-// }
-
 document.getElementById("addRowInvoice").addEventListener("click", function() {
     var tableBody = document.getElementById("invoiceTableBody");
     var rowCount = tableBody.rows.length;
@@ -166,20 +157,14 @@ document.getElementById("addRowInvoice").addEventListener("click", function() {
 
     var deleteIcon = cellAction.querySelector('.delete-icon');
     deleteIcon.addEventListener('click', function() {
-        tableBody.removeChild(newRow);
-
+        var productId = newRow.getAttribute('data-product-id');
+        if (productId !== null){
+            deleteProduct(productId, newRow);
+        }
+        else{
+            tableBody.removeChild(newRow);
+        }
     });
-
-    // var deleteIcon = cellAction.querySelector('.delete-icon');
-    // deleteIcon.addEventListener('click', function() {
-    //     var productId = newRow.getAttribute('data-product-id');
-    //     if (productId !== null){
-    //         deleteProduct(productId, newRow);
-    //     }
-    //     else{
-    //         tableBody.removeChild(newRow);
-    //     }
-    // });
 
     var checkIcon = cellAction.querySelector('.check-icon');
     checkIcon.addEventListener('click', function() {
@@ -190,6 +175,24 @@ document.getElementById("addRowInvoice").addEventListener("click", function() {
         handleCheckClick(this);
     });
 });
+
+function deleteProduct(productId, tableRow) {
+    fetch('/api/v1/product/' + productId + '/delete', {
+        method: 'POST'
+    })
+    .then(function(response) {
+        if (!response.ok) {
+            throw new Error('Error deleting product:', response.status);
+        }
+        console.log('Product deleted successfully');
+        tableRow.parentNode.removeChild(tableRow);
+        // updateRowNumbers(tableBody);
+        getAllProduct();
+    })
+    .catch(function(error) {
+        console.error(error);
+    });
+}
 
 document.getElementById("taxList").addEventListener("click", function(){
     countTaxes();
@@ -264,6 +267,72 @@ closeModalButton.addEventListener('click', function() {
     $('#successModal').modal('hide');
 });
 
+
+document.getElementById("productDocument").addEventListener("change", function() {
+    var fileInput = document.querySelector('input[name="productDocument"]');
+    var formData = new FormData();
+    formData.append('productDocument', fileInput.files[0]);
+
+    fetch('/api/v1/create-product-document', {
+        method: 'POST',
+        body: formData
+    })
+    .then(function(response) {
+        if (!response.ok) {
+            throw new Error('Error creating product document: ' + response.status);
+        }
+        console.log('Product document created successfully');
+        return response.json();
+    })
+    .then(function(data) {
+        updateProductList(data);
+        getAllProduct();
+    })
+    .catch(function(error) {
+        console.error(error);
+    });
+});
+
+
+function updateProductList(listProduct){
+    var tableBody = document.getElementById("invoiceTableBody");
+    var rowCount = tableBody.rows.length;
+
+    listProduct.forEach(function(product, index) {
+        var newRow = tableBody.insertRow();
+        newRow.setAttribute('data-product-id', product.productId);
+
+        var count = newRow.insertCell(0);
+        count.textContent = rowCount + index + 1;
+
+        var description = newRow.insertCell(1);
+        description.textContent = product.description;
+
+        var quantity = newRow.insertCell(2);
+        quantity.textContent = product.quantity;
+
+        var price = newRow.insertCell(3);
+        price.textContent = product.price;
+
+        var totalPrice = newRow.insertCell(4);
+        totalPrice.textContent = product.totalPrice;
+
+        var action = newRow.insertCell(5);
+        action.innerHTML = '<i class="fa fa-trash delete-icon" style="color:#dc3545; cursor: pointer; margin:4px;"></i>'
+
+        var deleteIcon = action.querySelector('.delete-icon');
+        deleteIcon.addEventListener('click', function() {
+            var productId = newRow.getAttribute('data-product-id');
+            if (productId !== null){
+                deleteProduct(productId, newRow);
+            }
+            else{
+                tableBody.removeChild(newRow);
+            }
+        });
+    });
+}
+
 function getAllProduct() {
     var invoiceId = document.getElementById("invoiceId").value;  
     console.log("invoice id: " + invoiceId);
@@ -290,4 +359,18 @@ function getAllProduct() {
     .catch(function(error) {
         console.error('Error:', error);
     });
+}
+
+function showGuidelinesModal() {
+    var modal = document.getElementById("guidelinesModal");
+    modal.classList.add('show');
+    modal.setAttribute('aria-hidden', 'false');
+    modal.style.display = 'block';
+}
+
+function hideGuidelinesModal() {
+    var modal = document.getElementById("guidelinesModal");
+    modal.classList.remove('show');
+    modal.setAttribute('aria-hidden', 'true');
+    modal.style.display = 'none';
 }

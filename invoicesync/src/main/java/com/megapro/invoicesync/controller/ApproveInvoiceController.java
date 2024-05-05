@@ -83,6 +83,7 @@ public class ApproveInvoiceController {
         var employee = employeeDb.findByEmail(email);
         String role = employee.getRole().getRole();
         model.addAttribute("role", role);
+        model.addAttribute("email", email);
 
         List<ReadInvoiceResponse> invoiceDTOList = new ArrayList<>();
         var approvalList = employee.getListApproval();

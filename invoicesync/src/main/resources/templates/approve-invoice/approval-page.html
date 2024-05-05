@@ -15,8 +15,8 @@
     <nav th:if="${role == 'Finance Manager'}" th:replace="~{fragments/navbar-finance :: navbar-finance-exc(page='Approve-Invoice')}"></nav>
 
     <div class="container">
-        <div class="header">
-            <h4>Approval of Invoice / <span class="invoice-number" th:text="${invoice.invoiceNumber}">Invoice #</span></h4>
+        <div class="card-title">
+            <h2>Approval of Invoice</h2>
         </div>
         <div class="modal fade" id="exampleModalCenter" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" style="display: none;">
             <!-- Modal detail revisi -->

@@ -4,56 +4,15 @@
   <meta charset="UTF-8">
   <title>Approval Hierarchy Management | InvoiceSync</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- Include Bootstrap CSS -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <!-- Google Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;600&display=swap" rel="stylesheet">
-  <!-- Custom styles -->
-  <style>
-    .flow-box {
-      background-color: #fff;
-      border: 1px solid #E3E6EB;
-      border-radius: 4px;
-      margin-bottom: 20px;
-      padding: 16px;
-      font-size: 16px;
-      color: #3F2685;
-      line-height: 1.4;
-      box-shadow: 0 2px 4px 0 rgba(0,0,0,.05);
-    }
-    .btn-primary {
-      background-color: #3F2685;
-      border-color: #3F2685;
-    }
-    .btn-primary:hover {
-      background-color: #3730a3;
-      border-color: #3730a3;
-    }
-    .card-custom, .input-card-custom {
-      background-color: #FFFFFF;
-      border-radius: 8px;
-      border: none;
-      box-shadow: 0 0 15px 0 rgba(0,0,0,.05);
-      padding: 20px;
-      margin-bottom: 20px;
-    }
-    .form-control, .form-select {
-      background-color: #ECEEF1;
-      border-color: #ECEEF1;
-      color: #4E5559;
-    }
-    .form-control::placeholder, .form-select option {
-      color: #B1B5B8;
-    }
-    .container {
-      padding-top: 50px;
-    }
-  </style>
+  <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+  <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
 </head>
 <body>
-  <nav th:replace="~{fragments/navbar-admin :: navbar-admin}"></nav>
+  <nav th:replace="~{fragments/navbar-admin :: navbar-admin(page='Home')}"></nav>
   <div class="container">
-    <h2 class="text-violet">Approval Hierarchy Management</h2>
+    <div class="card-title">
+      <h2>Approval Hierarchy Management</h2>
+    </div>
     <div class="card input-card-custom mt-4 mb-5">
       <div class="card-body">
         <form th:action="@{/add-approval-flow}" th:object="${approvalFlow}" method="post">
@@ -68,7 +27,7 @@
             </select>            
             </div>
             <div class="col-auto">
-              <button type="submit" class="btn btn-primary">ADD</button>
+              <button type="submit" class="btn btn-primary">Add</button>
               <!-- Setelah tombol ADD -->
               <button type="button" class="btn btn-danger" id="resetButton">Reset</button>
             </div>
@@ -94,7 +53,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="modalLabel">Sukses</h5>
+        <h5 class="modal-title" id="modalLabel">Success</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -103,7 +62,7 @@
         <p id="successMessage"></p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
@@ -123,7 +82,7 @@
         <p id="errorMessage"></p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>

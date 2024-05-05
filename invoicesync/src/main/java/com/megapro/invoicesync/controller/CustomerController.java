@@ -4,10 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -32,19 +29,6 @@ public class CustomerController {
     @Autowired
     CustomerMapper customerMapper;
 
-    // @GetMapping("/create-customer")
-    // public String formCreateCustomer(Model model){
-    //     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    //     String email = authentication.getName();
-    //     var user = userAppDb.findByEmail(email);
-    //     String role = user.getRole().getRole();
-    //     var customerDTO = new CreateCustomerRequestDTO();
-    //     model.addAttribute("email", email);
-    //     model.addAttribute("role", role);
-    //     model.addAttribute("customerDTO", customerDTO);
-    //     return "account/form-create-customer";
-    // }
-    
     @PostMapping("/create-customer")
     public RedirectView createCustomer(@Valid CreateCustomerRequestDTO customerRequest){
         var customer = customerMapper.createCustomerDTOToCustomer(customerRequest);

@@ -2,9 +2,6 @@ package com.megapro.invoicesync.dto.request;
 
 import java.util.UUID;
 
-import com.megapro.invoicesync.model.Employee;
-import com.megapro.invoicesync.model.Invoice;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

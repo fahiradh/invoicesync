@@ -6,7 +6,7 @@ html, body {
     box-sizing: border-box;
 }
 
-h2, .flow-box strong{
+h2{
     color:#3F2685;
     font-size:xx-large;
     font-weight: 600;
@@ -64,15 +64,6 @@ h4{
 .grid-child {
     padding: 5px;
     border: 1px solid #000;
-}
-
-.container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    margin: auto;
-    max-width: 1200px;
-    padding-top: 20px;
 }
 
 .container-title{
@@ -588,7 +579,44 @@ h4{
     margin-right: 15px;
 }
 
+.dashboard-col-left{
+    border: 2px solid #EEF2F5; 
+    border-radius: 0.7rem;
+    padding: 20px;
+    margin-right: 15px;
+}
+
 .dashborad-content{
     max-width: 400px;
     max-height: 300px;
+}
+
+/* Approval Hierarchy */
+.flow-box {
+    background-color: #fff;
+    border: 1px solid #E3E6EB;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    padding: 16px;
+    font-size: 16px;
+    color: #3F2685;
+    line-height: 1.4;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,.05);
+}
+
+.card-custom, .input-card-custom {
+    background-color: #FFFFFF;
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0 0 15px 0 rgba(0,0,0,.05);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+.form-control, .form-select {
+    background-color: #ECEEF1;
+    border-color: #ECEEF1;
+    color: #4E5559;
+}
+.form-control::placeholder, .form-select option {  
+    color: #B1B5B8;
 }

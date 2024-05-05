@@ -98,13 +98,6 @@ function updateGrandTotalInvoice() {
 }
 
 
-// function updateRowNumbers(tableBody) {
-//     var rows = tableBody.querySelectorAll('tr');
-//     for (var i = 0; i < rows.length; i++) {
-//         var cells = rows[i].querySelectorAll('td');
-//         cells[0].innerHTML = i + 1;
-//     }
-// }
 
 document.getElementById("addRowInvoice").addEventListener("click", function() {
     var tableBody = document.getElementById("invoiceTableBody");
@@ -345,4 +338,19 @@ function getAllProduct() {
     .catch(function(error) {
         console.error('Error:', error);
     });
+}
+
+
+function showGuidelinesModal() {
+    var modal = document.getElementById("guidelinesModal");
+    modal.classList.add('show');
+    modal.setAttribute('aria-hidden', 'false');
+    modal.style.display = 'block';
+}
+
+function hideGuidelinesModal() {
+    var modal = document.getElementById("guidelinesModal");
+    modal.classList.remove('show');
+    modal.setAttribute('aria-hidden', 'true');
+    modal.style.display = 'none';
 }

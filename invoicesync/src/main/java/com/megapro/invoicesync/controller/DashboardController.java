@@ -9,10 +9,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.Locale;
 
-import org.bouncycastle.math.raw.Mod;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -23,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.megapro.invoicesync.dto.response.InvoiceStatusCountDTO;
 import com.megapro.invoicesync.dto.response.TopCustomerDTO;
 import com.megapro.invoicesync.dto.response.TopProductDTO;
-import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 import com.megapro.invoicesync.dto.response.InvoicesStatusChartDTO;
 import com.megapro.invoicesync.dto.response.MonthlyTaxDTO;
 import com.megapro.invoicesync.dto.response.NewestInvoiceDTO;
@@ -31,8 +27,6 @@ import com.megapro.invoicesync.dto.response.OutboundInvoiceCountDTO;
 import com.megapro.invoicesync.model.Invoice;
 import com.megapro.invoicesync.service.DashboardService;
 import com.megapro.invoicesync.util.classes.Revenue;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 
 
