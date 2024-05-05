@@ -31,6 +31,7 @@
         <th:block th:if="${invoice.status == 'Waiting for Approver' && emailPermission == true}">
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addApproverModal">Assign Approver</button>
         </th:block>
+        <button type="button" class="btn btn-primary" data-toggle="modal" id="approverModal" onclick="showApprover()">See Approver</button>
     </form>
     <!-- </div> -->
     <div class="grid-container-invoice-logs">
@@ -343,6 +344,43 @@
     </div>
     <!-- Existing HTML code -->
 
+    <div class="modal fade" id="approverModal" tabindex="-1" aria-labelledby="approverModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="approverModalLabel">Invoice Approver</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="card">
+                        <div class="card-body">
+                            <table class="table table-custom" id="approversTable">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Approver</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="approver, iterStat : ${approvers}">
+                                        <td th:text="${iterStat.count}"></td>
+                                        <td th:text="${approver.employee.first_name + ' ' + approver.employee.last_name}"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
  <!-- Approver List Section -->
  <div class="container">
     <div class="card" style="width: 100%;"> <!-- Set the width to 100% of the container -->
@@ -414,9 +452,12 @@
         var toPaid= '/invoice/' + invoiceNumber + '/mark-as-paid';
         $('#paidLink').attr('href', toPaid);
         $('#confirmPaidModal').modal('show');
-        
     }
-</script>  
+
+    function showApprover(){
+        $('#approverModal').modal('show');
+    }
+</script> 
   
 
 <!-- Rest of your existing HTML including the Add Approver Modal -->
