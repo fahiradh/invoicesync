@@ -1,11 +1,10 @@
 package com.megapro.invoicesync.service;
 
 import java.io.IOException;
+import jakarta.transaction.Transactional;
+import java.util.Base64;
 import java.util.List;
-
 import java.util.UUID;
-
-import javax.xml.catalog.Catalog;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,9 +18,6 @@ import com.megapro.invoicesync.model.Employee;
 import com.megapro.invoicesync.model.UserApp;
 import com.megapro.invoicesync.repository.EmployeeDb;
 import com.megapro.invoicesync.repository.UserAppDb;
-
-import jakarta.transaction.Transactional;
-import java.util.Base64;
 
 @Service
 @Transactional

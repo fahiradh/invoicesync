@@ -15,10 +15,8 @@ import com.megapro.invoicesync.dto.ApprovalFlowMapper;
 import com.megapro.invoicesync.dto.request.CreateApprovalFlowRequest;
 import com.megapro.invoicesync.model.ApprovalFlow;
 import com.megapro.invoicesync.model.Role;
-import com.megapro.invoicesync.repository.EmployeeDb;
 import com.megapro.invoicesync.repository.UserAppDb;
 import com.megapro.invoicesync.service.ApprovalFlowService;
-import com.megapro.invoicesync.service.NotificationService;
 import com.megapro.invoicesync.service.RoleService;
 
 import jakarta.validation.Valid;
@@ -46,7 +44,10 @@ public class ApprovalFlowController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         var user = userAppDb.findByEmail(email);
-        model.addAttribute("role", user.getRole().getRole());
+        String role = user.getRole().getRole();
+        model.addAttribute("role", role);
+        model.addAttribute("email", email);
+
         if (result.hasErrors()) {
             // Ekstrak pesan error dari hasil validasi
             String errorMessage = result.getFieldError().getDefaultMessage();
@@ -56,7 +57,7 @@ public class ApprovalFlowController {
         try {
             var approvalFlow = approvalFlowMapper.createApprovalFlowRequestToApprovalFlow(approvalFlowDTO);
             approvalFlowService.createApprovalFlow(approvalFlow);
-            redirectAttributes.addFlashAttribute("successMessage", "Flow berhasil ditambahkan.");
+            redirectAttributes.addFlashAttribute("successMessage", "Flow added successfully");
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
             return "redirect:/approval-flows";
@@ -69,11 +70,13 @@ public class ApprovalFlowController {
     @GetMapping("/approval-flows")
     public String getAllFlow(Model model, @ModelAttribute("successMessage") String successMessage,
                                 @ModelAttribute("errorMessage") String errorMessage) {
-                                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                                String email = authentication.getName();
-                                var user = userAppDb.findByEmail(email);
-                                String role = user.getRole().getRole();
-                                model.addAttribute("role", role);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        var user = userAppDb.findByEmail(email);
+        String role = user.getRole().getRole();
+        model.addAttribute("role", role);
+        model.addAttribute("email", email);
+
         model.addAttribute("approvalFlow", new CreateApprovalFlowRequest());
         List<ApprovalFlow> listApproval = approvalFlowService.getAllApprovalFlows();
         model.addAttribute("listApproval", listApproval);
@@ -89,9 +92,9 @@ public class ApprovalFlowController {
 public String resetApprovalFlows(RedirectAttributes redirectAttributes) {
     try {
         approvalFlowService.resetAllApprovalFlows(); // Metode untuk menghapus seluruh approval flow
-        redirectAttributes.addFlashAttribute("successMessage", "Semua flow berhasil dihapus.");
+        redirectAttributes.addFlashAttribute("successMessage", "All flows deleted successfully");
     } catch (Exception e) {
-        redirectAttributes.addFlashAttribute("errorMessage", "Terjadi kesalahan saat menghapus flow.");
+        redirectAttributes.addFlashAttribute("errorMessage", "There is an error while deleting the flow");
     }
     return "redirect:/approval-flows";
 }

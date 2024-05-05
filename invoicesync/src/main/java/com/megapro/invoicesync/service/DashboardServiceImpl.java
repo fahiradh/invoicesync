@@ -6,12 +6,9 @@ import java.util.HashMap;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import java.time.LocalDate;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 import com.megapro.invoicesync.model.Approval;
 import com.megapro.invoicesync.model.Invoice;
 import com.megapro.invoicesync.repository.CustomerDb;

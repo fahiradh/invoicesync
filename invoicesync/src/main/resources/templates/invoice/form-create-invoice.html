@@ -83,7 +83,7 @@
                         <br>
 
                         <p class="card-text">Attach Product List (.xlsx)</p>
-                        <p>Please refer to <span id="openGuidelinesModal" class="guidelinseModal">these guidelines</span> for the document's format.</p>
+                        <p>Please refer to <a id="openGuidelinesModal" href="#" onclick="showGuidelinesModal()">these guidelines</a> for the document's format.</p>
                         <input type="file" class="form-control" id="productDocument" name="productDocument"/>
                         <br>
 
@@ -290,14 +290,25 @@
             </div>
         </div>
     </div>
-
-    <!-- Modal -->
-    <div id="guidelinesModal" class="modal">
-        <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2>Add Product from Document Guidelines</h2>
-        <p>1. Your file must be .xls or .xlsx</p>
-        <p>2. Make sure there are minimun 3 headers (Description, Quantity, and Price)</p>
+ 
+    <div class="modal fade" id="guidelinesModal" role="dialog" data-toggle="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="guidelinesModalTitle">Document Guidelines</h5>
+                    <button type="button" class="close" data-dismiss="modal" onclick="hideGuidelinesModal()" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>1. The document file format must be ".xlsx" for a better accuracy.</p>
+                    <p>2. The document must include a minimum of three cells titled "product," "quantity," and "price," all in lowercase format.</p>
+                    <p>3. Don't forget to review the product details after uploading the files to ensure accuracy and completeness.<p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="hideGuidelinesModal()">Close</button>
+                </div>
+            </div>
         </div>
     </div>
 

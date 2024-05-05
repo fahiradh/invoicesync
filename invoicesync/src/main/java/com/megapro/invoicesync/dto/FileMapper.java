@@ -2,7 +2,6 @@ package com.megapro.invoicesync.dto;
 
 import java.io.IOException;
 
-import org.aspectj.lang.annotation.After;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

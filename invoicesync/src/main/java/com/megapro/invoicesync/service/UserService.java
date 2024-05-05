@@ -9,7 +9,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 import com.megapro.invoicesync.dto.request.ChangePasswordRequestDTO;
-import com.megapro.invoicesync.dto.request.CreateCustomerRequestDTO;
 import com.megapro.invoicesync.dto.request.CreateEmployeeRequestDTO;
 import com.megapro.invoicesync.dto.request.CreateUserAppRequestDTO;
 import com.megapro.invoicesync.model.Employee;

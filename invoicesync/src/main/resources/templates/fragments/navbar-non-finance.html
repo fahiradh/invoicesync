@@ -55,7 +55,7 @@
                         </div>
                     </li>
                     <li class="nav-item dropdown">
-                        <a th:classappend="${page == 'Profile'} ? active : ''" class="nav-link mx-2 dropdown-toggle nav-profile" th:href="@{#}" id="navbarDropdownMenuLink" role="button"
+                        <a th:classappend="${page == 'Profile'} ? 'active-profile' : ''" class="nav-link mx-2 dropdown-toggle nav-profile" th:href="@{#}" id="navbarDropdownMenuLink" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-user" style="margin-right:5px"></i>
                             <span th:text="${email}"></span>

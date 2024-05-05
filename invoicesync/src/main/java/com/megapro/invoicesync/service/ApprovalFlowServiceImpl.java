@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.megapro.invoicesync.dto.ApprovalFlowMapper;
 import com.megapro.invoicesync.dto.request.CreateApprovalRequestDTO;
 import com.megapro.invoicesync.model.ApprovalFlow;
-import com.megapro.invoicesync.model.Invoice;
 import com.megapro.invoicesync.repository.ApprovalDb;
 import com.megapro.invoicesync.repository.ApprovalFlowDb;
 import com.megapro.invoicesync.repository.EmployeeDb;
@@ -36,14 +35,14 @@ public class ApprovalFlowServiceImpl implements ApprovalFlowService {
         }
         // Check if the employee is already included in any previous flows
         if (existingFlows.stream().anyMatch(flow -> flow.getApproverRole().equals(approvalFlow.getApproverRole()))) {
-            throw new IllegalArgumentException("Employee for the role " + approvalFlow.getApproverRole() + " has already been assigned to a previous flow.");
+            throw new IllegalArgumentException("Employee for the role " + approvalFlow.getApproverRole() + " has already been assigned to a previous flow");
         }
 
         // Jika ada existing flow, pastikan nominal baru lebih besar dari nominal terakhir
         if (!existingFlows.isEmpty()) {
             ApprovalFlow lastFlow = existingFlows.get(existingFlows.size() - 1);
             if (approvalFlow.getNominalRange() <= lastFlow.getNominalRange()) {
-                throw new IllegalArgumentException("Nominal pada flow baru harus lebih besar dari flow sebelumnya.");
+                throw new IllegalArgumentException("The nominal value of the new flow must be greater than the previous flow");
             }
         }
 
