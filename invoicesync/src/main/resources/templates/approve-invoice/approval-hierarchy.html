@@ -23,7 +23,7 @@
             <div class="col">
               <select class="form-select" th:field="*{approverRole}">
                 <option value="">Select Approver Role</option>
-                <option th:each="role : ${roles}" th:value="${role.role}" th:text="${role.role}"></option>
+                <option th:each="role : ${roles}" th:value="${role.role}" th:text="${role.role}" required></option>
             </select>            
             </div>
             <div class="col-auto">
