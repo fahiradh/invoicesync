@@ -42,6 +42,9 @@
                             <td th:text="${'Rp' + #numbers.formatDecimal(invoice.grandTotal, 0, 'COMMA', 2, 'POINT')}"></td>
                             <td th:with="status=${invoice.approvalStatus}" th:include="fragments/invoice-status :: invoice-status-show"></td>
                         </tr>
+                        <tr th:if="${#lists.isEmpty(invoices)}">
+                            <td colspan="5" class="text-center">No data available in the system</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

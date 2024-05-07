@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+  <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <title>Home | InvoiceSync</title>
+</head>
+<body>
+    <nav th:replace="~{fragments/navbar-finance :: navbar-finance-exc(page='Home')}"></nav>
+    <!-- Modal -->
+    <div id="myModal" class="modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title theme-color">Complete Your Profile Now</h4>
+                </div>
+                <div class="modal-body">
+                    <p class="theme-color" >First time on the system? Please <a th:href="@{/profile-page/edit}">complete your profile</a> first before using InvoiceSync.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row dashboard-row">
+            <div class="col dashboard-col shadow-lg p-3" style="background-image: linear-gradient(to right,#3f2685  , #856ad4);">
+                <div class="card-title text-left">
+                    <h3 th:if="${showModal}" class="center-text theme-color"></h3>
+                    <h4 th:unless="${showModal}" class="text-left text-white">Welcome to InvoiceSync, <span th:text="${employee.first_name} + ' ' + ${employee.last_name}"></span></h4>
+                    <p class="text-left text-white">InvoiceSync is a web-based invoice management system made for a consulting firm that facilitates invoice creation, invoice approval, dashboards, and user management. As a finance manager, you have access to features to view the dashboard, approve invoices, view the list of invoices and their details, and update your account profile.</p>
+                </div>
+            </div>
+        </div>
+        <div class="row dashboard-row">
+            <div class="col dashboard-col">
+                <div class="dashboard-content">
+                    <h4>Total Paid Amount</h4>
+                    <h5 id="formattedPaidAmount" th:text="${invoicePaidAmount}" class="theme-color"></h5>
+                </div>
+            </div>
+            <div class="col dashboard-col-middle">
+                <div class="dashboard-content">
+                    <h4>Total Unpaid Amount</h4>
+                    <h5 id="formattedUnpaidAmount" th:text="${invoiceUnpaidAmount}" class="theme-color"></h5>
+                </div>
+            </div>
+            <div class="col dashboard-col">
+                <div class="dashboard-content">
+                    <h4>Total Overdue Amount</h4>
+                    <h5 id="formattedOverdueAmount" th:text="${invoiceOverdueAmount}" class="theme-color"></h5>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row dashboard-row">
+                <!-- Number of Invoices per Month -->
+                <div class="col-md-4 dashboard-col">
+                    <div class="dashboard-content">
+                        <h4 class="text-center">Number of Invoices per Month</h4>
+                        <div id="chart_invoice" style="width: 100%; height: 500px;"></div>
+                    </div>
+                </div>
+                <!-- Number of Invoices by Payment Status -->
+                <div class="col-md-4 dashboard-col">
+                    <div class="dashboard-content">
+                        <h4 class="text-center">Total Tax Gain</h4>
+                        <div id="chart_tax" style="width: 100%; height: 500px;"></div>
+                    </div>
+                </div>
+                <!-- Total Tax Gain -->
+                <div class="col-md-4 dashboard-col">
+                    <div class="dashboard-content">
+                        <h4 class="text-center">Number of Invoices by Payment Status</h4>
+                        <div id="chart_status" style="width: 100%; height: 500px;"></div> <!-- Notice the corrected id 'chart_div3' -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+  <!-- JavaScript code -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.9.3/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+  <script>
+    var showModal = "[[${showModal}]]";
+    if (showModal == "true") {
+        document.getElementById('myModal').style.display = 'block';
+    }
+  </script>
+
+    <script type="text/javascript">
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawCharts);
+
+        function drawCharts() {
+            drawChartNumber();
+            drawChartStatus();
+            drawChartTax();
+        }
+
+        function drawChartNumber() {
+            fetch('/api/dashboard/invoices-per-month')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length === 0) {
+                        document.getElementById('chart_invoice').innerHTML = '<div class="text-center">No data available in the system</div>';
+                    }
+                    else {
+                        const dataTable = new google.visualization.DataTable();
+                        dataTable.addColumn('string', 'Month');
+                        dataTable.addColumn('number', 'Number of Invoices');
+
+                        data.forEach(item => {
+                            dataTable.addRow([item.month, item.count]);
+                        });
+
+                        const options = {
+                            hAxis: {title: 'Month', titleTextStyle: {color: '#333'}},
+                            vAxis: {minValue: 0, title: 'Number of Invoices', format: '0'},
+                            legend: 'none',
+                            chartArea: {width: '70%', height: '70%'},
+                            colors: ['#3f2685'],
+
+                        };
+
+                        const chart = new google.visualization.ColumnChart(document.getElementById('chart_invoice'));
+                        chart.draw(dataTable, options);
+                    }})
+                .catch(error => console.error('Error loading the data:', error));
+        }
+
+        function drawChartStatus() {
+            fetch('/api/invoices/status-per-month')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length === 0) {
+                        document.getElementById('chart_status').innerHTML = '<div class="text-center">No data available in the system</div>';  
+                    }
+                    else {
+                        const dataTable = new google.visualization.DataTable();
+                        dataTable.addColumn('string', 'Month');
+                        dataTable.addColumn('number', 'Paid Invoices');
+                        dataTable.addColumn('number', 'Unpaid Invoices');
+
+                        data.forEach(item => {
+                            dataTable.addRow([item.month.toString(), item.paidInvoices, item.unpaidInvoices]);
+                        });
+
+                        const options = {
+                            isStacked: true,
+                            hAxis: { title: 'Month' },
+                            vAxis: { title: 'Number of Invoices', format: '0' },
+                            legend: { position: 'top', maxLines: 3 },
+                            chartArea: {width: '70%', height: '70%'},
+                            series: {
+                            0: { color: '#3f2685' }, // Paid Invoices
+                            1: { color: '#a0153e' }     // Unpaid Invoices
+                        }
+                        };
+
+                        const chart = new google.visualization.ColumnChart(document.getElementById('chart_status'));
+                        chart.draw(dataTable, options);
+                    }})
+                .catch(error => console.error('Error loading the data:', error));
+        }
+
+        function drawChartTax() {
+            fetch('/api/tax-gain-chart') 
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json(); 
+                })
+                .then(taxData => {
+                    if (taxData.length === 0) { 
+                        document.getElementById('chart_tax').innerHTML = '<div class="text-center">No data available in the system</div>';  
+                        return; 
+                    }
+
+                    drawLineChart(taxData); 
+                })
+                .catch(error => {
+                    console.error("Error fetching tax gain data:", error);
+                });
+        }
+
+        function drawLineChart(taxData) {
+            var data = new google.visualization.DataTable(); 
+            data.addColumn('string', 'Month');
+            data.addColumn('number', 'Total Tax');
+
+            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+            taxData.forEach(function (item) {
+                var monthName = monthNames[item.month - 1]; 
+                data.addRow([monthName, item.totalTax]);
+            });
+
+            var options = {
+                hAxis: { 
+                title: 'Month' 
+                },
+                vAxis: { title: 'Total Tax', 
+                        minValue: 0 ,
+                        format: '#', 
+                    },
+                legend: 'none',
+                pointSize: 5,
+                curveType: 'function',
+                colors: ['#3f2685'],
+                chartArea: {width: '70%', height: '70%'},
+            };
+
+            var chart = new google.visualization.LineChart(document.getElementById('chart_tax'));
+            chart.draw(data, options);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+        formatAmount('formattedPaidAmount');
+        formatAmount('formattedUnpaidAmount');
+        formatAmount('formattedOverdueAmount');
+        
+        });
+
+        function formatAmount(elementId) {
+            const element = document.getElementById(elementId);
+            const amount = parseFloat(element.textContent);
+            if (isNaN(amount)) {
+                element.textContent = 'None';
+                return;
+            }
+
+            const formatter = new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 2
+            });
+
+            element.textContent = formatter.format(amount);
+        }
+    </script>
+
+</body>
+</html>

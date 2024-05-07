@@ -4,16 +4,11 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.ui.Model;
 
 import com.megapro.invoicesync.dto.TaxMapper;
 import com.megapro.invoicesync.dto.request.CountTaxRequestDTO;
-import com.megapro.invoicesync.dto.request.CreateTaxRequestDTO;
 import com.megapro.invoicesync.dto.response.CountTaxResponseDTO;
 import com.megapro.invoicesync.dto.response.ReadTaxResponseDTO;
-import com.megapro.invoicesync.model.Tax;
 import com.megapro.invoicesync.repository.UserAppDb;
 import com.megapro.invoicesync.service.TaxService;
 
@@ -21,8 +16,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.view.RedirectView;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController

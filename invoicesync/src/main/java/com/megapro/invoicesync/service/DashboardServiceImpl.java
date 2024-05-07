@@ -63,6 +63,15 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     @Override
+    public List<Object[]> getMonthlyInvoiceCounts() {
+        return invoiceDb.findMonthlyInvoiceCounts();
+    }
+
+    @Override
+    public List<Object[]> getMonthlyInvoiceStatusCounts() {
+        return invoiceDb.findMonthlyInvoiceStatusCounts();
+    }
+    
     public List<Object[]> getOutboundInvoicePerMonth(){
         return invoiceDb.findMonthlyInvoiceOutbound();
     }
@@ -158,4 +167,25 @@ public class DashboardServiceImpl implements DashboardService {
         List<Invoice> invoices = invoiceDb.findTopFiveClosestDueDate(today); // Fetch all ordered by closest due date
         return invoices.subList(0, Math.min(5, invoices.size()));
     }
+
+    @Override
+    public List<Invoice> getTop5ApprovedInvoicesByStaffEmail(String staffEmail) {
+        List<Invoice> invoices = invoiceDb.findTop5ApprovedInvoicesByStaffEmail(staffEmail);
+        return invoices.subList(0, Math.min(5, invoices.size()));
+    }
+
+    @Override
+    public List<Invoice> getTop5NeedRevisionInvoicesByStaffEmail(String staffEmail) {
+        List<Invoice> invoices = invoiceDb.findTop5NeedRevisionInvoicesByStaffEmail(staffEmail);
+        return invoices.subList(0, Math.min(5, invoices.size()));
+    }
+
+    @Override
+    public List<Invoice> getFiveDueClosestInvoicesByStaffEmail(String staffEmail) {
+        LocalDate today = LocalDate.now();
+        List<Invoice> invoices = invoiceDb.findTopFiveClosestDueDateByStaffEmail(today, staffEmail);
+        return invoices.subList(0, Math.min(5, invoices.size()));
+    }
+
+    
 }

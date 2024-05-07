@@ -32,7 +32,6 @@ import com.megapro.invoicesync.service.RoleService;
 import org.springframework.web.server.ResponseStatusException;
 
 
-
 @Controller
 public class EmployeeController {
     @Autowired

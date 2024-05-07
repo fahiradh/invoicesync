@@ -9,11 +9,14 @@
 </head>
 
 <body>
-    <nav th:replace="~{fragments/navbar-admin :: navbar-admin}"></nav>
+    <nav th:replace="~{fragments/navbar-admin :: navbar-admin(page = 'Employee Management')}"></nav>
     <div class="container">
         <div class="card-borderless mt-4">
             <div class="card-title p-4">
                 <h2>List of Employees</h2>
+                <div class="text-center">
+                    <a href="/create-account" class="btn btn-primary">Create New Employee</a>
+                </div>
             </div>
             <div class="grid-container">
                 <div th:each="employee: ${listEmployee}" class="card-employee">
@@ -23,7 +26,6 @@
                         <p th:text="${employee.role.role}" class="card-text text-muted"></p>
                         <p th:text="${employee.city}" class="card-text text-muted"></p>
                         <div class="btn-container">
-                            <button type="button" class="btn btn-primary">Edit</button>
                             <a type="button" class="btn btn-danger" href="#" th:attr="onclick=|prepareDeleteEmployeeModal('${employee.userId}')|"
                             >Delete</a>
                         </div>
