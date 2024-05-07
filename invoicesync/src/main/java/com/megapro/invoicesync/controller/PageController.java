@@ -66,6 +66,7 @@ public class PageController {
                 model.addAttribute("showModal", "false");
             }
             return "home/home-non-finance.html"; // home staf non finance
+
         } else if (role.equals("Finance Staff")) {
             if (employee.getFirst_name() == null) {
                 model.addAttribute("showModal", "true");
@@ -73,6 +74,7 @@ public class PageController {
                 model.addAttribute("showModal", "false");
             }
             return "home/home-staff-finance.html";
+
         } else if (role.equals("Non-Finance Manager")) {
             if (employee.getFirst_name() == null) {
                 model.addAttribute("showModal", "true");
@@ -84,7 +86,8 @@ public class PageController {
             model.addAttribute("countApproved", countApproved);
             model.addAttribute("countWaitingApproval", countWaitingApproval);
             return "home/home-exc-non-finance.html";
-        } else if (role.equals("Finance Manager") || role.equals("Finance Director") ) {
+
+        } else if (role.equals("Finance Director") ) {
             if (employee.getFirst_name() == null) {
                 model.addAttribute("showModal", "true");
             } else {
@@ -99,6 +102,23 @@ public class PageController {
             model.addAttribute("invoiceOverdueAmount", invoiceOverdueAmount);
 
             return "home/home-exc-finance.html";
+            
+        } else if (role.equals("Finance Manager")) {
+            if (employee.getFirst_name() == null) {
+                model.addAttribute("showModal", "true");
+            } else {
+                model.addAttribute("showModal", "false");
+            }
+            var invoicePaidAmount = dashboardService.getInvoicePaidAmount();
+            var invoiceUnpaidAmount = dashboardService.getInvoiceUnpaidAmount();
+            var invoiceOverdueAmount = dashboardService.getInvoiceOverdueAmount();
+
+            model.addAttribute("invoicePaidAmount", invoicePaidAmount);
+            model.addAttribute("invoiceUnpaidAmount", invoiceUnpaidAmount);
+            model.addAttribute("invoiceOverdueAmount", invoiceOverdueAmount);
+
+            return "home/home-manager-finance.html";
+            
         } else {
             return "home/home-admin.html";
         }

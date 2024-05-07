@@ -21,4 +21,9 @@ public interface DashboardService {
     BigDecimal getInvoicePaidAmount();
     BigDecimal getInvoiceUnpaidAmount();
     BigDecimal getInvoiceOverdueAmount();
+    List<Object[]> getMonthlyInvoiceCounts();
+    List<Object[]> getMonthlyInvoiceStatusCounts();
+    List<Invoice> getTop5ApprovedInvoicesByStaffEmail(String staffEmail);
+    List<Invoice> getTop5NeedRevisionInvoicesByStaffEmail(String staffEmail);
+    List<Invoice> getFiveDueClosestInvoicesByStaffEmail(String staffEmail);
 }

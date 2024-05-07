@@ -11,7 +11,6 @@ import java.util.Optional;
 
 @Repository
 public interface ApprovalFlowDb extends JpaRepository<ApprovalFlow, Integer> {
-    // You can add custom database queries if needed
     @Query("SELECT af FROM ApprovalFlow af WHERE af.nominalRange <= :amount ORDER BY af.nominalRange DESC")
     Optional<ApprovalFlow> findTopByNominalRangeLessThanEqualOrderByNominalRangeDesc(BigDecimal amount);
     List<ApprovalFlow> findAllByOrderByNominalRangeDesc();

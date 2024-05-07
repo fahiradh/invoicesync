@@ -62,7 +62,10 @@
                             <td th:text="${invoice.staffRole}">Division</td>
                             <td th:text="${'Rp' + #numbers.formatDecimal(invoice.grandTotal, 0, 'COMMA', 2, 'POINT')}"></td>
                             <td th:with="status=${invoice.status}" th:include="~{fragments/invoice-status :: invoice-status-show}" style=></td>
-                        </tr>                            
+                        </tr>  
+                        <tr th:if="${#lists.size(invoices) == 1}">
+                            <td colspan="5" class="text-center">No data available in the system</td>
+                        </tr>                          
                     </tbody>
                 </table>
             </div>

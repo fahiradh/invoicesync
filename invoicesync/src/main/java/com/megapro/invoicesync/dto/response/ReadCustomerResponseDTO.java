@@ -1,6 +1,5 @@
 package com.megapro.invoicesync.dto.response;
 
-import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -9,9 +8,6 @@ import lombok.Setter;
 
 import java.util.UUID;
 
-import com.megapro.invoicesync.model.Customer;
-
-import java.math.BigDecimal;
 
 @Setter
 @Getter

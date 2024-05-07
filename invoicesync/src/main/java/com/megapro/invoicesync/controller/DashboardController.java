@@ -8,23 +8,33 @@ import java.util.Arrays;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.Locale;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.megapro.invoicesync.dto.response.InvoicePerMonthDTO;
 import com.megapro.invoicesync.dto.response.InvoiceStatusCountDTO;
+import com.megapro.invoicesync.dto.response.MonthStatusDTO;
 import com.megapro.invoicesync.dto.response.TopCustomerDTO;
 import com.megapro.invoicesync.dto.response.TopProductDTO;
 import com.megapro.invoicesync.dto.response.InvoicesStatusChartDTO;
 import com.megapro.invoicesync.dto.response.MonthlyTaxDTO;
 import com.megapro.invoicesync.dto.response.NewestInvoiceDTO;
 import com.megapro.invoicesync.dto.response.OutboundInvoiceCountDTO;
+import com.megapro.invoicesync.model.Employee;
 import com.megapro.invoicesync.model.Invoice;
+import com.megapro.invoicesync.repository.EmployeeDb;
+import com.megapro.invoicesync.repository.InvoiceDb;
 import com.megapro.invoicesync.service.DashboardService;
 import com.megapro.invoicesync.util.classes.Revenue;
 
@@ -35,7 +45,7 @@ public class DashboardController {
 
     @Autowired
     DashboardService dashboardService;
-
+    
     // Dashboard direktur //
 
     @GetMapping("/api/dashboard/revenue")
@@ -217,4 +227,103 @@ public class DashboardController {
 
     
     
+    // Dashboard manager finance //
+
+    @GetMapping("/api/dashboard/invoices-per-month")
+    @ResponseBody
+    public ResponseEntity<List<InvoicePerMonthDTO>> getInvoicesPerMonth() {
+        List<Object[]> invoiceData = dashboardService.getMonthlyInvoiceCounts();
+        List<InvoicePerMonthDTO> invoicesPerMonth = new ArrayList<>();
+
+        for (Month month : Month.values()) {
+            invoicesPerMonth.add(new InvoicePerMonthDTO(month.getDisplayName(TextStyle.SHORT, Locale.ENGLISH), 0));
+        }
+        for (Object[] data : invoiceData) {
+            int monthIndex = ((Number) data[0]).intValue() - 1; 
+            int count = ((Number) data[1]).intValue();
+            invoicesPerMonth.get(monthIndex).setCount(count);
+        }
+        return new ResponseEntity<>(invoicesPerMonth, HttpStatus.OK);
+    }
+
+    @GetMapping("/api/invoices/status-per-month")
+    public ResponseEntity<List<MonthStatusDTO>> getInvoiceStatusPerMonth() {
+        List<Object[]> results = dashboardService.getMonthlyInvoiceStatusCounts();
+        Map<Integer, MonthStatusDTO> monthDataMap = new HashMap<>();
+        for (Month month : Month.values()) {
+            String monthName = month.getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
+            monthDataMap.put(month.getValue(), new MonthStatusDTO(monthName, 0, 0));
+        }
+
+        for (Object[] result : results) {
+            int month = ((Number) result[0]).intValue();
+            String status = (String) result[1];
+            int count = ((Number) result[2]).intValue();
+
+            MonthStatusDTO dto = monthDataMap.get(month);
+            if ("Paid".equals(status)) {
+                dto.setPaidInvoices(count);
+            } else if ("Approved".equals(status)) {
+                dto.setUnpaidInvoices(count);
+            }
+        }
+
+        return ResponseEntity.ok(new ArrayList<>(monthDataMap.values()));
+    }
+
+    // Dashboard non-finance staff //
+
+    @GetMapping("/api/invoices/latest-approved")
+    @ResponseBody
+    public ResponseEntity<List<NewestInvoiceDTO>> getLatestApprovedInvoices() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+
+        List<Invoice> invoices = dashboardService.getTop5ApprovedInvoicesByStaffEmail(userEmail);
+        List<NewestInvoiceDTO> invoicesDTO = invoices.stream()
+        .map(invoice -> new NewestInvoiceDTO(
+            invoice.getInvoiceNumber(),
+            invoice.getApprovedDate().toString(),
+            invoice.getCustomer().getName(),
+            invoice.getGrandTotal().doubleValue()))
+        .collect(Collectors.toList());
+
+        return new ResponseEntity<>(invoicesDTO, HttpStatus.OK);
+    }
+
+    @GetMapping("/api/invoices/latest-need-revision")
+    @ResponseBody
+    public ResponseEntity<List<NewestInvoiceDTO>> getLatestNeedRevisionInvoices() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+
+        List<Invoice> invoices = dashboardService.getTop5NeedRevisionInvoicesByStaffEmail(userEmail);
+        List<NewestInvoiceDTO> invoicesDTO = invoices.stream()
+        .map(invoice -> new NewestInvoiceDTO(
+            invoice.getInvoiceNumber(),
+            invoice.getInvoiceDate().toString(),
+            invoice.getCustomer().getName(),
+            invoice.getGrandTotal().doubleValue()))
+        .collect(Collectors.toList());
+
+        return new ResponseEntity<>(invoicesDTO, HttpStatus.OK);
+    }
+
+    @GetMapping("/api/invoices/due-by-email")
+    @ResponseBody
+    public ResponseEntity<List<NewestInvoiceDTO>> getFiveDueSoonInvoiceByEmail() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+
+        List<Invoice> invoices = dashboardService.getFiveDueClosestInvoicesByStaffEmail(userEmail);
+        List<NewestInvoiceDTO> invoicesDTO = invoices.stream()
+        .map(invoice -> new NewestInvoiceDTO(
+            invoice.getInvoiceNumber(),
+            invoice.getDueDate().toString(),
+            invoice.getCustomer().getName(),
+            invoice.getGrandTotal().doubleValue()))
+        .collect(Collectors.toList());
+
+        return new ResponseEntity<>(invoicesDTO, HttpStatus.OK);
+    }
 }

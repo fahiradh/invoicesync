@@ -61,11 +61,11 @@
 
   <div class="container">
     <div class="row dashboard-row">
-        <div class="col dashboard-col p-3" style="background-color: #3f2685;">
+        <div class="col dashboard-col p-3" style="background-image: linear-gradient(to right,#3f2685  , #856ad4);">
           <div class="card-title text-left">
-            <h3 th:if="${showModal}" class="center-text theme-color">Halo, <span th:text="${email}"></span></h3>
+            <h3 th:if="${showModal}" class="center-text theme-color"></h3>
             <h4 th:unless="${showModal}" class="text-left text-white">Welcome to InvoiceSync, <span th:text="${employee.first_name} + ' ' + ${employee.last_name}"></span></h4>
-            <p class="text-left text-white">InvoiceSync is a web-based invoice management system made for a consulting firm that facilitates invoice creation, invoice approval, dashboards, and user management.</p>
+            <p class="text-left text-white">InvoiceSync is a web-based invoice management system made for a consulting firm that facilitates invoice creation, invoice approval, dashboards, and user management. As a finance staff, you have access to features to view the dashboard, approve invoices, view the list of invoices and their details, configure taxes, and update your account profile.</p>
           </div>
         </div>
     </div>
@@ -147,7 +147,12 @@
         fetch('/api/invoice-status') // Fetch data from REST endpoint
             .then(response => response.json())
             .then(data => {
-                drawPieChart(data); // Use fetched data to draw the chart
+                if (data.length === 0) {
+                    document.getElementById('pie_chart').innerHTML = '<div class="text-center">No data available in the system</div>';  
+                }
+                else {
+                    drawPieChart(data); // Use fetched data to draw the chart
+                }
             })
             .catch(error => {
                 console.error("Error fetching invoice status data:", error);
@@ -164,7 +169,12 @@
         });
 
         var options = {
-            height: 250
+            height: 250,
+            colors: ['#3f2685', '#a0153e'],
+            pieSliceTextStyle: {
+                fontSize: 9,
+                italic: true 
+            }
         };
 
         var chart = new google.visualization.PieChart(document.getElementById('pie_chart'));
@@ -175,7 +185,13 @@
         fetch('/api/invoice-status-bar') // Fetch data from the REST endpoint
             .then(response => response.json())
             .then(data => {
-                drawBarChart(data);
+                if (data.length === 0) {
+                    document.getElementById('bar_chart').innerHTML = '<div class="text-center">No data available in the system</div>';  
+                }
+                else {
+                    drawBarChart(data); // Use fetched data to draw the chart
+                }
+                
             })
             .catch(error => {
                 console.error("Error fetching invoice status data:", error);
@@ -206,7 +222,7 @@
               }
             },
             vAxis: {
-                    title: 'Count',
+                    title: 'Number of Invoices',
                     format: '#', // Use '#' to ensure whole numbers
                     textStyle: {
                         color: '#3f2685', // Change the label color
@@ -218,11 +234,13 @@
                         bold: true // Bold title
                     }
                 },
-            legend: 'none',
             bar: { groupWidth: '30%' },
             height: 250,
             chartArea: { width: '60%', height: '75%' },
-            colors: ['#3f2685'],
+            series: {
+                0: { color: '#3f2685' }, // Paid Invoices
+                1: { color: '#a0153e' } // Unpaid Invoices
+            }     
         };
 
         var chart = new google.visualization.ColumnChart(document.getElementById('bar_chart'));
@@ -239,7 +257,7 @@
         })
         .then(taxData => {
             if (taxData.length === 0) { // No data scenario
-                document.getElementById('line_chart').innerHTML = 'No data available';
+                document.getElementById('line_chart').innerHTML = '<div class="text-center">No data available in the system</div>';  
                 return; // Exit early
             }
 
@@ -312,7 +330,7 @@
             })
             .then(topFiveInvoices => {
                 if (topFiveInvoices.length === 0) { // No data handling
-                    document.getElementById('latest_invoice_table').innerHTML = 'No recent invoices to display';
+                    document.getElementById('latest_invoice_table').innerHTML = '<div class="text-center">No data available in the system</div>';  
                     return; // Exit early
                 }
 
@@ -369,7 +387,7 @@
             })
             .then(topFiveInvoices => {
                 if (topFiveInvoices.length === 0) { // No data handling
-                    document.getElementById('due_invoice_table').innerHTML = 'No invoices to display';
+                    document.getElementById('due_invoice_table').innerHTML = '<div class="text-center">No data available in the system</div>';  
                     return; // Exit early
                 }
 

@@ -10,14 +10,6 @@
 </head>
 <body>
     <nav th:replace="~{fragments/navbar-finance :: navbar-finance-exc(page='Home')}"></nav>
-    <!-- <div class="container">
-        <div class="row">
-            <div class="col">
-              <h1 th:if="${showModal}" class="center-text theme-color">Halo, <span th:text="${email}"></span></h1>
-              <h1 th:unless="${showModal}" class="center-text theme-color">Halo, <span th:text="${employee.first_name} + ' ' + ${employee.last_name}"></span></h1>
-            </div>
-        </div>
-      </div> -->
     <!-- Modal -->
     <div id="myModal" class="modal">
         <div class="modal-dialog">
@@ -33,11 +25,11 @@
     </div>
     <div class="container">
         <div class="row dashboard-row">
-            <div class="col dashboard-col p-3" style="background-color: rgb(63, 38, 133);">
+            <div class="col dashboard-col p-3" style="background-image: linear-gradient(to right,#3f2685  , #856ad4);">
                 <div class="card-title text-left">
-                    <h3 th:if="${showModal}" class="center-text theme-color">Halo, <span th:text="${email}"></span></h3>
+                    <h3 th:if="${showModal}" class="center-text theme-color"></h3>
                     <h4 th:unless="${showModal}" class="text-left text-white">Welcome to InvoiceSync, <span th:text="${employee.first_name} + ' ' + ${employee.last_name}"></span></h4>
-                    <p class="text-left text-white">InvoiceSync is a web-based invoice management system made for a consulting firm that facilitates invoice creation, invoice approval, dashboards, and user management.</p>
+                    <p class="text-left text-white">InvoiceSync is a web-based invoice management system made for a consulting firm that facilitates invoice creation, invoice approval, dashboards, and user management. As a finance director, you have access to features to view the dashboard, approve invoices, view the list of invoices and their details, and update your account profile.</p>
                 </div>
             </div>
         </div>
@@ -100,9 +92,7 @@
   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
   <script>
-
     var showModal = "[[${showModal}]]";
-
     if (showModal == "true") {
         document.getElementById('myModal').style.display = 'block';
     }
@@ -144,7 +134,8 @@
                     pointSize: 5,
                     curveType: 'function',
                     height: 500,
-                    chartArea: {width: '60%', height: '75%'}
+                    chartArea: {width: '60%', height: '75%'},
+                    colors: ['#3f2685'],
                 };
 
                 var chart = new google.visualization.LineChart(document.getElementById('line_chart'));
@@ -170,7 +161,12 @@
 
                     var options = {
                         pieHole: 0.4,
-                        height: 250
+                        height: 250,
+                        colors: ['#3f2685', '#6744c9', '#856ad4', '#a490df', '#c3b6ea'],
+                        pieSliceTextStyle: {
+                            fontSize: 9,
+                            italic: true 
+                        }
                     };
 
                     var chart = new google.visualization.PieChart(document.getElementById('customerPieChart'));
@@ -197,7 +193,12 @@
 
                     var options = {
                         pieHole: 0.4,
-                        height: 250
+                        height: 250,
+                        colors: ['#3f2685', '#6744c9', '#856ad4', '#a490df', '#c3b6ea'],
+                        pieSliceTextStyle: {
+                            fontSize: 9,
+                            italic: true 
+                        }
                     };
 
                     var chart = new google.visualization.PieChart(document.getElementById('productPieChart'));
@@ -224,7 +225,12 @@
 
                     var options = {
                         pieHole: 0.4,
-                        height: 250
+                        height: 250,
+                        colors: ['#3f2685', '#a0153e'],
+                        pieSliceTextStyle: {
+                            fontSize: 9,
+                            italic: true 
+                        }
                     };
 
                     var chart = new google.visualization.PieChart(document.getElementById('invoiceStatusPieChart'));
