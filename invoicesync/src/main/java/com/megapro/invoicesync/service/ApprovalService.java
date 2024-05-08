@@ -11,4 +11,5 @@ public interface ApprovalService {
     public Approval findApprovalByApprovalId(int id);
     public void saveApproval(Approval approval);
     public List<UserApp> getEligibleApproversForInvoice(Invoice invoice);
+    public void resetApproval(int approvalId);
 }

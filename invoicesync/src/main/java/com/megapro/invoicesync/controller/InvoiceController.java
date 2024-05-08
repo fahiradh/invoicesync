@@ -2,6 +2,7 @@ package com.megapro.invoicesync.controller;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.config.Task;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.List;
@@ -20,6 +21,7 @@ import com.megapro.invoicesync.dto.CustomerMapper;
 import com.megapro.invoicesync.dto.FileMapper;
 import com.megapro.invoicesync.dto.InvoiceMapper;
 import com.megapro.invoicesync.dto.ProductMapper;
+import com.megapro.invoicesync.dto.TaxMapper;
 import com.megapro.invoicesync.dto.request.CreateCustomerRequestDTO;
 import com.megapro.invoicesync.dto.request.CreateInvoiceRequestDTO;
 import com.megapro.invoicesync.dto.request.UpdateInvoiceRequestDTO;
@@ -87,6 +89,9 @@ public class InvoiceController {
 
     @Autowired
     TaxService taxService;
+
+    @Autowired
+    TaxMapper taxMapper;
 
     @Autowired
     UserService userService;
@@ -216,6 +221,8 @@ public class InvoiceController {
         }
 
         List<ApproverDisplay> approverDisplays = invoiceService.getApproverDisplaysForInvoice(invoice);
+        System.out.println("Ini approver displays ");
+        System.out.println(approverDisplays);
         model.addAttribute("approverDisplays", approverDisplays);
         model.addAttribute("documents", documents);
         model.addAttribute("image", invoice.getSignature());
@@ -473,6 +480,10 @@ public class InvoiceController {
         model.addAttribute("currentSignature", invoice.getSignature());
         model.addAttribute("employee", employee);
 
+        List<Tax> taxLists = taxService.findAllTaxes();
+        var taxList = taxMapper.taxListToReadTaxResponseDTOList(taxLists);
+        model.addAttribute("taxList", taxList);
+
         // Notification
         var notifications = notificationService.getEmployeeNotification(employee);
         model.addAttribute("notifications", notifications);
@@ -531,7 +542,77 @@ public class InvoiceController {
         return "redirect:/invoice/" + invoiceNumber.replace('/', '_');
     }
     
+    @PostMapping("/invoice/{invoiceNumber}/readd-approver")
+    public String reAddApprover(@PathVariable("invoiceNumber") String invoiceNumber,
+                              @RequestParam Map<String, String> allParams,
+                              RedirectAttributes redirectAttributes) {
+        
+            String decodedInvoiceNumber = invoiceNumber.replace('_', '/');
+            Invoice invoice = invoiceService.getInvoiceByInvoiceNumber(decodedInvoiceNumber);
+
+            List<Approval> existingApprovals = new ArrayList<>(invoice.getListApproval());
+            for(Approval existApproval : existingApprovals){
+                var approvalId = existApproval.getApprovalId();
+                approvalService.resetApproval(approvalId);
+            }
     
+            var oldSize = invoice.getListApproval().size();
+            allParams.forEach((key, value) -> {
+                if (key.startsWith("approverEmail") && !value.isEmpty()) {
+                    var approval = invoiceService.readdApproverToInvoice(invoice.getInvoiceId(), value, oldSize);
+                    approval.setRank(invoice.getListApproval().size()-oldSize);
+                    System.out.printf("Size baru segini %d size lama segini %d\n", invoice.getListApproval().size(), oldSize);
+                    if(approval.getRank()==1){
+                        approval.setShown(true);
+                    }
+                }
+            });
+    
+            invoice.setStatus("Pending Approval");
+            invoiceDb.save(invoice);
+    
+            // Generate notification
+            var firstApprover = invoice.getListApproval().get(oldSize).getEmployee();
+            notificationService.generateInvoiceApproverNotification(firstApprover.getEmail(), invoice.getInvoiceId());
+    
+            redirectAttributes.addFlashAttribute("success", "Approvers successfully added.");
+        
+        // try {
+        //     String decodedInvoiceNumber = invoiceNumber.replace('_', '/');
+        //     Invoice invoice = invoiceService.getInvoiceByInvoiceNumber(decodedInvoiceNumber);
+        //     approvalService.resetApproval(invoice);
+
+        //     System.out.println("approval saat ini");
+        //     for(Approval approval: invoice.getListApproval()){
+        //         System.out.println(approval.getApprovalId());
+        //     }
+    
+        //     var oldSize = invoice.getListApproval().size();
+        //     allParams.forEach((key, value) -> {
+        //         if (key.startsWith("approverEmail") && !value.isEmpty()) {
+        //             var approval = invoiceService.readdApproverToInvoice(invoice.getInvoiceId(), value, oldSize);
+        //             approval.setRank(invoice.getListApproval().size()-oldSize+1);
+        //             System.out.printf("Size baru segini %i size lama segini %i\n", invoice.getListApproval().size(), oldSize);
+        //             if(approval.getRank()==1){
+        //                 approval.setShown(true);
+        //             }
+        //         }
+        //     });
+
+        //     invoice.setStatus("Pending Approval");
+        //     invoiceDb.save(invoice);
+
+        //     // Generate notification
+        //     var firstApprover = invoice.getListApproval().get(oldSize).getEmployee();
+        //     notificationService.generateInvoiceApproverNotification(firstApprover.getEmail(), invoice.getInvoiceId());
+    
+        //     redirectAttributes.addFlashAttribute("success", "Approvers successfully added.");
+        // } catch (IllegalStateException | IllegalArgumentException e) {
+        //     String simplifiedMessage = e.getMessage().replaceAll("java\\.lang\\.(IllegalArgumentException|IllegalStateException): ", "");
+        //     redirectAttributes.addFlashAttribute("error", simplifiedMessage);
+        // } 
+        return "redirect:/invoice/" + invoiceNumber.replace('/', '_');
+    }
     
     @PostMapping("/invoice/edit")
     public String editInvoice(@ModelAttribute UpdateInvoiceRequestDTO invoiceDTO, Model model,

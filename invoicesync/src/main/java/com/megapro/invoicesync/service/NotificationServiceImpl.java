@@ -45,7 +45,7 @@ public class NotificationServiceImpl implements NotificationService {
             content = invoiceNumber + " has been rejected.";
         } else if (invoiceStatus.equals("Need Revision")){
             content = invoiceNumber + " needs to be revised.";        }
-        Notification notification = new Notification(content, employee, invoiceId);
+        Notification notification = new Notification(content, employee, invoiceId, invoiceNumber);
 
         notificationDb.save(notification);
     }
@@ -58,7 +58,7 @@ public class NotificationServiceImpl implements NotificationService {
         var employee = userService.findByEmail(employeeEmail);
 
         var content = invoiceNumber + " needs your approval";
-        Notification notification = new Notification(content, employee, invoiceId);
+        Notification notification = new Notification(content, employee, invoiceId, invoiceNumber);
 
         notificationDb.save(notification);
     }

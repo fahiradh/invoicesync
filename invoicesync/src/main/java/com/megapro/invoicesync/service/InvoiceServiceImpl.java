@@ -311,6 +311,36 @@ public void addApproverToInvoice(UUID invoiceId, String approverEmail) {
 }
 
 @Override
+public Approval readdApproverToInvoice(UUID invoiceId, String approverEmail, int oldSize) {
+    Invoice invoice = invoiceDb.findById(invoiceId)
+        .orElseThrow(() -> new EntityNotFoundException("Invoice not found"));
+
+    Employee employee = employeeDb.findByEmail(approverEmail);
+
+    List<ApprovalFlow> applicableFlows = approvalFlowDb.findAllByOrderByNominalRangeAsc().stream()
+        .filter(flow -> invoice.getGrandTotal().compareTo(BigDecimal.valueOf(flow.getNominalRange())) >= 0)
+        .collect(Collectors.toList());
+
+    if (applicableFlows.isEmpty()) {
+        throw new IllegalArgumentException("No approval flow matches the invoice's nominal range.");
+    }
+
+    List<Approval> existingApprovals = approvalDb.findByInvoice(invoice);
+
+    Approval approval = new Approval();
+    approval.setEmployee(employee);
+    approval.setInvoice(invoice);
+    approval.setApprovalStatus("Need Approval");
+    approval.setApprovalTime(LocalDate.now());
+    // approval.setRank(existingApprovals.size() + 1);
+    // approval.setShown(approval.getRank() == 1);
+
+    approvalDb.save(approval);
+    invoice.getListApproval().add(approval);
+    return approval;
+}
+
+@Override
 public List<UserApp> getEligibleApproversForInvoice(Invoice invoice) {
     BigDecimal total = invoice.getGrandTotal();
     List<ApprovalFlow> applicableFlows = approvalFlowDb.findAllByOrderByNominalRangeAsc().stream()
@@ -349,6 +379,7 @@ public List<UserApp> getEligibleApproversForInvoice(Invoice invoice) {
             res = "errorMessage, Please upload your signature image";
         }
         else {
+            // TODO: perlu logic kalau grand total lebih kecil dari nominal flow pertama
             invoiceDTO.setStatus("Waiting for Approver");
             res = "successMessage, Invoice successfully created";
         }    
@@ -377,6 +408,9 @@ public List<UserApp> getEligibleApproversForInvoice(Invoice invoice) {
         List<ApprovalFlow> applicableFlows = approvalFlowDb.findAllByOrderByNominalRangeAsc().stream()
             .filter(flow -> total.compareTo(BigDecimal.valueOf(flow.getNominalRange())) >= 0)
             .collect(Collectors.toList());
+
+        System.out.println("Ini applicable flow ");
+        System.out.println(applicableFlows);
     
         return applicableFlows.stream().map(flow -> {
             List<UserApp> usersInRole = userAppDb.findByRoleNames(Arrays.asList(flow.getApproverRole()));

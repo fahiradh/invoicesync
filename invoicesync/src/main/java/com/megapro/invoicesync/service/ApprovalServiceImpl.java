@@ -16,7 +16,6 @@ import java. util.List;
 public class ApprovalServiceImpl implements ApprovalService{
     @Autowired
     private ApprovalDb approvalDb;
-
     
     @Override
     public List<Approval> findApproversByInvoice(Invoice invoice) {
@@ -39,5 +38,12 @@ public class ApprovalServiceImpl implements ApprovalService{
     @Override
     public List<UserApp> getEligibleApproversForInvoice(Invoice invoice) {
         throw new UnsupportedOperationException("Unimplemented method 'getEligibleApproversForInvoice'");
+    }
+
+    @Override
+    public void resetApproval(int approvalId) {
+        var approval = approvalDb.findByApprovalId(approvalId);
+        approval.setCycle(-1);
+        approvalDb.save(approval);
     }
 }

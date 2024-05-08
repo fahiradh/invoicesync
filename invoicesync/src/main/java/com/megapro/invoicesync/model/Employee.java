@@ -51,6 +51,9 @@ public class Employee extends UserApp {
     @Column(name = "is_deleted")
     private boolean deleted = false;
 
+    @Column(name = "notification_counter")
+    private int notificationCounter;
+
     @Lob
     @Basic(fetch = FetchType.EAGER)
     @Column(name = "image")

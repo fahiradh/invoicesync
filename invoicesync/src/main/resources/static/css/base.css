@@ -26,6 +26,7 @@ h4{
 /* Navbar */
 .nav-link {
     display: flex;
+    justify-content: center;
     align-items: center;
     text-decoration: none;
     color: black;
@@ -531,6 +532,11 @@ h4{
 }
 .notifications h2 span {
     color: #f00;
+}
+.dropdown-menu.dropdown-menu-notification{
+    width: 300px;
+    max-height: 230px;
+    overflow-y: scroll;
 }
 .notifications-item {
     display: flex;
