@@ -3,6 +3,7 @@ package com.megapro.invoicesync.service;
 import com.megapro.invoicesync.dto.request.CreateInvoiceRequestDTO;
 import com.megapro.invoicesync.dto.request.UpdateInvoiceRequestDTO;
 import com.megapro.invoicesync.dto.response.ApproverDisplay;
+import com.megapro.invoicesync.model.Approval;
 import com.megapro.invoicesync.model.Invoice;
 import com.megapro.invoicesync.model.Product;
 import com.megapro.invoicesync.model.UserApp;
@@ -35,6 +36,7 @@ public interface InvoiceService {
     public List<ApproverDisplay> getApproverDisplaysForInvoice(Invoice invoice);
     Invoice updateInvoice(Invoice invoiceFromDTO);
     void addApproverToInvoice(UUID invoiceId, String email);
+    Approval readdApproverToInvoice(UUID invoiceId, String email, int oldSize);
     public List<UserApp> getEligibleApproversForInvoice(Invoice invoice);
     public void save(Invoice invoice);
 }

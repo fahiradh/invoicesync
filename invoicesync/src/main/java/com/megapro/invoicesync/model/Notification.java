@@ -1,5 +1,7 @@
 package com.megapro.invoicesync.model;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.UUID;
 
 import jakarta.persistence.CascadeType;
@@ -39,12 +41,20 @@ public class Notification {
     @Column(name="invoice_id")
     private UUID invoiceId;
 
+    @Column(name="invoice_number")
+    private String invoiceNumber;
+
     @Column(name="is_read")
     private boolean isRead = false;
 
-    public Notification(String content, Employee employee, UUID invoiceId) {
+    @Column(name="notification_time")
+    private LocalDateTime notificationTime;
+
+    public Notification(String content, Employee employee, UUID invoiceId, String invoiceNumber) {
         this.content = content;
         this.employee = employee;
         this.invoiceId = invoiceId;
+        this.invoiceNumber = invoiceNumber;
+        this.notificationTime = LocalDateTime.now(ZoneId.systemDefault());
     }
 }

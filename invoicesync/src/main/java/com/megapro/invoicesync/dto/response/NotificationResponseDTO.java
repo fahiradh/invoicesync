@@ -9,5 +9,6 @@ public class NotificationResponseDTO {
     private int notificationId;
     private String content;
     private UUID invoiceId;
+    private String invoiceNumber;
     private boolean isRead;
 }

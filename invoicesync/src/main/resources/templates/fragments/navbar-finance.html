@@ -46,20 +46,26 @@
                             Tax Management
                         </a> 
                     </li>
-                    <li class="nav-item">
-                        <div class="icon nav-link" id="bell">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link" data-bs-toggle="dropdown" th:href="@{#}">
                             <img src="https://cdn.hugeicons.com/icons/notification-01-solid-rounded.svg" alt="notification-01"/>
-                        </div>
-                        <div class="notifications" id="box">
-                            <h2>Notifications</h2>
-                            <div th:each="notif: ${notifications}">
-                                <div class="notifications-item">
-                                    <div class="text">
-                                        <p th:text="${notif.content}"></p>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-notification">
+                            <h6 class="dropdown-header" style="text-align: center;">Notifications</h6>
+                            <li>
+                                <li>
+                                    <div th:each="notif: ${notifications}">
+                                        <a th:href="@{/invoice/{invoiceNumber}(invoiceNumber=${notif.invoiceNumber.replace('/', '_')})}">
+                                            <div class="notifications-item">
+                                                <div class="text">
+                                                    <p th:text="${notif.content}"></p>
+                                                </div>
+                                            </div>
+                                        </a>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
+                                </li>
+                            </li>
+                        </ul>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link mx-2 dropdown-toggle nav-profile" href="#" id="navbarDropdownMenuLink" role="button"
@@ -79,33 +85,6 @@
                 </ul>
             </div>
         </div>
-        <script>
-
-            var showModal = "[[${showModal}]]";
-        
-            if (showModal == "true") {
-                document.getElementById('myModal').style.display = 'block';
-            }
-        
-            $(document).ready(function(){
-                var down = false;
-                $('#bell').click(function(e){
-                  
-                    var color = $(this).text();
-                    if(down){
-                        
-                        $('#box').css('height','0px');
-                        $('#box').css('opacity','0');
-                        down = false;
-                    }else{
-                        
-                        $('#box').css('height','auto');
-                        $('#box').css('opacity','1');
-                        down = true;
-                    }
-                });
-                    });
-        </script>
     </nav>
 
     <nav th:fragment="navbar-finance-exc" th:if="${role == 'Finance Manager' or role == 'Finance Director'}" class="navbar navbar-expand-lg navbar-bg  p-3">
@@ -138,20 +117,26 @@
                             All Invoices List
                         </a> 
                     </li>
-                    <li class="nav-item">
-                        <div class="icon nav-link" id="bell">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link" data-bs-toggle="dropdown" th:href="@{#}">
                             <img src="https://cdn.hugeicons.com/icons/notification-01-solid-rounded.svg" alt="notification-01"/>
-                        </div>
-                        <div class="notifications" id="box">
-                            <h2>Notifications</h2>
-                            <div th:each="notif: ${notifications}">
-                                <div class="notifications-item">
-                                    <div class="text">
-                                        <p th:text="${notif.content}"></p>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-notification">
+                            <h6 class="dropdown-header" style="text-align: center;">Notifications</h6>
+                            <li>
+                                <li>
+                                    <div th:each="notif: ${notifications}">
+                                        <a th:href="@{/invoice/{invoiceNumber}(invoiceNumber=${notif.invoiceNumber.replace('/', '_')})}">
+                                            <div class="notifications-item">
+                                                <div class="text">
+                                                    <p th:text="${notif.content}"></p>
+                                                </div>
+                                            </div>
+                                        </a>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
+                                </li>
+                            </li>
+                        </ul>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link mx-2 dropdown-toggle nav-profile" href="#" id="navbarDropdownMenuLink" role="button"
@@ -171,33 +156,6 @@
                 </ul>
             </div>
         </div>
-        <script>
-
-            var showModal = "[[${showModal}]]";
-        
-            if (showModal == "true") {
-                document.getElementById('myModal').style.display = 'block';
-            }
-        
-            $(document).ready(function(){
-                var down = false;
-                $('#bell').click(function(e){
-                  
-                    var color = $(this).text();
-                    if(down){
-                        
-                        $('#box').css('height','0px');
-                        $('#box').css('opacity','0');
-                        down = false;
-                    }else{
-                        
-                        $('#box').css('height','auto');
-                        $('#box').css('opacity','1');
-                        down = true;
-                    }
-                });
-                    });
-        </script>
     </nav>
 </body>
 

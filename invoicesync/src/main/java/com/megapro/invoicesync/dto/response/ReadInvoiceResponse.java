@@ -31,7 +31,7 @@ public class ReadInvoiceResponse {
     // private String productDocument;
     private BigDecimal subtotal;
     private int totalDiscount;
-    private List<Tax> listTax;
+    private List<ReadTaxResponseDTO> listTax;
     private BigDecimal taxTotal;
     private BigDecimal grandTotal;
     private String accountNumber;

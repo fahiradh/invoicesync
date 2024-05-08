@@ -31,6 +31,9 @@
         <th:block th:if="${invoice.status == 'Waiting for Approver' && emailPermission == true}">
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addApproverModal">Assign Approver</button>
         </th:block>
+        <th:block th:if="${invoice.status == 'Need Revision' && emailPermission == true}">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#readdApproverModal">Re-assign Approver</button>
+        </th:block>
         <button type="button" class="btn btn-primary" data-toggle="modal" id="seeApproversBtn">See Approver</button>
     </form>
     <!-- </div> -->
@@ -360,6 +363,42 @@
             </div>
         </div>
     </div>
+
+    <!-- Untuk Readd Approver Modal -->
+    <div class="modal fade" id="readdApproverModal" tabindex="-1" role="dialog" aria-labelledby="readdApproverModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="readdApproverModalLabel">Assign Approver</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <!-- Add Approver Modal -->
+                <div class="modal-body">
+                <form th:action="@{/invoice/{invoiceNumber}/readd-approver(invoiceNumber=${invoice.invoiceNumber.replace('/', '_')})}" method="post">
+                    <div th:each="approverDisplay : ${approverDisplays}">
+                        <div class="form-group">
+                            <label th:for="${'approverName' + approverDisplay.role}" th:text="${'Approver for ' + approverDisplay.role}">Approver Name</label>
+                            <select th:id="${'approverName' + approverDisplay.role}" class="form-control" th:name="${'approverEmail' + approverDisplay.role}">
+                                <option value="">Select Approver</option>
+                                <option th:each="employee : ${approverDisplay.approvers}"
+                                        th:value="${employee.email}"
+                                        th:text="${employee.first_name + ' ' + employee.last_name}">
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="hidden" name="invoiceNumber" th:value="${invoice.invoiceNumber}" />
+                        <button type="submit" class="btn btn-primary">Add</button>
+                    </div>
+                </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Existing HTML code -->
 
     <div class="modal fade" id="approverModal" tabindex="-1" aria-labelledby="approverModalLabel" aria-hidden="true">
@@ -376,13 +415,11 @@
                         <table class="table table-custom" id="approversTable">
                             <thead>
                                 <tr>
-                                    <th>No</th>
                                     <th>Approver</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr th:each="approver, iterStat : ${approvers}">
-                                    <td th:text="${iterStat.count}"></td>
+                                <tr th:each="approver, iterStat : ${approvers}" th:if="${approver.cycle != -1}">
                                     <td th:text="${approver.employee.first_name + ' ' + approver.employee.last_name}"></td>
                                 </tr>
                             </tbody>
