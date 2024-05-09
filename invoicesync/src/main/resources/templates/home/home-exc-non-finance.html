@@ -5,12 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
   <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
-  <style>
-    .center-text {
-        text-align: center;
-        margin-top: 100px;
-    }
-  </style>
   <title>Home | InvoiceSync</title>
 </head>
 <body>
@@ -44,13 +38,13 @@
     <div class="row dashboard-row">
         <div class="col dashboard-col-left">
             <div class="dashboard-content">
-              <h4>Total Approved Invoice</h4>
+              <h4 class="text-center">Total Approved Invoice</h4>
                 <h5 id="totApprovedInvoice" th:text="${countApproved} + ' ' + 'Invoice(s)'" class="theme-color"></h5>
             </div>
         </div>
         <div class="col dashboard-col">
             <div class="dashboard-content">
-              <h4>Total Invoice Need Approval</h4>
+              <h4 class="text-center">Total Invoice Need Approval</h4>
                 <h5 id="totInvoiceNeedApproval;" th:text="${countWaitingApproval} + ' ' +'Invoice(s)'" class="theme-color"></h5>
             </div>
         </div>

@@ -35,11 +35,4 @@ public class CustomerController {
         customerService.createCustomer(customer);
         return new RedirectView("/create-invoice");
     }
-
-    @GetMapping(value = "/api/v1/customers", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public List<Customer> getCustomers() {
-        List<Customer> listCustomers = customerService.getAllCustomer();
-        return listCustomers;
-    }
 }

@@ -5,46 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
   <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
-  <style>
-    .center-text {
-        text-align: center;
-        margin-top: 100px;
-    }
-    .header-row {
-        background-color: #3f2685; /* Change background color of header row */
-        color: white; /* Change font color for header row */
-    }
-
-    .table-row {
-        background-color: #f9f9f9; /* Default background for even rows */
-    }
-
-    .odd-row {
-        background-color: #e0e0e0; /* Background for odd rows */
-    }
-
-    .header-cell {
-        font-weight: bold; /* Bold font for header cells */
-        text-align: center; /* Center-align header text */
-    }
-
-    .table-cell {
-        color: #333; /* Default text color for table cells */
-    }
-  </style>
   <title>Home | InvoiceSync</title>
 </head>
 <body>
-    <nav th:replace="~{fragments/navbar-finance :: navbar-finance-staff(page='Home')}"></nav>
-  <!-- <div class="container">
-    <div class="row">
-        <div class="col">
-          <h1 th:if="${showModal}" class="center-text theme-color">Halo, <span th:text="${email}"></span></h1>
-          <h1 th:unless="${showModal}" class="center-text theme-color">Halo, <span th:text="${employee.first_name} + ' ' + ${employee.last_name}"></span></h1>
-        </div>
-    </div>
-  </div> -->
-
+  <nav th:replace="~{fragments/navbar-finance :: navbar-finance-staff(page='Home')}"></nav>
   <!-- Modal -->
   <div id="myModal" class="modal">
     <div class="modal-dialog">
@@ -73,7 +37,7 @@
     <div class="row dashboard-row">
       <div class="col dashboard-col-left">
           <div class="dashboard-content">
-              <h4 class="text-center">Latest Invoice Made</h4>
+              <h4 class="text-center">Latest Invoice Created</h4>
               <div id="latest_invoice_table" style="height: 150px;"></div>
           </div>
       </div>
@@ -108,18 +72,10 @@
           </div>
       </div>
     </div>
-
-
-
-
   </div>  
 
   <!-- JavaScript code to handle modal display -->
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.9.3/dist/umd/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script>
-
     var showModal = "[[${showModal}]]";
 
     if (showModal == "true") {
@@ -140,7 +96,10 @@
         drawInvoiceBarChart();
         drawNewestInvoiceTable();
         drawDueInvoiceTable();
+    }
 
+    function formatCurrency(amount) {
+        return 'Rp' + amount.toLocaleString('id-ID');
     }
 
     function drawInvoicePieChart() {
@@ -172,7 +131,7 @@
             height: 250,
             colors: ['#3f2685', '#a0153e'],
             pieSliceTextStyle: {
-                fontSize: 9,
+                fontSize: 12,
                 italic: true 
             }
         };
@@ -273,7 +232,7 @@
         data.addColumn('string', 'Month');
         data.addColumn('number', 'Total Tax');
 
-        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
 
         // Populate the DataTable
         taxData.forEach(function (item) {
@@ -286,13 +245,12 @@
               title: 'Month' ,
               textStyle: {
                   color: '#3f2685', // Change the color of the labels
-                  fontSize: 6, // Change the font size
-                  bold: true // Make the text bold
+                  fontSize: 14, // Change the font size
               },
               titleTextStyle: {
                   color: '#3f2685', // Change the title color
                   fontSize: 16, // Title font size
-                  bold: true // Bold title
+                  bold: true, // Bold title
               }
             },
             vAxis: { title: 'Total Tax', 
@@ -300,12 +258,12 @@
                     format: '#', // Use '#' to ensure whole numbers
                     textStyle: {
                         color: '#3f2685', // Change the label color
-                        fontSize: 14, // Change the font size
+                        fontSize: 14,
                     },
                     titleTextStyle: {
                         color: '#3f2685', // Change the title color
                         fontSize: 16, // Title font size
-                        bold: true // Bold title
+                        bold: true, // Bold title
                     }
                   },
             legend: 'none',
@@ -345,16 +303,17 @@
         var data = new google.visualization.DataTable(); // Create DataTable
         data.addColumn('string', 'Invoice Number'); // Define columns
         data.addColumn('string', 'Date');
-        data.addColumn('string', 'Customer Name');
-        data.addColumn('number', 'Grand Total');
+        data.addColumn('string', 'Customer');
+        data.addColumn('string', 'Grand Total');
 
         // Populate the DataTable with fetched data
         topFiveInvoices.forEach(function (invoice) {
+            var formattedGrandTotal = formatCurrency(invoice.grandTotal);
             data.addRow([
                 invoice.invoiceNumber,
                 invoice.invoiceDate, // Date is already formatted
                 invoice.customerName, // Avoid null issues
-                invoice.grandTotal // Already converted to double
+                formattedGrandTotal // Already converted to double
             ]);
         });
 
@@ -401,17 +360,18 @@
       function drawDueTable(topFiveInvoices) {
         var data = new google.visualization.DataTable(); // Create DataTable
         data.addColumn('string', 'Invoice Number'); // Define columns
-        data.addColumn('string', 'Date');
-        data.addColumn('string', 'Customer Name');
-        data.addColumn('number', 'Grand Total');
+        data.addColumn('string', 'Due Date');
+        data.addColumn('string', 'Customer');
+        data.addColumn('string', 'Grand Total');
 
         // Populate the DataTable with fetched data
         topFiveInvoices.forEach(function (invoice) {
+            var formattedGrandTotal = formatCurrency(invoice.grandTotal);
             data.addRow([
                 invoice.invoiceNumber,
                 invoice.invoiceDate, // Date is already formatted
                 invoice.customerName, // Avoid null issues
-                invoice.grandTotal // Already converted to double
+                formattedGrandTotal
             ]);
         });
 

@@ -2,7 +2,6 @@ package com.megapro.invoicesync.controller;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.config.Task;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.List;
@@ -100,19 +99,19 @@ public class InvoiceController {
     ExcelService excelService;
 
     @Autowired
-    private ApprovalService approvalService;
+    ApprovalService approvalService;
 
     @Autowired
-    private FilesStorageService fileService;
+    FilesStorageService fileService;
 
     @Autowired
-    private FileMapper fileMapper;
+    FileMapper fileMapper;
 
     @Autowired
-    private ApprovalMapper approvalMapper;
+    ApprovalMapper approvalMapper;
 
     @Autowired
-    private NotificationService notificationService;
+    NotificationService notificationService;
 
     @GetMapping(value="/create-invoice")
     public String formCreateInvoice(Model model, @ModelAttribute("successMessage") String successMessage, 
@@ -209,6 +208,9 @@ public class InvoiceController {
         var date = invoiceDTO.getInvoiceDate();
         Employee employee = userService.findByEmail(email);
 
+        var creatorInvoice = userService.findByEmail(invoice.getStaffEmail());
+        model.addAttribute("creator", String.format("%s %s", creatorInvoice.getFirst_name(), creatorInvoice.getLast_name()));
+
         var emailPermission = email.equals(invoice.getStaffEmail());
 
         var files = fileService.findByFileInvoice(invoice);
@@ -230,11 +232,10 @@ public class InvoiceController {
         model.addAttribute("email", email);
         model.addAttribute("role", role);
         model.addAttribute("listProduct", listProduct);
-        model.addAttribute("date", String.format("%02d/%02d/%04d", date.getDayOfMonth(),  date.getMonth().getValue(), date.getYear()));
+        model.addAttribute("date", String.format("%02d/%02d/%04d", date.getDayOfMonth(), date.getMonth().getValue(), date.getYear()));
         model.addAttribute("taxList", taxList);
         model.addAttribute("invoice", invoiceDTO);
         model.addAttribute("dateInvoice", invoiceService.parseDate(invoiceDTO.getInvoiceDate()));
-        model.addAttribute("employee", employee);
         model.addAttribute("employee", employee);
         model.addAttribute("emailPermission", emailPermission);
 
@@ -542,7 +543,7 @@ public class InvoiceController {
         return "redirect:/invoice/" + invoiceNumber.replace('/', '_');
     }
     
-    @PostMapping("/invoice/{invoiceNumber}/readd-approver")
+    @PostMapping("/invoice/{invoiceNumber}/read-approver")
     public String reAddApprover(@PathVariable("invoiceNumber") String invoiceNumber,
                               @RequestParam Map<String, String> allParams,
                               RedirectAttributes redirectAttributes) {
@@ -683,7 +684,9 @@ public class InvoiceController {
                 documents.add(addedFileDTO);
             }
         }
-
+        
+        var creatorInvoice = userService.findByEmail(invoice.getStaffEmail());
+        model.addAttribute("creator", String.format("%s %s", creatorInvoice.getFirst_name(), creatorInvoice.getLast_name()));
         model.addAttribute("documents", documents);
         model.addAttribute("image", invoice.getSignature());
         model.addAttribute("status", invoice.getStatus());
@@ -697,7 +700,6 @@ public class InvoiceController {
         model.addAttribute("employee", employee);
         List<ApproverDisplay> approverDisplays = invoiceService.getApproverDisplaysForInvoice(invoice);
         model.addAttribute("approverDisplays", approverDisplays);
-        model.addAttribute("employee", employee);
         model.addAttribute("emailPermission", emailPermission);
 
         // Bagian logs

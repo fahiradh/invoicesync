@@ -13,9 +13,9 @@
         <h2>Tax Management</h2>
         
       </div>
-      <div class="card-borderless">
-        <div class="card-body p-4">
-          <p>To add a tax option, click the add button.</p>
+      <div class="card">
+        <div class="card-body">
+          <p>Add a tax option by clicking the 'Add' button.</p>
           <div class="row g-3">
             <div class="col-auto">
               <button type="button" class="btn btn-primary" style="padding-left: 0.5rem; padding-right: 0.5rem;" data-toggle="modal" data-target="#exampleModal">Add</button>
@@ -31,6 +31,9 @@
       </thead>
       <tbody>
         <!-- Iterate over taxes and populate table rows -->
+        <tr th:if="${#lists.size(taxes) == 0}">
+          <td colspan="6" class="text-center">There are no saved tax records.</td>
+        </tr>     
         <tr th:each="tax : ${taxes}">
           <td th:text="${tax.taxName}"></td>
           <td th:text="${tax.taxType}"></td>

@@ -36,19 +36,19 @@
         <div class="row dashboard-row">
             <div class="col dashboard-col">
                 <div class="dashboard-content">
-                    <h4>Total Paid Amount</h4>
+                    <h4 class="text-center">Total Paid Amount</h4>
                     <h5 id="formattedPaidAmount" th:text="${invoicePaidAmount}" class="theme-color"></h5>
                 </div>
             </div>
             <div class="col dashboard-col-middle">
                 <div class="dashboard-content">
-                    <h4>Total Unpaid Amount</h4>
+                    <h4 class="text-center">Total Unpaid Amount</h4>
                     <h5 id="formattedUnpaidAmount" th:text="${invoiceUnpaidAmount}" class="theme-color"></h5>
                 </div>
             </div>
             <div class="col dashboard-col">
                 <div class="dashboard-content">
-                    <h4>Total Overdue Amount</h4>
+                    <h4 class="text-center">Total Overdue Amount</h4>
                     <h5 id="formattedOverdueAmount" th:text="${invoiceOverdueAmount}" class="theme-color"></h5>
                 </div>
             </div>
@@ -62,19 +62,19 @@
             </div>
         </div>
         <div class="row dashboard-row">
-            <div class="col-md-4 dashboard-col">
+            <div class="col dashboard-col">
                 <div class="dashboard-content">
                     <h4 class="text-center">Top 5 Customers by Invoice</h4>
                     <div id="customerPieChart" style="height: 250px;"></div>
                 </div>
             </div>
-            <div class="col-md-4 dashboard-col">
+            <div class="col dashboard-col-middle">
                 <div class="dashboard-content">
                     <h4 class="text-center">Top 5 Products by Invoice</h4>
                     <div id="productPieChart" style="height: 250px;"></div>
                 </div>
             </div>
-            <div class="col-md-4 dashboard-col">
+            <div class="col dashboard-col">
                 <div class="dashboard-content">
                     <h4 class="text-center">Invoice Payment Status Ratio</h4>
                     <div id="invoiceStatusPieChart" style="height: 250px;"></div>
@@ -128,8 +128,32 @@
                 }
 
                 var options = {
-                    hAxis: {title: 'Month'},
-                    vAxis: {title: 'Revenue', minValue: 0},
+                    hAxis: {
+                        title: 'Month',
+                        textStyle: {
+                            color: '#3f2685',
+                            fontSize: 14,
+                        },
+                        titleTextStyle: {
+                            color: '#3f2685',
+                            fontSize: 16,
+                            bold: true,
+                        }
+                    },
+                    vAxis: {
+                        title: 'Revenue',
+                        minValue: 0 ,
+                        format: '#',
+                        textStyle: {
+                            color: '#3f2685',
+                            fontSize: 14,
+                        },
+                        titleTextStyle: {
+                            color: '#3f2685',
+                            fontSize: 16,
+                            bold: true,
+                        }
+                    },
                     legend: 'none',
                     pointSize: 5,
                     curveType: 'function',
@@ -251,7 +275,7 @@
         const element = document.getElementById(elementId);
         const amount = parseFloat(element.textContent);
         if (isNaN(amount)) {
-            element.textContent = 'None';
+            element.textContent = 'Rp0,00';
             return;
         }
 

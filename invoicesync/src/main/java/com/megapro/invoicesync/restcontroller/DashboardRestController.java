@@ -1,4 +1,4 @@
-package com.megapro.invoicesync.controller;
+package com.megapro.invoicesync.restcontroller;
 
 import java.math.BigDecimal;
 import java.time.Month;
@@ -31,17 +31,14 @@ import com.megapro.invoicesync.dto.response.InvoicesStatusChartDTO;
 import com.megapro.invoicesync.dto.response.MonthlyTaxDTO;
 import com.megapro.invoicesync.dto.response.NewestInvoiceDTO;
 import com.megapro.invoicesync.dto.response.OutboundInvoiceCountDTO;
-import com.megapro.invoicesync.model.Employee;
 import com.megapro.invoicesync.model.Invoice;
-import com.megapro.invoicesync.repository.EmployeeDb;
-import com.megapro.invoicesync.repository.InvoiceDb;
 import com.megapro.invoicesync.service.DashboardService;
 import com.megapro.invoicesync.util.classes.Revenue;
 
 
 
 @RestController
-public class DashboardController {
+public class DashboardRestController {
 
     @Autowired
     DashboardService dashboardService;

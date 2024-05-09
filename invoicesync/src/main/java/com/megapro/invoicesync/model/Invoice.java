@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.format.annotation.DateTimeFormat;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -28,9 +29,11 @@ public class Invoice {
     private String invoiceNumber;
 
     @Column(name="invoice_date")
+    @DateTimeFormat(pattern = "MM/dd/yyyy")
     private LocalDate invoiceDate;
 
     @Column(name="due_date")
+    @DateTimeFormat(pattern = "MM/dd/yyyy")
     private LocalDate dueDate;
 
     @Column(name="total_words")
@@ -42,9 +45,6 @@ public class Invoice {
 
     @Column(name="city")
     private String city;
-
-    // @Column(name="product_document")
-    // private String productDocument;
 
     @Column(name="subtotal")
     private BigDecimal subtotal;
@@ -71,12 +71,6 @@ public class Invoice {
 
     @Column(name="account_name")
     private String accountName;
-
-    // @Column(name="additional_document")
-    // private String additionalDocument;
-
-    // @OneToMany(mappedBy="asApprover", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
-    // private List<Employee> asApprover;
 
     @OneToMany(mappedBy = "productId", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
     private List<Product> listProduct;

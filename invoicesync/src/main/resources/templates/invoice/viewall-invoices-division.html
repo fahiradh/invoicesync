@@ -17,7 +17,7 @@
         <div class="card-title">
             <h2 th:text="'Invoice History - ' + ${division}"></h2>
         </div>
-        <div class="card-borderless">
+        <div class="card">
             <div class="card-body">
                 <p>Click on the invoice number to view the details.</p>
                 <form class="row align-items-center" th:action="@{/invoices/division/{division}(division=${division})}" method="GET">
@@ -38,7 +38,7 @@
                         </select>
                     </div>
                     <div class="col-auto">
-                        <button type="submit" class="btn btn-primary">Apply Filter</button>
+                        <button type="submit" class="btn btn-primary">Apply</button>
                     </div>
                 </form>
                 <table class="table table-custom">
@@ -57,7 +57,7 @@
                             <td th:text="${invoice.invoiceId}"></td>
                             <td th:text="${invoice.invoiceNumber}">4</td>
                             <td th:text="${invoice.customerName}"></td>
-                            <td th:text="${'Rp' + #numbers.formatDecimal(invoice.grandTotal, 0, 'COMMA', 2, 'POINT')}"></td>
+                            <td th:text="${'Rp' + #numbers.formatDecimal(invoice.grandTotal, 0, 'POINT', 2, 'COMMA')}"></td>
                             <!-- The status column will be updated according to your business logic -->
                         </tr>
                     </tbody>

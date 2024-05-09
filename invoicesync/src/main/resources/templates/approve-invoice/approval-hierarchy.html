@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Approval Hierarchy Management | InvoiceSync</title>
+  <title>Approval Hierarchy | InvoiceSync</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
   <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
@@ -13,13 +13,13 @@
     <div class="card-title">
       <h2>Approval Flows Management</h2>
     </div>
-    <div class="card input-card-custom mt-4 mb-5">
+    <div class="card">
       <div class="card-body">
         <p>To add an approval flow, input a minimum amount and the approver for each flow.</p>
         <form th:action="@{/add-approval-flow}" th:object="${approvalFlow}" method="post">
           <div class="row mb-4">
             <div class="col">
-              <input type="number" class="form-control" placeholder="Minimal Nominal" th:field="*{nominalRange}" min="1" required>
+              <input type="number" class="form-control" placeholder="Minimum Amount" th:field="*{nominalRange}" min="1" required>
             </div>
             <div class="col">
               <select class="form-select" th:field="*{approverRole}">
@@ -36,11 +36,11 @@
         </form>
       </div>
     </div>
-    <div class="row">
+    <div class="row mt-4">
       <div th:each="flow, flowStat : ${listApproval}" class="col-md-4">
         <div class="flow-box text-violet">
           <strong th:text="'Flow ' + ${flowStat.count}">Flow 1</strong><br>
-          <span>Minimal Nominal: </span><span th:text="${flow.nominalRange}">Rp0.00</span><br>
+          <span>Minimum Amount: </span><span th:text="${'Rp' + #numbers.formatDecimal(flow.nominalRange, 0, 'POINT', 2, 'COMMA')}"></span><br>
           <span>Approver: </span><span th:text="${flow.approverRole}">Division Manager</span>
         </div>
       </div>
@@ -52,7 +52,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="modalLabel">Sukses</h5>
+        <h5 class="modal-title" id="modalLabel">Success</h5>
         <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -81,7 +81,7 @@
         <p id="errorMessage"></p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
@@ -98,7 +98,7 @@
               </button>
           </div>
           <div class="modal-body">
-              Are you sure you want to reset all approval flows? This action cannot be undone.
+              Are you sure want to reset all approval flows? This action cannot be undone.
           </div>
           <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>

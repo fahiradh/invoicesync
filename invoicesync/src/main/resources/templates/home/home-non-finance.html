@@ -5,42 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
   <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
-  <style>
-    #notificationButton {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: none;
-      border: none;
-      padding: 0;
-      outline: none;
-      box-shadow: none;
-    .center-text {
-        text-align: center;
-        margin-top: 100px;
-    }
-    .header-row {
-        background-color: #3f2685; /* Change background color of header row */
-        color: white; /* Change font color for header row */
-    }
-
-    .table-row {
-        background-color: #f9f9f9; /* Default background for even rows */
-    }
-
-    .odd-row {
-        background-color: #e0e0e0; /* Background for odd rows */
-    }
-
-    .header-cell {
-        font-weight: bold; /* Bold font for header cells */
-        text-align: center; /* Center-align header text */
-    }
-
-    .table-cell {
-        color: #333; /* Default text color for table cells */
-    }
-  </style>
   <title>Home | InvoiceSync</title>
 </head>
 <body>
@@ -84,13 +48,14 @@
     </div>
     
   </div>
-
-  <div class="col dashboard-col">
-    <div class="dashboard-content">
-        <h4 class="text-center">Invoices Due Soon</h4>
-        <div id="due_invoice_table" style="height: 150px;"></div>
+  <div class="row dashboard-row">
+    <div class="col dashboard-col">
+        <div class="dashboard-content">
+            <h4 class="text-center">Invoices Due Soon</h4>
+            <div id="due_invoice_table" style="height: 150px;"></div>
+        </div>
     </div>
-</div>
+    </div>
   </div>
 
   <script>
@@ -106,6 +71,12 @@
     google.charts.setOnLoadCallback(drawTable);
 
     function drawTable() {
+        drawTableLatestApproved();
+        drawTableNeedRevision();
+        drawTableDue();
+    }
+
+    function drawTableLatestApproved() {
         fetch('/api/invoices/latest-approved')
         .then(response => response.json())
         .then(data => {
@@ -116,15 +87,16 @@
                 var dataTable = new google.visualization.DataTable();
             dataTable.addColumn('string', 'Invoice Number');
             dataTable.addColumn('string', 'Approved Date');
-            dataTable.addColumn('string', 'Customer Name');
-            dataTable.addColumn('number', 'Grand Total');
+            dataTable.addColumn('string', 'Customer');
+            dataTable.addColumn('string', 'Grand Total');
 
             data.forEach(invoice => {
+                var formattedGrandTotal = formatCurrency(invoice.grandTotal);
                 dataTable.addRow([
                     invoice.invoiceNumber,
                     invoice.invoiceDate, 
                     invoice.customerName, 
-                    invoice.grandTotal 
+                    formattedGrandTotal
                 ]);
             });
 
@@ -148,12 +120,12 @@
         }})
         .catch(error => console.error('Error loading invoice data:', error));
     }
-  </script>
-  <script>
-    google.charts.load('current', {'packages':['table']});
-    google.charts.setOnLoadCallback(drawTable);
 
-    function drawTable() {
+    function formatCurrency(amount) {
+        return 'Rp' + amount.toLocaleString('id-ID');
+    }
+
+    function drawTableNeedRevision() {
         fetch('/api/invoices/latest-need-revision')
         .then(response => response.json())
         .then(data => {
@@ -164,15 +136,16 @@
                 var dataTable = new google.visualization.DataTable();
                 dataTable.addColumn('string', 'Invoice Number');
                 dataTable.addColumn('string', 'Invoice Date');
-                dataTable.addColumn('string', 'Customer Name');
-                dataTable.addColumn('number', 'Grand Total');
+                dataTable.addColumn('string', 'Customer');
+                dataTable.addColumn('string', 'Grand Total');
 
                 data.forEach(invoice => {
+                    var formattedGrandTotal = formatCurrency(invoice.grandTotal);
                     dataTable.addRow([
                         invoice.invoiceNumber,
                         invoice.invoiceDate, 
                         invoice.customerName, 
-                        invoice.grandTotal 
+                        formattedGrandTotal
                     ]);
                 });
 
@@ -196,12 +169,8 @@
             }})
         .catch(error => console.error('Error loading invoice data:', error));
     }
-  </script>
-  <script>
-    google.charts.load('current', {'packages':['table']});
-    google.charts.setOnLoadCallback(drawTable);
 
-    function drawTable() {
+    function drawTableDue() {
         fetch('/api/invoices/due-by-email')
         .then(response => response.json())
         .then(data => {
@@ -212,15 +181,16 @@
                 var dataTable = new google.visualization.DataTable();
                 dataTable.addColumn('string', 'Invoice Number');
                 dataTable.addColumn('string', 'Due Date');
-                dataTable.addColumn('string', 'Customer Name');
-                dataTable.addColumn('number', 'Grand Total');
+                dataTable.addColumn('string', 'Customer');
+                dataTable.addColumn('string', 'Grand Total');
 
                 data.forEach(invoice => {
+                    var formattedGrandTotal = formatCurrency(invoice.grandTotal);
                     dataTable.addRow([
                         invoice.invoiceNumber,
                         invoice.invoiceDate, 
                         invoice.customerName, 
-                        invoice.grandTotal 
+                        formattedGrandTotal
                     ]);
                 });
 

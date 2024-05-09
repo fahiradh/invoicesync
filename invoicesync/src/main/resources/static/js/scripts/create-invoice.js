@@ -13,7 +13,6 @@ function fetchTaxes() {
 
                 const div = document.createElement('div');
                 div.classList.add('form-check');
-
                 const input = document.createElement('input');
                 input.classList.add('form-check-input');
                 input.type = 'checkbox';

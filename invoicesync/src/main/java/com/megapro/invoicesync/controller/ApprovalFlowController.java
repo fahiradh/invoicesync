@@ -15,10 +15,8 @@ import com.megapro.invoicesync.dto.ApprovalFlowMapper;
 import com.megapro.invoicesync.dto.request.CreateApprovalFlowRequest;
 import com.megapro.invoicesync.model.ApprovalFlow;
 import com.megapro.invoicesync.model.Role;
-import com.megapro.invoicesync.repository.EmployeeDb;
 import com.megapro.invoicesync.repository.UserAppDb;
 import com.megapro.invoicesync.service.ApprovalFlowService;
-import com.megapro.invoicesync.service.NotificationService;
 import com.megapro.invoicesync.service.RoleService;
 
 import jakarta.validation.Valid;
@@ -30,16 +28,16 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 public class ApprovalFlowController {
 
     @Autowired
-    private ApprovalFlowService approvalFlowService;
+    ApprovalFlowService approvalFlowService;
 
     @Autowired 
     ApprovalFlowMapper approvalFlowMapper;
 
     @Autowired
-    private UserAppDb userAppDb;
+    UserAppDb userAppDb;
 
     @Autowired
-    private RoleService roleService;
+    RoleService roleService;
 
     @PostMapping(value="/add-approval-flow")
     public String createFlow(@Valid CreateApprovalFlowRequest approvalFlowDTO, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
@@ -79,10 +77,10 @@ public class ApprovalFlowController {
         model.addAttribute("role", role);
         model.addAttribute("email", email);
 
-        model.addAttribute("approvalFlow", new CreateApprovalFlowRequest());
-        List<ApprovalFlow> listApproval = approvalFlowService.getAllApprovalFlows();
-        model.addAttribute("listApproval", listApproval);
         List<Role> roles = roleService.getAllRole();
+        List<ApprovalFlow> listApproval = approvalFlowService.getAllApprovalFlows();
+        model.addAttribute("approvalFlow", new CreateApprovalFlowRequest());
+        model.addAttribute("listApproval", listApproval);;
         model.addAttribute("roles", roles);
         model.addAttribute("successMessage", successMessage);
         model.addAttribute("errorMessage", errorMessage);
@@ -91,14 +89,14 @@ public class ApprovalFlowController {
     }
 
     @GetMapping("/reset-approval-flows")
-public String resetApprovalFlows(RedirectAttributes redirectAttributes) {
-    try {
-        approvalFlowService.resetAllApprovalFlows(); // Metode untuk menghapus seluruh approval flow
-        redirectAttributes.addFlashAttribute("successMessage", "All flows deleted successfully");
-    } catch (Exception e) {
-        redirectAttributes.addFlashAttribute("errorMessage", "There is an error while deleting the flow");
+    public String resetApprovalFlows(RedirectAttributes redirectAttributes) {
+        try {
+            approvalFlowService.resetAllApprovalFlows(); // Metode untuk menghapus seluruh approval flow
+            redirectAttributes.addFlashAttribute("successMessage", "All flows deleted successfully");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "There is an error while deleting the flow");
+        }
+        return "redirect:/approval-flows";
     }
-    return "redirect:/approval-flows";
-}
 
 }

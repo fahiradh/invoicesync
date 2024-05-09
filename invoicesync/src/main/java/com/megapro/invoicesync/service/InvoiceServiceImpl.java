@@ -261,7 +261,7 @@ public class InvoiceServiceImpl implements InvoiceService{
         int year = localDate.getYear();
         String[] monthNames = {"January", "February", "March", "April", "May", "June",
                                "July", "August", "September", "October", "November", "December"};
-        String formattedDate = day + " " + monthNames[monthIndex] + " " + year;
+        String formattedDate = day + " " + monthNames[monthIndex-1] + " " + year;
         return formattedDate;
     }
 

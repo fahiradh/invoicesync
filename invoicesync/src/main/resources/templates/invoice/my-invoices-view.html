@@ -13,7 +13,7 @@
         <div class="card-title">
             <h2>My Invoice History</h2>
         </div>
-        <div class="card-borderless">
+        <div class="card">
             <div class="card-body">
                 <p>Click on the invoice number to view the details.</p>
                 <form class="row align-items-center" th:action="@{/my-invoices}" method="GET">
@@ -34,7 +34,7 @@
                         </select>
                     </div>
                     <div class="col-auto">
-                        <button type="submit" class="btn btn-primary">Apply Filter</button>
+                        <button type="submit" class="btn btn-primary">Apply</button>
                     </div>
                 </form>
                 <table class="table table-custom">
@@ -48,13 +48,18 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr th:each="invoice, iterStat : ${invoices}">
+                        <tr th:if="${#lists.size(invoices) == 0}">
+                            <td colspan="5" class="text-center">You haven't created any invoices yet.</td>
+                        </tr>                   
+                        <tr th:each="invoice, iterStat : ${invoices}" th:if="${invoice.customer != null}">
                             <td th:text="${iterStat.count}"></td>
-                            <td><a th:href="@{/invoice/{invoiceNumber}(invoiceNumber=${invoice.invoiceNumber.replace('/', '_')})}" th:text="${invoice.invoiceNumber}">Invoice Link</a>
+                            <td>
+                                <a th:href="@{/invoice/{invoiceNumber}(invoiceNumber=${invoice.invoiceNumber.replace('/', '_')})}"
+                                    th:text="${invoice.invoiceNumber}">Invoice Link</a>
                             </td>
                             <td th:text="${invoice.customer.name}"></td>
-                            <td th:text="${'Rp' + #numbers.formatDecimal(invoice.grandTotal, 0, 'COMMA', 2, 'POINT')}"></td>
-                            <td th:with="status=${invoice.status}" th:include="~{fragments/invoice-status :: invoice-status-show}" style=></td>
+                            <td th:text="${'Rp' + #numbers.formatDecimal(invoice.grandTotal, 0, 'POINT', 2, 'COMMA')}"></td>
+                            <td th:with="status=${invoice.status}" th:include="~{fragments/invoice-status :: invoice-status-show}"></td>
                         </tr>
                     </tbody>
                 </table>

@@ -18,6 +18,8 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.io.ByteArrayOutputStream;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 @Service
 public class PrintService {
@@ -37,13 +39,15 @@ public class PrintService {
     private FileMapper fileMapper;
 
     public byte[] generateInvoice(Invoice invoice) throws IOException {
+        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
         Context context = new Context();
         String invoiceDate = invoiceService.parseDate(invoice.getInvoiceDate());
         String dueDate = invoiceService.parseDate(invoice.getDueDate());
         Employee employee = userService.findByEmail(invoice.getStaffEmail());
         String employeeName = String.format("%s %s", employee.getFirst_name(), employee.getLast_name());
-        String grandTotal = String.format("Rp%,.2f", invoice.getGrandTotal());
-        String subtotal = String.format("Rp%,.2f", invoice.getSubtotal());
+        String grandTotal = currencyFormat.format(invoice.getGrandTotal());
+        String subtotal = currencyFormat.format(invoice.getSubtotal());
+        String taxes = currencyFormat.format(invoice.getTaxTotal());
         List<Product> listProduct = invoiceService.getListProductInvoice(invoice);
         var files = fileService.findByFileInvoice(invoice);
         List<ReadFileResponseDTO> documents = new ArrayList<>();
@@ -61,7 +65,7 @@ public class PrintService {
         context.setVariable("dueDate", dueDate);
         context.setVariable("invoiceDate", invoiceDate);
         context.setVariable("subtotal", subtotal);
-        context.setVariable("taxes", invoice.getTaxTotal().toString());
+        context.setVariable("taxes", taxes);
         context.setVariable("grandTotal", grandTotal);
         context.setVariable("totalDiscount", String.valueOf(invoice.getTotalDiscount()));
         context.setVariable("status", invoice.getStatus());
@@ -78,9 +82,6 @@ public class PrintService {
         String processedHtml = templateEngine.process("data/template", context);
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-
-        // ConverterProperties converterProperties = new ConverterProperties();
-        // converterProperties.setBaseUri(baseUri);
 
         HtmlConverter.convertToPdf(processedHtml, stream);
 

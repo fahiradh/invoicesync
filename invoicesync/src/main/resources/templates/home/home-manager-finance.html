@@ -25,7 +25,7 @@
     </div>
     <div class="container">
         <div class="row dashboard-row">
-            <div class="col dashboard-col shadow-lg p-3" style="background-image: linear-gradient(to right,#3f2685  , #856ad4);">
+            <div class="col dashboard-col" style="background-image: linear-gradient(to right,#3f2685  , #856ad4);">
                 <div class="card-title text-left">
                     <h3 th:if="${showModal}" class="center-text theme-color"></h3>
                     <h4 th:unless="${showModal}" class="text-left text-white">Welcome to InvoiceSync, <span th:text="${employee.first_name} + ' ' + ${employee.last_name}"></span></h4>
@@ -53,28 +53,26 @@
                 </div>
             </div>
         </div>
-        <div class="container-fluid">
-            <div class="row dashboard-row">
-                <!-- Number of Invoices per Month -->
-                <div class="col-md-4 dashboard-col">
-                    <div class="dashboard-content">
-                        <h4 class="text-center">Number of Invoices per Month</h4>
-                        <div id="chart_invoice" style="width: 100%; height: 500px;"></div>
-                    </div>
+        <div class="row dashboard-row">
+            <!-- Number of Invoices per Month -->
+            <div class="col dashboard-col">
+                <div class="dashboard-content">
+                    <h4 class="text-center">Number of Invoices per Month</h4>
+                    <div id="chart_invoice" style="width: 100%; height: 500px;"></div>
                 </div>
-                <!-- Number of Invoices by Payment Status -->
-                <div class="col-md-4 dashboard-col">
-                    <div class="dashboard-content">
-                        <h4 class="text-center">Total Tax Gain</h4>
-                        <div id="chart_tax" style="width: 100%; height: 500px;"></div>
-                    </div>
+            </div>
+            <!-- Number of Invoices by Payment Status -->
+            <div class="col dashboard-col-middle">
+                <div class="dashboard-content">
+                    <h4 class="text-center">Total Tax Gain</h4>
+                    <div id="chart_tax" style="width: 100%; height: 500px;"></div>
                 </div>
-                <!-- Total Tax Gain -->
-                <div class="col-md-4 dashboard-col">
-                    <div class="dashboard-content">
-                        <h4 class="text-center">Number of Invoices by Payment Status</h4>
-                        <div id="chart_status" style="width: 100%; height: 500px;"></div> <!-- Notice the corrected id 'chart_div3' -->
-                    </div>
+            </div>
+            <!-- Total Tax Gain -->
+            <div class="col dashboard-col">
+                <div class="dashboard-content">
+                    <h4 class="text-center">Number of Invoices by Payment Status</h4>
+                    <div id="chart_status" style="width: 100%; height: 500px;"></div> <!-- Notice the corrected id 'chart_div3' -->
                 </div>
             </div>
         </div>
@@ -233,7 +231,7 @@
             const element = document.getElementById(elementId);
             const amount = parseFloat(element.textContent);
             if (isNaN(amount)) {
-                element.textContent = 'None';
+                element.textContent = 'Rp0,00';
                 return;
             }
 

@@ -41,7 +41,7 @@
         <!-- Bagian invoice -->
         <div class="grid-container-invoice-logs-child">
             <div class="card">
-                <div class="card-body p-4">
+                <div class="card-body">
                 <div class="container-title">
                     <div class="row">
                         <div class="col" style="text-align:left;">
@@ -86,10 +86,8 @@
                         
                         <hr>
     
-                        <p class="card-text">Attach Product List (.xlsx)</p>
-                        <input type="file" class="form-control" id="file" name="file" accept=".xlsx" disabled/>
-                        <br>
-    
+                        <p class="card-text">Product List (.xlsx)</p>
+                        
                         <table class="table table-bordered">
                             <thead class="bg-dark text-white">
                                 <tr>
@@ -144,7 +142,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td><p class="card-text">Total Discount (%)</p></td>
+                                        <td><p class="card-text">Discount (%)</p></td>
                                         <td><input class="form-control" type="number" th:field="${invoice.totalDiscount}" readonly/></td>
                                     </tr>
                                     <tr>
@@ -163,7 +161,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td><p class="card-text">Taxes</p></td>
+                                        <td><p class="card-text">Tax Amount</p></td>
                                         <td>
                                             <input class="form-control" th:field="${invoice.taxTotal}" type="number" disabled />
                                         </td>
@@ -176,7 +174,9 @@
                                     </tr>
                                     <tr>
                                         <td><p class="card-text">Amount in Words</p></td>
-                                        <td><input class="form-control" type="text" th:field="${invoice.totalWords}" readonly/></td>
+                                        <td>
+                                            <textarea class="form-control" th:field="${invoice.totalWords}" style="resize: vertical;" readonly></textarea>
+                                        </td>
                                     </tr> 
                                 </table>
                             </div>
@@ -219,7 +219,7 @@
                                     </div>
                                     <br>
                                     <input class="form-control" type="text" th:value="${invoice.staffEmail}" hidden />
-                                    <p class="card-text" th:text="'Created by: ' + ${employee.first_name} + ' ' + ${employee.last_name}"></p>
+                                    <p class="card-text" th:text="'Created by: ' + ${creator}"></p>
                                 </div>
                             </div>
                         </div>
@@ -354,12 +354,12 @@
                             </select>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <input type="hidden" name="invoiceNumber" th:value="${invoice.invoiceNumber}" />
-                        <button type="submit" class="btn btn-primary">Add</button>
-                    </div>
-                </form>
                 </div>
+                <div class="modal-footer">
+                    <input type="hidden" name="invoiceNumber" th:value="${invoice.invoiceNumber}" />
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </div>
+                </form>
             </div>
         </div>
     </div>
@@ -376,7 +376,7 @@
                 </div>
                 <!-- Add Approver Modal -->
                 <div class="modal-body">
-                <form th:action="@{/invoice/{invoiceNumber}/readd-approver(invoiceNumber=${invoice.invoiceNumber.replace('/', '_')})}" method="post">
+                <form th:action="@{/invoice/{invoiceNumber}/read-approver(invoiceNumber=${invoice.invoiceNumber.replace('/', '_')})}" method="post">
                     <div th:each="approverDisplay : ${approverDisplays}">
                         <div class="form-group">
                             <label th:for="${'approverName' + approverDisplay.role}" th:text="${'Approver for ' + approverDisplay.role}">Approver Name</label>
@@ -433,45 +433,19 @@
         </div>
     </div>
 
-
- <!-- Approver List Section
- <div class="container">
-    <div class="card" style="width: 100%;"> <!-- Set the width to 100% of the container 
-        <div class="card-header">
-            <h5 class="card-title">Approvers</h5>
-        </div>
-        <div class="card-body p-4">
-            <table class="table table-custom" id="approversTable">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Approver</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="approver, iterStat : ${approvers}">
-                        <td th:text="${iterStat.count}"></td>
-                        <td th:text="${approver.employee.first_name + ' ' + approver.employee.last_name}"></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
--->
  <!-- Modal confirmation -->
 <div class="modal fade" id="confirmPaidModal" tabindex="-1" role="dialog" aria-labelledby="confirmPaidModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="confirmPaidModalLabel">Confirm Change Status</h5>
+                <h5 class="modal-title" id="confirmPaidModalLabel">Confirm Status</h5>
             </div>
             <div class="modal-body">
-                Are you sure you want to change this invoice status to "Paid"?
+                Are you sure you want to mark this invoice as "Paid"?
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <a id="paidLink" href="#" class="btn btn-primary">Change</a>
+                <a id="paidLink" href="#" class="btn btn-primary">Paid</a>
             </div>
         </div>
     </div>
