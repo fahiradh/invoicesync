@@ -16,9 +16,9 @@
         <div class="card-title">
             <h2>Approve Invoice</h2>
         </div>
-        <div class="card-borderless">
+        <div class="card">
             <div class="card-body">
-                <p>These are some invoices submitted to you. Click on the invoice number to proceed with approval.</p>
+                <p>Click on the invoice number to proceed with approval.</p>
                 <table class="table table-custom">
                     <thead>
                         <tr>
@@ -39,11 +39,11 @@
                                    th:value="${invoice.approvalId}"></a>
                             </td>
                             <td th:text="${invoice.customer.name}"></td>
-                            <td th:text="${'Rp' + #numbers.formatDecimal(invoice.grandTotal, 0, 'COMMA', 2, 'POINT')}"></td>
+                            <td th:text="${'Rp' + #numbers.formatDecimal(invoice.grandTotal, 0, 'POINT', 2, 'COMMA')}"></td>
                             <td th:with="status=${invoice.approvalStatus}" th:include="fragments/invoice-status :: invoice-status-show"></td>
                         </tr>
                         <tr th:if="${#lists.isEmpty(invoices)}">
-                            <td colspan="5" class="text-center">No data available in the system</td>
+                            <td colspan="5" class="text-center">There are no invoices awaiting your approval.</td>
                         </tr>
                     </tbody>
                 </table>

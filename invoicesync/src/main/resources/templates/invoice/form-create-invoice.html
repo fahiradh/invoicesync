@@ -21,7 +21,7 @@
     <div class="grid-container-invoice-logs">
         <div class="grid-container-invoice-logs-child">
             <div class="card">
-                <div class="card-body p-4">
+                <div class="card-body">
                 <div class="container-title">
                     <div class="row">
                         <div class="col" style="text-align:left;">
@@ -82,7 +82,7 @@
                         <p class="card-info">Please attach document or input the fields below to add product list.</p>
                         <br>
 
-                        <p class="card-text">Attach Product List (.xlsx)</p>
+                        <p class="card-text">Product List (.xlsx)</p>
                         <p>Please refer to <a id="openGuidelinesModal" href="#" onclick="showGuidelinesModal()">these guidelines</a> for the document's format.</p>
                         <input type="file" class="form-control" id="productDocument" name="productDocument"/>
                         <br>
@@ -148,7 +148,7 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td><p class="card-text">Taxes</p></td>
+                                            <td><p class="card-text">Tax Amount</p></td>
                                             <td>
                                                 <input class="form-control" th:field="*{taxTotal}" type="number" disabled />
                                             </td>
@@ -162,7 +162,9 @@
                                         </tr>
                                         <tr>
                                             <td><p class="card-text">Amount in Words</p></td>
-                                            <td><input class="form-control" type="text" th:field="*{totalWords}" /></td>
+                                            <td>
+                                                <textarea class="form-control" th:field="*{totalWords}" style="resize: vertical;"></textarea>
+                                            </td>
                                         </tr> 
                                     </table>
                                 </div>
@@ -244,9 +246,11 @@
                             <label for="customerAddress">Address</label>
                             <textarea class="form-control" type="text" th:field="*{address}" style="height:100px" required/>
                         </div>
-                        <button type="submit" class="btn btn-primary">Add</button>
-                    </form>
+                    </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Add</button>
                 </div>
+                </form>
             </div>
         </div>
     </div>
@@ -302,7 +306,7 @@
                 </div>
                 <div class="modal-body">
                     <p>1. The document file format must be ".xlsx" for a better accuracy.</p>
-                    <p>2. The document must include a minimum of three cells titled "description," "quantity," and "price," all in lowercase format.</p>
+                    <p>2. The document must include a minimum of three cells titled "description", "quantity", and "price" all in lowercase format.</p>
                     <p>3. Don't forget to review the product details after uploading the files to ensure accuracy and completeness.<p>
                 </div>
                 <div class="modal-footer">
@@ -314,6 +318,13 @@
 
     <script src="/js/scripts/modal.js"></script>
     <script src="/js/scripts/create-invoice.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#openGuidelinesModal').click(function() {
+                $('#approverModal').modal('show');
+            });
+        });
+    </script>    
     <script th:inline="javascript">
         $(document).ready(function() {
             var successMessage = /*[[${successMessage}]]*/ null;

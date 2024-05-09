@@ -109,7 +109,6 @@ async function countTaxes() {
     document.querySelector('input[name="taxTotal"]').value = taxTotal.toFixed(2);
 }
 
-
 function updateGrandTotalInvoice() {
     var subtotalElement = document.querySelector('input[name="grandTotal"]').value;
     var subtotal = parseFloat(subtotalElement || 0);
@@ -175,24 +174,6 @@ document.getElementById("addRowInvoice").addEventListener("click", function() {
         handleCheckClick(this);
     });
 });
-
-function deleteProduct(productId, tableRow) {
-    fetch('/api/v1/product/' + productId + '/delete', {
-        method: 'POST'
-    })
-    .then(function(response) {
-        if (!response.ok) {
-            throw new Error('Error deleting product:', response.status);
-        }
-        console.log('Product deleted successfully');
-        tableRow.parentNode.removeChild(tableRow);
-        // updateRowNumbers(tableBody);
-        getAllProduct();
-    })
-    .catch(function(error) {
-        console.error(error);
-    });
-}
 
 document.getElementById("taxList").addEventListener("click", function(){
     countTaxes();
@@ -267,13 +248,42 @@ closeModalButton.addEventListener('click', function() {
     $('#successModal').modal('hide');
 });
 
+function getAllProduct() {
+    var invoiceId = document.getElementById("invoiceDummyId").innerText;
+    console.log("invoice id: " + invoiceId);
+    
+    fetch('/api/v1/invoice/product/' + invoiceId, {
+        method: 'GET'
+    })
+    .then(function(response) {
+        if (!response.ok) {
+            throw new Error('Error fetching products: ' + response.status);
+        }
+        return response.json();
+    })
+    .then(function(products) {
+        var subtotal = 0;
+        products.forEach(function(product) {
+            subtotal += parseFloat(product.totalPrice);
+        });
+        document.querySelector('input[name="subtotal"]').value = subtotal.toFixed(2);
+        updateDiscount()
+        countTaxes();
+        updateGrandTotalInvoice();
+    })
+    .catch(function(error) {
+        console.error('Error:', error);
+    });
+}
 
-document.getElementById("productDocument").addEventListener("change", function() {
+function updateProductDocument() {
+    var invoiceId = document.getElementById("invoiceId").value; 
+    console.log(invoiceId);
     var fileInput = document.querySelector('input[name="productDocument"]');
     var formData = new FormData();
     formData.append('productDocument', fileInput.files[0]);
 
-    fetch('/api/v1/create-product-document', {
+    fetch('/api/v1/add-product/'+invoiceId, {
         method: 'POST',
         body: formData
     })
@@ -291,8 +301,24 @@ document.getElementById("productDocument").addEventListener("change", function()
     .catch(function(error) {
         console.error(error);
     });
-});
+}
 
+function deleteProduct(productId, tableRow) {
+    fetch('/api/v1/product/' + productId + '/delete', {
+        method: 'POST'
+    })
+    .then(function(response) {
+        if (!response.ok) {
+            throw new Error('Error deleting product:', response.status);
+        }
+        console.log('Product deleted successfully');
+        tableRow.parentNode.removeChild(tableRow);
+        getAllProduct();
+    })
+    .catch(function(error) {
+        console.error(error);
+    });
+}
 
 function updateProductList(listProduct){
     var tableBody = document.getElementById("invoiceTableBody");
@@ -331,46 +357,4 @@ function updateProductList(listProduct){
             }
         });
     });
-}
-
-function getAllProduct() {
-    var invoiceId = document.getElementById("invoiceId").value;  
-    console.log("invoice id: " + invoiceId);
-    
-    fetch('/api/v1/invoice/product/' + invoiceId, {
-        method: 'GET'
-    })
-    .then(function(response) {
-        if (!response.ok) {
-            throw new Error('Error fetching products: ' + response.status);
-        }
-        return response.json();
-    })
-    .then(function(products) {
-        var subtotal = 0;
-        products.forEach(function(product) {
-            subtotal += parseFloat(product.totalPrice);
-        });
-        document.querySelector('input[name="subtotal"]').value = subtotal.toFixed(2);
-        updateDiscount()
-        countTaxes();
-        updateGrandTotalInvoice();
-    })
-    .catch(function(error) {
-        console.error('Error:', error);
-    });
-}
-
-function showGuidelinesModal() {
-    var modal = document.getElementById("guidelinesModal");
-    modal.classList.add('show');
-    modal.setAttribute('aria-hidden', 'false');
-    modal.style.display = 'block';
-}
-
-function hideGuidelinesModal() {
-    var modal = document.getElementById("guidelinesModal");
-    modal.classList.remove('show');
-    modal.setAttribute('aria-hidden', 'true');
-    modal.style.display = 'none';
 }

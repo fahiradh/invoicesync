@@ -11,13 +11,13 @@
 <body>
     <nav th:replace="~{fragments/navbar-admin :: navbar-admin(page = 'Employee Management')}"></nav>
     <div class="container">
-        <div class="card-borderless mt-4">
-            <div class="card-title p-4">
-                <h2>List of Employees</h2>
-                <div class="text-center">
-                    <a href="/create-account" class="btn btn-primary">Create New Employee</a>
-                </div>
-            </div>
+        <div class="card-title">
+            <h2>Employee Account</h2>
+        </div>
+        <div class="text-center">
+            <a href="/create-account" class="btn btn-primary">Register New Account</a>
+        </div>
+        <div class="card-borderless mt-4" style="display: inline;">
             <div class="grid-container">
                 <div th:each="employee: ${listEmployee}" class="card-employee">
                     <img th:src="${employee.base64Photo}" alt="Employee Photo" class="rounded-circle">

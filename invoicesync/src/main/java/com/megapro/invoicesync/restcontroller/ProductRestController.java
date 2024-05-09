@@ -48,6 +48,7 @@ public class ProductRestController {
     @Autowired
     ExcelService excelService;
 
+    // Create product when create invoice
     @PostMapping("/create-product")
     public ResponseEntity<ReadProductResponseDTO> createProduct(@RequestBody CreateProductRequestDTO productDTO) {
         var dummyInvoice = invoiceService.getDummyInvoice();
@@ -61,6 +62,7 @@ public class ProductRestController {
         return ResponseEntity.ok(readProductDTO);
     }
 
+    // Create product by product document (.xlsx)
     @PostMapping("/create-product-document")
     public ResponseEntity<List<ReadProductResponseDTO>> createProductByDocument(@RequestParam("productDocument") MultipartFile productDocument) throws IOException{
         if (productDocument != null && !productDocument.isEmpty()) {
@@ -76,6 +78,7 @@ public class ProductRestController {
         }
     }
 
+    // Create product manually but the invoice already created (edit invoice)
     @PostMapping("/create-product/{invoiceId}")
     public ResponseEntity<ReadProductResponseDTO> updateProductInvoice(@RequestBody CreateProductRequestDTO productDTO,
                                                             @PathVariable("invoiceId") String invoiceId) {
@@ -89,6 +92,28 @@ public class ProductRestController {
         var readProductDTO = productMapper.readProductToProductDTO(product);
         return ResponseEntity.ok(readProductDTO);
     }
+
+    // Create product by product document for edit invoice
+    @PostMapping("/add-product/{invoiceId}")
+    public ResponseEntity<List<ReadProductResponseDTO>> addProductByDocument(@RequestParam("productDocument") MultipartFile productDocument,
+                                                                            @PathVariable("invoiceId") String invoiceId) throws IOException{
+        System.out.println("Masuk kee sokin ea");
+        System.out.println(invoiceId);
+        var invoice = invoiceService.getInvoiceById(UUID.fromString(invoiceId));
+        if (productDocument != null && !productDocument.isEmpty()) {
+            List<Product> listProduct = excelService.processExcel(productDocument);
+            List<ReadProductResponseDTO> listProductDTO = new ArrayList<>();
+            for (Product p : listProduct) {
+                p.setInvoice(invoice);
+                var productDTO = productMapper.readProductToProductDTO(p);
+                listProductDTO.add(productDTO);
+            }
+            return ResponseEntity.ok(listProductDTO);
+        } else {
+            return ResponseEntity.badRequest().body(Collections.emptyList());
+        }
+    }
+
 
     @PostMapping("/product/{id}/delete")
     public ResponseEntity<Product> deleteProduct(@PathVariable("id") String productId){

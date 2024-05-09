@@ -21,7 +21,7 @@
     <div class="grid-container-invoice-logs">
         <div class="grid-container-invoice-logs-child">
             <div class="card">
-                <div class="card-body p-4">
+                <div class="card-body">
                 <div class="container-title">
                     <div class="row">
                         <div class="col" style="text-align:left;">
@@ -68,9 +68,9 @@
                         <p class="card-info">Please attach document or input the fields below to add product list.</p>
                         <br>
 
-                        <p class="card-text">Attach Product List (.xlsx)</p>
+                        <p class="card-text">Product List (.xlsx)</p>
                         <p>Please refer to <a id="openGuidelinesModal" href="#" onclick="showGuidelinesModal()">these guidelines</a> for the document's format.</p>
-                        <input type="file" class="form-control" id="productDocument" name="productDocument"/>
+                        <input type="file" class="form-control" id="productDocument" name="productDocument" onchange="updateProductDocument()"/>
                         <br>
 
                         <table class="table table-bordered">
@@ -159,7 +159,7 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td><p class="card-text">Taxes</p></td>
+                                            <td><p class="card-text">Tax Amount</p></td>
                                             <td>
                                                 <input class="form-control" th:field="*{taxTotal}" type="number" disabled />
                                             </td>
@@ -281,7 +281,7 @@
                 </div>
                 <div class="modal-body">
                     <p>1. The document file format must be ".xlsx" for a better accuracy.</p>
-                    <p>2. The document must include a minimum of three cells titled "description," "quantity," and "price," all in lowercase format.</p>
+                    <p>2. The document must include a minimum of three cells titled "description", "quantity", and "price" all in lowercase format.</p>
                     <p>3. Don't forget to review the product details after uploading the files to ensure accuracy and completeness.<p>
                 </div>
                 <div class="modal-footer">
