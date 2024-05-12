@@ -10,7 +10,7 @@ import java.util.UUID;
 import java.util.List;
 
 import com.megapro.invoicesync.dto.response.ReadFileResponseDTO;
-import com.megapro.invoicesync.model.Tax;
+import com.megapro.invoicesync.dto.response.ReadTaxResponseDTO;
 
 @Data
 @AllArgsConstructor
@@ -24,7 +24,7 @@ public class CreateInvoiceRequestDTO {
     private String city;
     private BigDecimal subtotal;
     private int totalDiscount = 0;
-    private List<Tax> listTax;
+    private List<ReadTaxResponseDTO> listTax;
     private BigDecimal taxTotal;
     private BigDecimal grandTotal;
     private String accountNumber;

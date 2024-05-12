@@ -214,7 +214,7 @@ public class ApproveInvoiceController {
         }
 
         approvalService.saveApproval(approval);
-        invoiceService.updateInvoice(invoice);
+        invoiceService.save(invoice);
         
         var invoiceNumber = approval.getInvoice().getInvoiceNumber().replace('/', '_');
         redirectAttributes.addFlashAttribute("message", "Invoice Approved Successfully");
@@ -236,7 +236,7 @@ public class ApproveInvoiceController {
 
         var invoice = approval.getInvoice();
         invoice.setStatus("Need Revision");
-        invoiceService.updateInvoice(invoice);
+        invoiceService.save(invoice);
 
         // Notification
         var invoiceMaker = invoice.getStaffEmail();
@@ -256,7 +256,7 @@ public class ApproveInvoiceController {
 
         var invoice = approval.getInvoice();
         invoice.setStatus("Rejected");
-        invoiceService.updateInvoice(invoice);
+        invoiceService.save(invoice);
 
         // Notification
         var invoiceMaker = invoice.getStaffEmail();

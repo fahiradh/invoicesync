@@ -136,21 +136,15 @@
                                             <td><p class="card-text">Discount (%)</p></td>
                                             <td><input class="form-control" type="number" th:field="*{totalDiscount}" oninput="calculateGrandTotal()"/></td>
                                         </tr>
-                                        <!-- <tr>
-                                            <td><p class="card-text">Tax</p></td>
-                                            <td>
-                                                <div id="taxList">
-                                                </div>
-                                            </td>
-                                        </tr> -->
                                         <tr>
                                             <td><p class="card-text">Tax</p></td>
                                             <td>
-                                                <div id="taxListEdit" th:each="tax : ${taxList}">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" 
-                                                            value="${tax.taxId}" 
-                                                            id="${tax.taxId}" 
+                                                <div id="taxListEdit">
+                                                    <div class="form-check" th:each="tax : ${taxList}">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            name="taxOption"
+                                                            th:value="${tax.taxId}" 
+                                                            th:id="${tax.taxId}" 
                                                             th:checked="${#lists.contains(invoiceDTO.listTax.![taxId], tax.taxId)}">
                                                         <label class="form-check-label" for="${tax.taxId}" th:text="${tax.taxName}">
                                                         </label>
@@ -209,7 +203,7 @@
                                     </div>
                                     <br>
                                     <div class="drag-area">
-                                        <img class="card-img-top" th:src="@{'data:image/jpeg;base64,' + ${currentSignature}}" alt="signature-image" style="max-height=150px;">
+                                        <img class="card-img-top" th:src="@{'data:image/jpeg;base64,' + ${currentSignature}}" alt="signature-image" style="max-height:150px;">
                                     </div>
                                     <br>
                                     <input type="file" id="base64String" name="base64String" accept="image/*">

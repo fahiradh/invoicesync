@@ -23,25 +23,25 @@
                 <ul class="navbar-nav ms-auto ">
                     <li class="nav-item">
                         <a th:classappend="${page == 'Home'} ? active : ''" class="nav-link mx-2" th:href="@{/home}">
-                            <img src="https://cdn.hugeicons.com/icons/dashboard-square-01-stroke-rounded.svg" alt="dashboard-square-01" width="24" height="24" />
+                            <img th:src="@{/assets/dashboard-square-01-stroke-rounded.svg}" alt="dashboard-square-01" width="24" height="24" />
                             Home
                         </a>
                     </li>
                     <li class="nav-item">
                         <a th:classappend="${page == 'Create-Invoice'} ? active : ''" class="nav-link" th:href="@{/create-invoice}">
-                            <img src="https://cdn.hugeicons.com/icons/pencil-edit-02-stroke-rounded.svg" alt="pencil-edit-02" width="24" height="24" />
+                            <img th:src="@{/assets/pencil-edit-02-stroke-rounded.svg}" alt="pencil-edit-02" width="24" height="24" />
                             Create Invoice
                         </a>
                     </li>
                     <li class="nav-item">
                         <a th:classappend="${page == 'My-Invoice'} ? active : ''" class="nav-link" th:href="@{/my-invoices}">
-                            <img src="https://cdn.hugeicons.com/icons/invoice-01-stroke-rounded.svg" alt="invoice-01" width="24" height="24"/>
+                            <img th:src="@{/assets/invoice-01-stroke-rounded.svg}" alt="invoice-01" width="24" height="24"/>
                             My Invoices
                         </a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link" data-bs-toggle="dropdown" th:href="@{#}">
-                            <img src="https://cdn.hugeicons.com/icons/notification-01-solid-rounded.svg" alt="notification-01"/>
+                            <img th:src="@{/assets/notification-01-solid-rounded.svg}" alt="notification-01"/>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-notification">
                             <h6 class="dropdown-header" style="text-align: center;">Notifications</h6>
@@ -94,26 +94,25 @@
                 <ul class="navbar-nav ms-auto ">
                     <li class="nav-item">
                         <a th:classappend="${page == 'Home'} ? active : ''" class="nav-link mx-2" th:href="@{/home}">
-                            <img src="https://cdn.hugeicons.com/icons/dashboard-square-01-stroke-rounded.svg" alt="dashboard-square-01" width="24" height="24" />
+                            <img th:src="@{/assets/dashboard-square-01-stroke-rounded.svg}" alt="dashboard-square-01" width="24" height="24" />
                             Home
                         </a>
                     </li>
                     <li class="nav-item">
-                        <!-- TODO : Add th:href -->
                         <a th:classappend="${page == 'Approve-Invoice'} ? active : ''" class="nav-link mx-2" th:href="@{/approval}">
-                            <img src="https://cdn.hugeicons.com/icons/checkmark-square-04-stroke-rounded.svg" alt="checkmark-square-04" width="24" height="24" />
+                            <img th:src="@{/assets/checkmark-square-04-stroke-rounded.svg}" alt="checkmark-square-04" width="24" height="24" />
                             Approve Invoice
                         </a> 
                     </li>
                     <li class="nav-item">
                         <a th:classappend="${page == 'All-Invoices-List'} ? active : ''" class="nav-link mx-2" th:href="@{/invoices}">
-                            <img src="https://cdn.hugeicons.com/icons/invoice-01-stroke-rounded.svg" alt="invoice-01" width="24" height="24" />
+                            <img th:src="@{/assets/invoice-01-stroke-rounded.svg}" alt="invoice-01" width="24" height="24" />
                             All Invoice List
                         </a> 
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link" data-bs-toggle="dropdown" th:href="@{#}">
-                            <img src="https://cdn.hugeicons.com/icons/notification-01-solid-rounded.svg" alt="notification-01"/>
+                            <img th:src="@{/assets/notification-01-solid-rounded.svg}" alt="notification-01"/>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-notification">
                             <h6 class="dropdown-header" style="text-align: center;">Notifications</h6>

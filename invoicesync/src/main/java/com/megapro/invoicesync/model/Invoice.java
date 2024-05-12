@@ -49,8 +49,13 @@ public class Invoice {
     @Column(name="subtotal")
     private BigDecimal subtotal;
 
+    // Ini discount (%)
     @Column(name="total_discount")
     private int totalDiscount;
+
+    // Ini hasil perkalian discount dengan subtotal
+    @Column(name="discount_total")
+    private BigDecimal discountTotal;
 
     @ManyToMany
     @JoinTable(name = "invoice_tax", joinColumns = @JoinColumn(name = "invoice_id"),
