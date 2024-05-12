@@ -129,12 +129,12 @@ public class PageController {
         return "auth/login.html";
     }
 
-    @GetMapping("/create-user-account")
-    public String createUser(Model model){
-        var userAppDTO = new CreateUserAppRequestDTO();
-        model.addAttribute("userAppDTO", userAppDTO);
-        return "auth/create-user-account.html";
-    }
+    // @GetMapping("/create-user-account")
+    // public String createUser(Model model){
+    //     var userAppDTO = new CreateUserAppRequestDTO();
+    //     model.addAttribute("userAppDTO", userAppDTO);
+    //     return "auth/create-user-account.html";
+    // }
 
     @GetMapping("/access-denied")
     public String accessDenied() {

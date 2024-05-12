@@ -5,12 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
   <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
-  <style>
-    .center-text {
-        text-align: center;
-        margin-top: 100px;
-    }
-  </style>
   <title>Login | InvoiceSync</title>
 </head>
 <body>
@@ -32,7 +26,7 @@
       <div class="row justify-content-center align-items-center">
         <div class="col-md-9 col-lg-6 col-xl-5 mt-5">
           <div class="text-center">
-            <img src="https://img.freepik.com/free-vector/sign-page-abstract-concept-illustration_335657-3875.jpg?w=740&t=st=1709305292~exp=1709305892~hmac=1c2804d1b6148b1a2e4ad5f8012cbeba5ac33ddb459450c19e068cbc0bfd5279"
+            <img th:src="@{/assets/login-account.jpg}" 
               class="img-fluid" alt="Sample image">
           </div>
         </div>

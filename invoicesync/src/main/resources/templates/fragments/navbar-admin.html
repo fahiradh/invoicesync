@@ -24,19 +24,19 @@
                     <ul class="navbar-nav ms-auto ">
                         <li class="nav-item">
                             <a th:classappend="${page == 'Home'} ? active : ''" class="nav-link mx-2" th:href="@{/home}">
-                                <img src="https://cdn.hugeicons.com/icons/dashboard-square-01-stroke-rounded.svg" alt="dashboard-square-01" width="24" height="24" />
+                                <img th:src="@{/assets/icon/home.svg}" alt="dashboard-square-01" width="24" height="24" />
                                 Home
                             </a>
                         </li>
                         <li class="nav-item">
                             <a th:classappend="${page == 'Employee Management'} ? active : ''" class="nav-link" th:href="@{/employees}">
-                                <img src="https://cdn.hugeicons.com/icons/user-multiple-02-stroke-rounded.svg" alt="user-multiple-02" width="24" height="24" />
+                                <img th:src="@{/assets/icon/employee-mgm.svg}" alt="user-multiple-02" width="24" height="24" />
                                 Employee Management
                             </a>
                         </li>
                         <li class="nav-item">
                             <a th:classappend="${page == 'Approval Flows Management'} ? active : ''" class="nav-link" th:href="@{/approval-flows}">
-                                <img src="https://cdn.hugeicons.com/icons/workflow-square-03-stroke-rounded.svg" alt="workflow-square-03" width="24" height="24" />
+                                <img th:src="@{/assets/icon/approval-flow.svg}" alt="workflow-square-03" width="24" height="24" />
                                 Approval Flows Management
                             </a>
                         </li>

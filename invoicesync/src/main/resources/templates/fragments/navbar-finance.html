@@ -23,32 +23,32 @@
                 <ul class="navbar-nav ms-auto ">
                     <li class="nav-item">
                         <a th:classappend="${page == 'Home'} ? active : ''" class="nav-link mx-2" th:href="@{/home}">
-                            <img th:src="@{/assets/dashboard-square-01-stroke-rounded.svg}" alt="dashboard-square-01" width="24" height="24" />
+                            <img th:src="@{/assets/icon/home.svg}" alt="dashboard-square-01" width="24" height="24" />
                             Home
                         </a>
                     </li>
                     <li class="nav-item">
                         <!-- TODO : Add th:href -->
                         <a th:classappend="${page == 'Approve-Invoice'} ? active : ''" class="nav-link mx-2" th:href="@{/approval}">
-                            <img th:src="@{/assets/checkmark-square-04-stroke-rounded.svg}" alt="checkmark-square-04" width="24" height="24" />
+                            <img th:src="@{/assets/icon/approval.svg}" alt="checkmark-square-04" width="24" height="24" />
                             Approve Invoice
                         </a> 
                     </li>
                     <li class="nav-item">
                         <a th:classappend="${page == 'All-Invoices-List'} ? active : ''" class="nav-link mx-2" th:href="@{/invoices}">
-                            <img th:src="@{/assets/invoice-01-stroke-rounded.svg}" alt="invoice-01" width="24" height="24" />
+                            <img th:src="@{/assets/icon/invoices.svg}" alt="invoice-01" width="24" height="24" />
                             All Invoices List
                         </a> 
                     </li>
                     <li class="nav-item">
                         <a th:classappend="${page == 'Tax'} ? active : ''" class="nav-link mx-2" th:href="@{/tax}">
-                            <img th:src="@{https://cdn.hugeicons.com/icons/taxes-stroke-rounded.svg}" alt="taxes" width="24" height="24" />
+                            <img th:src="@{/assets/icon/tax.svg}" alt="taxes" width="24" height="24" />
                             Tax Management
                         </a> 
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link" data-bs-toggle="dropdown" th:href="@{#}">
-                            <img th:src="@{https://cdn.hugeicons.com/icons/notification-01-solid-rounded.svg}" alt="notification-01"/>
+                            <img th:src="@{/assets/icon/notification.svg}" alt="notification-01"/>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-notification">
                             <h6 class="dropdown-header" style="text-align: center;">Notifications</h6>
@@ -101,25 +101,26 @@
                 <ul class="navbar-nav ms-auto ">
                     <li class="nav-item">
                         <a th:classappend="${page == 'Home'} ? active : ''" class="nav-link mx-2" th:href="@{/home}">
-                            <img th:src="@{/assets/dashboard-square-01-stroke-rounded.svg}" alt="dashboard-square-01" width="24" height="24" />
+                            <img th:src="@{/assets/icon/home.svg}" alt="dashboard-square-01" width="24" height="24" />
                             Home
                         </a>
                     </li>
                     <li class="nav-item">
+                        <!-- TODO : Add th:href -->
                         <a th:classappend="${page == 'Approve-Invoice'} ? active : ''" class="nav-link mx-2" th:href="@{/approval}">
-                            <img th:src="@{/assets/checkmark-square-04-stroke-rounded.svg}" alt="checkmark-square-04" width="24" height="24" />
+                            <img th:src="@{/assets/icon/approval.svg}" alt="checkmark-square-04" width="24" height="24" />
                             Approve Invoice
                         </a> 
                     </li>
                     <li class="nav-item">
                         <a th:classappend="${page == 'All-Invoices-List'} ? active : ''" class="nav-link mx-2" th:href="@{/invoices}">
-                            <img th:src="@{/assets/invoice-01-stroke-rounded.svg}" alt="invoice-01" width="24" height="24" />
-                            All Invoice List
+                            <img th:src="@{/assets/icon/invoices.svg}" alt="invoice-01" width="24" height="24" />
+                            All Invoices List
                         </a>  
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link" data-bs-toggle="dropdown" th:href="@{#}">
-                            <img th:src="@{/assets/notification-01-solid-rounded.svg}" alt="notification-01"/>
+                            <img th:src="@{/assets/icon/notification.svg}" alt="notification-01"/>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-notification">
                             <h6 class="dropdown-header" style="text-align: center;">Notifications</h6>
