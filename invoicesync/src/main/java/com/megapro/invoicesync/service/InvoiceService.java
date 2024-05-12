@@ -34,7 +34,7 @@ public interface InvoiceService {
     String checkValidity(CreateInvoiceRequestDTO invoiceDTO, List<Integer> selectedTaskIds, String email);
     String checkValidityUpdate(UpdateInvoiceRequestDTO invoiceDTO);
     public List<ApproverDisplay> getApproverDisplaysForInvoice(Invoice invoice);
-    Invoice updateInvoice(Invoice invoiceFromDTO);
+    Invoice updateInvoice(Invoice invoiceFromDTO, List<Integer> selectedTaxIds);
     void addApproverToInvoice(UUID invoiceId, String email);
     Approval readdApproverToInvoice(UUID invoiceId, String email, int oldSize);
     public List<UserApp> getEligibleApproversForInvoice(Invoice invoice);

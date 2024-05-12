@@ -2,6 +2,7 @@ package com.megapro.invoicesync.controller;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.config.Task;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.List;
@@ -45,6 +46,7 @@ import com.megapro.invoicesync.dto.response.ApproverDisplay;
 import com.megapro.invoicesync.dto.response.ReadApprovalResponseDTO;
 import com.megapro.invoicesync.dto.response.ReadFileResponseDTO;
 import com.megapro.invoicesync.dto.response.ReadInvoiceResponse;
+import com.megapro.invoicesync.dto.response.ReadTaxResponseDTO;
 import com.megapro.invoicesync.model.Approval;
 import com.megapro.invoicesync.model.Customer;
 import com.megapro.invoicesync.model.Employee;
@@ -470,6 +472,11 @@ public class InvoiceController {
         var date = invoice.getInvoiceDate();
         Employee employee = userService.findByEmail(email);
 
+        System.out.println("Ini isi edit tax saat ini ");
+        for(ReadTaxResponseDTO taxDTO:invoiceDTO.getListTax()){
+            System.out.printf("Tax id: %d", taxDTO.getTaxId());
+        }
+
         model.addAttribute("listProduct", listProduct);
         model.addAttribute("role", role);
         model.addAttribute("date", String.format("%02d/%02d/%04d", date.getDayOfMonth(),  date.getMonth().getValue(), date.getYear()));
@@ -491,26 +498,43 @@ public class InvoiceController {
 
         return "invoice/form-edit-invoice";
     }
-
-    // @PostMapping("/invoice/{invoiceNumber}/add-approver")
-    // public String addApprover(@PathVariable("invoiceNumber") String invoiceNumber,
-    //                           @RequestParam("approverEmail") String approverEmail,
-    //                           RedirectAttributes redirectAttributes) {
-    //     try {
-    //         String decodedInvoiceNumber = invoiceNumber.replace('_', '/');
-    //         Invoice invoice = invoiceService.getInvoiceByInvoiceNumber(decodedInvoiceNumber);
-            
-    //         invoiceService.addApproverToInvoice(invoice.getInvoiceId(), approverEmail);
-            
-    //         redirectAttributes.addFlashAttribute("success", "Approver successfully added.");
-    //     } catch (IllegalStateException ex) {
-    //         redirectAttributes.addFlashAttribute("error", ex.getMessage());
-    //     } catch (Exception ex) {
-    //         redirectAttributes.addFlashAttribute("error", "Failed to add approver: " + ex.getMessage());
-    //     }
-    //     return "redirect:/invoice/" + invoiceNumber.replace('/', '_');
-    // }
     
+    @PostMapping("/invoice/edit")
+    public String editInvoice(@ModelAttribute UpdateInvoiceRequestDTO invoiceDTO, Model model,
+                            @RequestParam(value = "taxOption", required = false) List<Integer> selectedTaxIds,
+                            @RequestParam(value = "base64String",required = false ) MultipartFile imageDataUrl,
+                            RedirectAttributes redirectAttributes) throws IOException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        var user = userAppDb.findByEmail(email);
+        String role = user.getRole().getRole();
+
+        if (imageDataUrl.getSize() != 0){
+            byte[] imageBytes = imageDataUrl.getBytes();
+            String bytesToString = invoiceService.translateByte(imageBytes);
+            invoiceDTO.setSignature(bytesToString);
+        }
+
+        // var check = invoiceService.checkValidityUpdate(invoiceDTO);
+        // var message = check.split(",");
+
+        // if (message[0].equals("errorMessage")){
+        //     redirectAttributes.addFlashAttribute(message[0], message[1]);
+        // } else{
+        var invoiceFromDTO = invoiceMapper.updateInvoiceDTOToInvoice(invoiceDTO);
+        var invoice = invoiceService.updateInvoice(invoiceFromDTO, selectedTaxIds);
+        // redirectAttributes.addFlashAttribute(message[0], message[1]); 
+        // }
+
+        String encodedInvoiceNumber = invoice.getInvoiceNumber().replace("/", "_");
+        // model.addAttribute("successMessage", successMessage);
+        // model.addAttribute("errorMessage", errorMessage);
+        model.addAttribute("email", email);
+        model.addAttribute("role", role);
+        model.addAttribute("image", invoice.getSignature());
+        return String.format("redirect:/invoice/%s", encodedInvoiceNumber);
+    }
+
     @PostMapping("/invoice/{invoiceNumber}/add-approver")
     public String addApprover(@PathVariable("invoiceNumber") String invoiceNumber,
                               @RequestParam Map<String, String> allParams,
@@ -543,111 +567,41 @@ public class InvoiceController {
         return "redirect:/invoice/" + invoiceNumber.replace('/', '_');
     }
     
-    @PostMapping("/invoice/{invoiceNumber}/read-approver")
+    @PostMapping("/invoice/{invoiceNumber}/reassign-approver")
     public String reAddApprover(@PathVariable("invoiceNumber") String invoiceNumber,
                               @RequestParam Map<String, String> allParams,
                               RedirectAttributes redirectAttributes) {
         
-            String decodedInvoiceNumber = invoiceNumber.replace('_', '/');
-            Invoice invoice = invoiceService.getInvoiceByInvoiceNumber(decodedInvoiceNumber);
+        String decodedInvoiceNumber = invoiceNumber.replace('_', '/');
+        Invoice invoice = invoiceService.getInvoiceByInvoiceNumber(decodedInvoiceNumber);
 
-            List<Approval> existingApprovals = new ArrayList<>(invoice.getListApproval());
-            for(Approval existApproval : existingApprovals){
-                var approvalId = existApproval.getApprovalId();
-                approvalService.resetApproval(approvalId);
-            }
-    
-            var oldSize = invoice.getListApproval().size();
-            allParams.forEach((key, value) -> {
-                if (key.startsWith("approverEmail") && !value.isEmpty()) {
-                    var approval = invoiceService.readdApproverToInvoice(invoice.getInvoiceId(), value, oldSize);
-                    approval.setRank(invoice.getListApproval().size()-oldSize);
-                    System.out.printf("Size baru segini %d size lama segini %d\n", invoice.getListApproval().size(), oldSize);
-                    if(approval.getRank()==1){
-                        approval.setShown(true);
-                    }
-                }
-            });
-    
-            invoice.setStatus("Pending Approval");
-            invoiceDb.save(invoice);
-    
-            // Generate notification
-            var firstApprover = invoice.getListApproval().get(oldSize).getEmployee();
-            notificationService.generateInvoiceApproverNotification(firstApprover.getEmail(), invoice.getInvoiceId());
-    
-            redirectAttributes.addFlashAttribute("success", "Approvers successfully added.");
-        
-        // try {
-        //     String decodedInvoiceNumber = invoiceNumber.replace('_', '/');
-        //     Invoice invoice = invoiceService.getInvoiceByInvoiceNumber(decodedInvoiceNumber);
-        //     approvalService.resetApproval(invoice);
-
-        //     System.out.println("approval saat ini");
-        //     for(Approval approval: invoice.getListApproval()){
-        //         System.out.println(approval.getApprovalId());
-        //     }
-    
-        //     var oldSize = invoice.getListApproval().size();
-        //     allParams.forEach((key, value) -> {
-        //         if (key.startsWith("approverEmail") && !value.isEmpty()) {
-        //             var approval = invoiceService.readdApproverToInvoice(invoice.getInvoiceId(), value, oldSize);
-        //             approval.setRank(invoice.getListApproval().size()-oldSize+1);
-        //             System.out.printf("Size baru segini %i size lama segini %i\n", invoice.getListApproval().size(), oldSize);
-        //             if(approval.getRank()==1){
-        //                 approval.setShown(true);
-        //             }
-        //         }
-        //     });
-
-        //     invoice.setStatus("Pending Approval");
-        //     invoiceDb.save(invoice);
-
-        //     // Generate notification
-        //     var firstApprover = invoice.getListApproval().get(oldSize).getEmployee();
-        //     notificationService.generateInvoiceApproverNotification(firstApprover.getEmail(), invoice.getInvoiceId());
-    
-        //     redirectAttributes.addFlashAttribute("success", "Approvers successfully added.");
-        // } catch (IllegalStateException | IllegalArgumentException e) {
-        //     String simplifiedMessage = e.getMessage().replaceAll("java\\.lang\\.(IllegalArgumentException|IllegalStateException): ", "");
-        //     redirectAttributes.addFlashAttribute("error", simplifiedMessage);
-        // } 
-        return "redirect:/invoice/" + invoiceNumber.replace('/', '_');
-    }
-    
-    @PostMapping("/invoice/edit")
-    public String editInvoice(@ModelAttribute UpdateInvoiceRequestDTO invoiceDTO, Model model,
-                            @RequestParam(value = "base64String",required = false ) MultipartFile imageDataUrl,
-                            RedirectAttributes redirectAttributes) throws IOException {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        var user = userAppDb.findByEmail(email);
-        String role = user.getRole().getRole();
-
-        if (imageDataUrl.getSize() != 0){
-            byte[] imageBytes = imageDataUrl.getBytes();
-            String bytesToString = invoiceService.translateByte(imageBytes);
-            invoiceDTO.setSignature(bytesToString);
+        List<Approval> existingApprovals = new ArrayList<>(invoice.getListApproval());
+        for(Approval existApproval : existingApprovals){
+            var approvalId = existApproval.getApprovalId();
+            approvalService.resetApproval(approvalId);
         }
 
-        // var check = invoiceService.checkValidityUpdate(invoiceDTO);
-        // var message = check.split(",");
+        var oldSize = invoice.getListApproval().size();
+        allParams.forEach((key, value) -> {
+            if (key.startsWith("approverEmail") && !value.isEmpty()) {
+                var approval = invoiceService.readdApproverToInvoice(invoice.getInvoiceId(), value, oldSize);
+                approval.setRank(invoice.getListApproval().size()-oldSize);
+                System.out.printf("Size baru segini %d size lama segini %d\n", invoice.getListApproval().size(), oldSize);
+                if(approval.getRank()==1){
+                    approval.setShown(true);
+                }
+            }
+        });
 
-        // if (message[0].equals("errorMessage")){
-        //     redirectAttributes.addFlashAttribute(message[0], message[1]);
-        // } else{
-        var invoiceFromDTO = invoiceMapper.updateInvoiceDTOToInvoice(invoiceDTO);
-        var invoice = invoiceService.updateInvoice(invoiceFromDTO);
-        // redirectAttributes.addFlashAttribute(message[0], message[1]); 
-        // }
+        invoice.setStatus("Pending Approval");
+        invoiceDb.save(invoice);
 
-        String encodedInvoiceNumber = invoice.getInvoiceNumber().replace("/", "_");
-        // model.addAttribute("successMessage", successMessage);
-        // model.addAttribute("errorMessage", errorMessage);
-        model.addAttribute("email", email);
-        model.addAttribute("role", role);
-        model.addAttribute("image", invoice.getSignature());
-        return String.format("redirect:/invoice/%s", encodedInvoiceNumber);
+        // Generate notification
+        var firstApprover = invoice.getListApproval().get(oldSize).getEmployee();
+        notificationService.generateInvoiceApproverNotification(firstApprover.getEmail(), invoice.getInvoiceId());
+
+        redirectAttributes.addFlashAttribute("success", "Approvers successfully added.");
+        return "redirect:/invoice/" + invoiceNumber.replace('/', '_');
     }
 
     @GetMapping("/invoice/{invoiceNumber}/mark-as-paid")

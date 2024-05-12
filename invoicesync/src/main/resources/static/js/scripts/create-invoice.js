@@ -1,7 +1,6 @@
 // Ambil data tax dari backend
 var taxes = [];
 function fetchTaxes() {
-    console.log("Masuk fetch taxes")
     fetch('/api/taxes')
         .then(response => response.json())
         .then(data => {
@@ -60,23 +59,21 @@ function updateSubtotal(priceInput, quantityInput, subtotalInput) {
 }
 
 document.getElementById('totalDiscount').addEventListener('input', function() {
-    updateDiscount();
     countTaxes();
     updateGrandTotalInvoice();
 });
 
-function updateDiscount(){
-    var discount = parseFloat(document.getElementById('totalDiscount').value || 0);
-    var subtotal = parseFloat(document.querySelector('input[name="subtotal"]').value);
-    var currentGrandTotal = subtotal - ((discount/100.0)*subtotal);
-    document.querySelector('input[name="grandTotal"]').value = currentGrandTotal.toFixed(2);
-}
-
 async function countTaxes() {
+    // Ambil tax yang dipilih
     var selectedTaxPercentage = getSelectedTaxPercentage();
-    var amount = document.getElementById("grandTotal").value;
-    var taxTotal = 0;
 
+    // Ambil subtotal dan hitung dengan discountnya
+    var subtotal = document.getElementById("subtotal").value;
+    var discount = parseFloat(document.getElementById('totalDiscount').value || 0);
+    var amount = subtotal - ((discount/100.0)*subtotal);
+
+    // Hitung total taxes (Rp)
+    var taxTotal = 0;
     selectedTaxPercentage.forEach(tax => {
         taxTotal += (tax*amount/100)
     })
@@ -85,13 +82,16 @@ async function countTaxes() {
 
 
 function updateGrandTotalInvoice() {
-    var subtotalElement = document.querySelector('input[name="grandTotal"]').value;
+    var subtotalElement = document.querySelector('input[name="subtotal"]').value;
     var subtotal = parseFloat(subtotalElement || 0);
+
+    var discountElement = document.getElementById('totalDiscount').value
+    var discount = parseFloat(discountElement || 0);
 
     var taxTotalElement = document.querySelector('input[name="taxTotal"]').value;
     var taxTotal = parseFloat(taxTotalElement || 0);
 
-    var total = subtotal + taxTotal;
+    var total = subtotal - ((discount/100.0)*subtotal) + taxTotal;
 
     document.querySelector('input[name="grandTotal"]').value = total.toFixed(2);
 }
@@ -125,10 +125,14 @@ document.getElementById("addRowInvoice").addEventListener("click", function() {
 
     quantityInput.addEventListener('change', function() {
         updateSubtotal(priceInput, this, subtotalInput);
+        countTaxes();
+        updateGrandTotalInvoice();
     });
 
     priceInput.addEventListener('change', function() {
         updateSubtotal(this, quantityInput, subtotalInput);
+        countTaxes();
+        updateGrandTotalInvoice();
     });
 
     var deleteIcon = cellAction.querySelector('.delete-icon');
@@ -229,6 +233,8 @@ document.getElementById("invoiceTableBody").addEventListener("change", function(
         var priceInput = row.querySelector('input[name="productPrice"]');
         var subtotalInput = row.querySelector('input[name="productSubtotal"]');
         updateSubtotal(priceInput, quantityInput, subtotalInput);
+        countTaxes();
+        updateGrandTotalInvoice();
     }
 });
 
@@ -330,7 +336,6 @@ function getAllProduct() {
             subtotal += parseFloat(product.totalPrice);
         });
         document.querySelector('input[name="subtotal"]').value = subtotal.toFixed(2);
-        updateDiscount()
         countTaxes();
         updateGrandTotalInvoice();
     })

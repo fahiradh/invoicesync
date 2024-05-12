@@ -21,7 +21,7 @@
                 <p>Click on the invoice number to view the details.</p>
                 <form class="row align-items-center" th:action="@{/invoices}" method="GET">
                     <div class="col-auto">
-                        <img src="https://cdn.hugeicons.com/icons/filter-horizontal-stroke-rounded.svg" alt="filter-horizontal" width="24" height="24" />
+                        <img th:src="@{/assets/filter-horizontal-stroke-rounded.svg}" alt="filter-horizontal" width="24" height="24" />
                         <label style="margin-bottom:0px" for="filterDropdown">Filter:</label>
                     </div>
                     <div class="col-auto">

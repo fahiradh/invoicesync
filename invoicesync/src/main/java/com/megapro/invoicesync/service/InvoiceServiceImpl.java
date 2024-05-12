@@ -141,6 +141,7 @@ public class InvoiceServiceImpl implements InvoiceService{
         double discount = (invoice.getTotalDiscount()/100.0)*subtotal;
         double afterDiscount = subtotal-discount;
         invoice.setGrandTotal(BigDecimal.valueOf(afterDiscount));
+        invoice.setDiscountTotal(BigDecimal.valueOf(discount));
     }
 
     private void calculateTax(Invoice invoice){
@@ -419,7 +420,7 @@ public List<UserApp> getEligibleApproversForInvoice(Invoice invoice) {
     }
     
     @Override
-    public Invoice updateInvoice(Invoice invoiceFromDTO) {
+    public Invoice updateInvoice(Invoice invoiceFromDTO, List<Integer> selectedTaxIds) {
         Invoice invoice = getInvoiceById(invoiceFromDTO.getInvoiceId());
         Invoice dummy = getDummyInvoice();
         var listProduct = productService.getAllProductDummyInvoice(dummy);
@@ -443,6 +444,12 @@ public List<UserApp> getEligibleApproversForInvoice(Invoice invoice) {
             newListProduct.add(p);
         }
         invoice.setListProduct(newListProduct);
+
+        if(selectedTaxIds == null){
+            invoice.getListTax().clear();
+        } else {
+            invoice.setListTax(taxDb.findAllById(selectedTaxIds));
+        }
         calculateSubtotal(invoice);
         calculateDiscount(invoice);
         calculateTax(invoice);
