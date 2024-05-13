@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.megapro.invoicesync.dto.response.InvoicePerMonthDTO;
 import com.megapro.invoicesync.dto.response.InvoiceStatusCountDTO;
+import com.megapro.invoicesync.dto.response.InvoiceStatusPaymentDTO;
 import com.megapro.invoicesync.dto.response.MonthStatusDTO;
 import com.megapro.invoicesync.dto.response.TopCustomerDTO;
 import com.megapro.invoicesync.dto.response.TopProductDTO;
@@ -133,6 +134,8 @@ public class DashboardRestController {
         return new ResponseEntity<>(response, HttpStatus.OK); // Return the JSON data
     }
 
+    // Dashboard Staff Finance //
+
     @GetMapping("/api/invoice-status")
     @ResponseBody
     public ResponseEntity<List<InvoicesStatusChartDTO>> getInvoiceStatusData(Model model) {
@@ -152,14 +155,15 @@ public class DashboardRestController {
 
     @GetMapping("/api/invoice-status-bar")
     @ResponseBody
-    public ResponseEntity<List<InvoicesStatusChartDTO>> getInvoiceStatusCounts() {
+    public ResponseEntity<List<InvoiceStatusPaymentDTO>> getInvoiceStatusCounts() {
         List<Object[]> rawData = dashboardService.getInvoiceCountsByPaidAndApproved();
-        List<InvoicesStatusChartDTO> response = new ArrayList<>();
+        List<InvoiceStatusPaymentDTO> response = new ArrayList<>();
 
         for (Object[] item : rawData) {
-            String status = (String) item[0]; // Invoice status
-            int count = ((Number) item[1]).intValue(); // Invoice count
-            response.add(new InvoicesStatusChartDTO(status, count));
+            String status = (String) item[0];
+            int paidCount = ((Number) item[1]).intValue();
+            int unpaidCount = ((Number) item[2]).intValue();
+            response.add(new InvoiceStatusPaymentDTO(status, paidCount, unpaidCount));
         }
 
         return new ResponseEntity<>(response, HttpStatus.OK); // Return the JSON response

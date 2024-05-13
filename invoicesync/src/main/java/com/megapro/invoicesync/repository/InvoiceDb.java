@@ -41,6 +41,14 @@ public interface InvoiceDb extends JpaRepository<Invoice, UUID>{
       "GROUP BY CASE WHEN i.status = 'Approved' THEN 'Unpaid' ELSE i.status END")
    List<Object[]> findInvoiceCountsByStatus();
 
+    @Query("SELECT EXTRACT(YEAR FROM i.approvedDate) AS year, EXTRACT(MONTH FROM i.approvedDate) AS month, COUNT(i) AS invoiceCount " +
+       "FROM Invoice i " +
+       "WHERE i.status IN ('Approved', 'Paid') " +
+       "AND i.staffEmail <> 'dummy' " + // Exclude invoices with 'dummy' email
+       "GROUP BY EXTRACT(YEAR FROM i.approvedDate), EXTRACT(MONTH FROM i.approvedDate) " +
+       "ORDER BY year, month")
+    List<Object[]> findMonthlyInvoiceOutbound();
+
    @Query("SELECT SUM(i.grandTotal) FROM Invoice i WHERE i.status = 'Paid'")
    BigDecimal findTotalPaidAmount();
 
@@ -64,12 +72,6 @@ public interface InvoiceDb extends JpaRepository<Invoice, UUID>{
    "ORDER BY month", nativeQuery = true)
    List<Object[]> findMonthlyInvoiceStatusCounts();
 
-   @Query("SELECT EXTRACT(YEAR FROM i.approvedDate) AS year, EXTRACT(MONTH FROM i.approvedDate) AS month, COUNT(i) AS invoiceCount " +
-      "FROM Invoice i " +
-      "WHERE i.status IN ('Approved', 'Paid') " +
-      "GROUP BY EXTRACT(YEAR FROM i.approvedDate), EXTRACT(MONTH FROM i.approvedDate) " +
-      "ORDER BY year, month")
-   List<Object[]> findMonthlyInvoiceOutbound();
 
    @Query("SELECT i.status AS status, COUNT(i) AS count " +
       "FROM Invoice i " +
@@ -78,11 +80,13 @@ public interface InvoiceDb extends JpaRepository<Invoice, UUID>{
       "ORDER BY i.status")
    List<Object[]> findInvoicesByStatus();
 
-   @Query("SELECT i.status AS status, COUNT(i) AS count " +
-      "FROM Invoice i " +
-      "WHERE i.status IN ('Paid', 'Approved') " +
-      "GROUP BY i.status " +
-      "ORDER BY i.status")
+   @Query("SELECT i.status AS status, " +
+       "SUM(CASE WHEN i.status = 'Paid' THEN 1 ELSE 0 END) AS paidCount, " +
+       "SUM(CASE WHEN i.status = 'Approved' THEN 1 ELSE 0 END) AS unpaidCount " +
+       "FROM Invoice i " +
+       "WHERE i.status IN ('Paid', 'Approved') " +
+       "GROUP BY i.status " +
+       "ORDER BY i.status")
    List<Object[]> findInvoiceCountsByPaidAndApproved();
 
    @Query("SELECT EXTRACT(MONTH FROM i.paymentDate) AS month, SUM(i.taxTotal) AS totalTax " +

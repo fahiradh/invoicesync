@@ -67,7 +67,7 @@
       </div>
       <div class="col dashboard-col">
           <div class="dashboard-content">
-              <h4 class="text-center">Invoices with Status Paid and Approved (not yet paid)</h4>
+              <h4 class="text-center">Invoices with Status Paid and Approved (Unpaid)</h4>
               <div id="bar_chart" style="height: 250px;"></div>
           </div>
       </div>
@@ -129,7 +129,7 @@
 
         var options = {
             height: 250,
-            colors: ['#3f2685', '#a0153e'],
+            colors: ['#3f2685', '#a0153e', '#45a5f5', '#ff8f00', '#4caf50', '#f44336'],
             pieSliceTextStyle: {
                 fontSize: 12,
                 italic: true 
@@ -157,54 +157,76 @@
             });
     }
 
-    function drawBarChart(invoiceStatusData){
+    function drawBarChart(invoiceStatusData) {
         var data = new google.visualization.DataTable();
         data.addColumn('string', 'Status');
-        data.addColumn('number', 'Count');
+        data.addColumn('number', 'Paid Invoices');
+        data.addColumn('number', 'Unpaid Invoices');
 
         invoiceStatusData.forEach(function (item) {
-            data.addRow([item.status, item.count]);
+            data.addRow([item.status, item.paidCount, item.unpaidCount]);
         });
 
         var options = {
-            hAxis: { 
-              title: 'Status',
-              textStyle: {
-                  color: '#3f2685', // Change the color of the labels
-                  fontSize: 14, // Change the font size
-                  bold: true // Make the text bold
-              },
-              titleTextStyle: {
-                  color: '#3f2685', // Change the title color
-                  fontSize: 16, // Title font size
-                  bold: true // Bold title
-              }
+            hAxis: {
+                title: 'Status',
+                textStyle: {
+                    color: '#3f2685',
+                    fontSize: 14,
+                    bold: true
+                },
+                titleTextStyle: {
+                    color: '#3f2685',
+                    fontSize: 16,
+                    bold: true
+                }
             },
             vAxis: {
-                    title: 'Number of Invoices',
-                    format: '#', // Use '#' to ensure whole numbers
-                    textStyle: {
-                        color: '#3f2685', // Change the label color
-                        fontSize: 14, // Change the font size
-                    },
-                    titleTextStyle: {
-                        color: '#3f2685', // Change the title color
-                        fontSize: 16, // Title font size
-                        bold: true // Bold title
-                    }
+                title: 'Number of Invoices',
+                format: '#',
+                textStyle: {
+                    color: '#3f2685',
+                    fontSize: 14,
                 },
-            bar: { groupWidth: '30%' },
+                titleTextStyle: {
+                    color: '#3f2685',
+                    fontSize: 16,
+                    bold: true
+                }
+            },
+            bar: {
+                groupWidth: '30%'
+            },
             height: 250,
-            chartArea: { width: '60%', height: '75%' },
+            chartArea: {
+                width: '60%',
+                height: '75%'
+            },
             series: {
                 0: { color: '#3f2685' }, // Paid Invoices
                 1: { color: '#a0153e' } // Unpaid Invoices
-            }     
+            },
+            legend: {
+                position: 'right',
+                alignment: 'end',
+                textStyle: {
+                    color: '#3f2685',
+                    fontSize: 14
+                },
+                titleTextStyle: {
+                    color: '#3f2685',
+                    fontSize: 16,
+                    bold: true
+                }
+            }
         };
 
         var chart = new google.visualization.ColumnChart(document.getElementById('bar_chart'));
         chart.draw(data, options);
     }
+
+
+
 
     function drawTaxLineChart() {
       fetch('/api/tax-gain-chart') // Fetch data from REST endpoint
