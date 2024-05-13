@@ -9,9 +9,11 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.megapro.invoicesync.dto.response.ReadInvoiceResponse;
 import com.megapro.invoicesync.model.Approval;
 import com.megapro.invoicesync.model.Invoice;
 import com.megapro.invoicesync.repository.CustomerDb;
+import com.megapro.invoicesync.repository.EmployeeDb;
 import com.megapro.invoicesync.repository.InvoiceDb;
 import com.megapro.invoicesync.repository.ProductDb;
 
@@ -26,6 +28,9 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Autowired
     ProductDb productDb;
+
+    @Autowired
+    EmployeeDb employeeDb;
     
     @Override
     public List<Object[]> getMonthlyRevenue() {
@@ -100,24 +105,17 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Override
     public int totalInvoiceWaitingApproved(String email) {
-        List<Invoice> allInvoices = invoiceDb.findAll();
+        var employee = employeeDb.findByEmail(email);
+        var approvalList = employee.getListApproval();
         int count = 0;
-
-        for (Invoice inv : allInvoices) {
-            // Check if the invoice is "Approved"
-            if (inv.getStatus() != null && inv.getStatus().equals("Need Approval")) {
-                // Loop through the list of approvals
-                for (Approval approval : inv.getListApproval()) {
-                    // Check if the approver's email matches the given email
-                    if (approval.getEmployee().getEmail().equals(email)) {
-                        count++; // Increment the count
-                        break; // No need to check further for this invoice
-                    }
-                }
+        for(Approval approval : approvalList){
+            if(approval.isShown() && approval.getApprovalStatus().equals("Need Approval")){
+                count++;
             }
         }
 
-        return count; // Return the total count
+        return count;
+
     }
 
     @Override 
