@@ -34,18 +34,24 @@
           </div>
         </div>
     </div>
-
+    <div class="filter-container">
+        <label for="yearSelect">Select Year: </label>
+        <select id="yearSelect">
+        </select>
+    </div>
     <div class="row dashboard-row">
         <div class="col dashboard-col-left">
             <div class="dashboard-content">
               <h4 class="text-center">Total Approved Invoice</h4>
-                <h5 id="totApprovedInvoice" th:text="${countApproved} + ' ' + 'Invoice(s)'" class="theme-color"></h5>
+              <p class="text-center">This figure represents the total number of invoices approved by you for this year.</p>
+                <h5 id="totalApprovedInvoice" class="theme-color text-center"></h5>
             </div>
         </div>
         <div class="col dashboard-col">
             <div class="dashboard-content">
               <h4 class="text-center">Total Invoice Need Approval</h4>
-                <h5 id="totInvoiceNeedApproval;" th:text="${countWaitingApproval} + ' ' +'Invoice(s)'" class="theme-color"></h5>
+              <p class="text-center">This figure represents the total number of invoices that needs your approval for this year.</p>
+                <h5 id="totalInvoiceNeedApproval" class="theme-color text-center"></h5>
             </div>
         </div>
     </div>
@@ -54,6 +60,7 @@
       <div class="col dashboard-col">
           <div class="dashboard-content">
               <h4 class="text-center">Outbound Invoices</h4>
+              <p class="text-center">This figure represents the total number of invoices that have been sent out to clients this year.</p>
               <div id="bar_chart"></div>
           </div>
       </div>
@@ -80,11 +87,78 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         google.charts.load('current', {'packages':['corechart']});
-        google.charts.setOnLoadCallback(fetchAndDrawChart);
+        fetchYears();
+        // google.charts.setOnLoadCallback(fetchAndDrawChart);
     });
 
+    function fetchYears() {
+        fetch('/api/dashboard/years')
+            .then(response => response.json())
+            .then(years => {
+                const yearSelect = document.getElementById('yearSelect');
+                years.forEach(year => {
+                    const option = document.createElement('option');
+                    option.value = year;
+                    option.textContent = year;
+                    yearSelect.appendChild(option);
+                });
+                fetchTotalApproved();
+                fetchWaitingApproval();
+                fetchAndDrawChart();
+                setEventListeners();
+            })
+            .catch(error => console.error('Error loading years:', error));
+    }
+
+    function setEventListeners() {
+        document.getElementById('yearSelect').addEventListener('change', function() {
+            fetchTotalApproved();
+            fetchWaitingApproval();
+            fetchAndDrawChart();
+        });
+    }
+
+    function fetchTotalApproved() {
+        const selectedYear = document.getElementById('yearSelect').value;
+        const url = `/api/dashboard/count-approved` + (selectedYear ? `?year=${selectedYear}` : '');
+
+        fetch(url, { cache: "no-store" })
+            .then(response => response.json())
+            .then(data => {
+                if (data === 1 || data === 0) {
+                    document.getElementById('totalApprovedInvoice').textContent = data + " invoice";
+                } else {
+                    document.getElementById('totalApprovedInvoice').textContent = data + " invoices";
+                }
+            })
+            .catch(error => {
+                console.error('Failed to fetch total approved number', error);
+            });
+    }
+
+    function fetchWaitingApproval() {
+        const selectedYear = document.getElementById('yearSelect').value;
+        const url = `/api/dashboard/waiting-approval` + (selectedYear ? `?year=${selectedYear}` : '');
+
+        fetch(url, { cache: "no-store" })
+            .then(response => response.json())
+            .then(data => {
+                if (data === 1 || data === 0) {
+                    document.getElementById('totalInvoiceNeedApproval').textContent = data + " invoice";
+                } else {
+                    document.getElementById('totalInvoiceNeedApproval').textContent = data + " invoices";
+                }
+            })
+            .catch(error => {
+                console.error('Failed to fetch waiting approval number:', error);
+            });
+    }
+
     function fetchAndDrawChart() {
-        fetch('/api/outbound-invoices') // Fetch data from REST endpoint
+        const selectedYear = document.getElementById('yearSelect').value;
+        const url = `/api/dashboard/outbound-invoices` + (selectedYear ? `?year=${selectedYear}` : '');
+
+        fetch(url, { cache : "no-store"}) // Fetch data from REST endpoint
             .then(response => response.json())
             .then(data => {
                 if (!Array.isArray(data)) {

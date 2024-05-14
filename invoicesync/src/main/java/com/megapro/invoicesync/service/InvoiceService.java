@@ -33,10 +33,10 @@ public interface InvoiceService {
     String parseDate(LocalDate localDate);
     String checkValidity(CreateInvoiceRequestDTO invoiceDTO, List<Integer> selectedTaskIds, String email);
     String checkValidityUpdate(UpdateInvoiceRequestDTO invoiceDTO);
-    public List<ApproverDisplay> getApproverDisplaysForInvoice(Invoice invoice);
+    List<ApproverDisplay> getApproverDisplaysForInvoice(Invoice invoice);
     Invoice updateInvoice(Invoice invoiceFromDTO, List<Integer> selectedTaxIds);
     void addApproverToInvoice(UUID invoiceId, String email);
     Approval readdApproverToInvoice(UUID invoiceId, String email, int oldSize);
-    public List<UserApp> getEligibleApproversForInvoice(Invoice invoice);
-    public void save(Invoice invoice);
+    List<UserApp> getEligibleApproversForInvoice(Invoice invoice);
+    void save(Invoice invoice);
 }

@@ -32,17 +32,23 @@
           </div>
       </div>
   </div>
+  <div class="filter-container">
+        <label for="yearSelect">Select Year: </label>
+        <select id="yearSelect">
+        </select>
+    </div>
   <div class="row dashboard-row">
     <div class="col dashboard-col-left">
         <div class="dashboard-content">
             <h4 class="text-center mb-3">Your Latest Approved Invoices</h4>
-    
+            <p class="text-center">This table represents 5 of your latest approved invoices.</p>
             <div id="latest_invoice_table" style="height: 150px;"></div>
         </div>
     </div>
     <div class="col dashboard-col">
         <div class="dashboard-content">
             <h4 class="text-center">Invoices You Need to Revise</h4>
+            <p class="text-center">This table represents 5 of your latest need revision invoices.</p>
             <div id="latest_revision_table" style="height: 150px;"></div>
         </div>
     </div>
@@ -52,6 +58,7 @@
     <div class="col dashboard-col">
         <div class="dashboard-content">
             <h4 class="text-center">Invoices Due Soon</h4>
+            <p class="text-center">This table represents 5 of your due soon invoices.</p>
             <div id="due_invoice_table" style="height: 150px;"></div>
         </div>
     </div>
@@ -67,8 +74,34 @@
   </script>
   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   <script>
-    google.charts.load('current', {'packages':['table']});
-    google.charts.setOnLoadCallback(drawTable);
+
+document.addEventListener('DOMContentLoaded', function () {
+        google.charts.load('current', {'packages':['table']});
+        fetchYears();
+    });
+
+    function fetchYears() {
+        fetch('/api/dashboard/years')
+            .then(response => response.json())
+            .then(years => {
+                const yearSelect = document.getElementById('yearSelect');
+                years.forEach(year => {
+                    const option = document.createElement('option');
+                    option.value = year;
+                    option.textContent = year;
+                    yearSelect.appendChild(option);
+                });
+                drawTable()
+                setEventListeners();
+            })
+            .catch(error => console.error('Error loading years:', error));
+    }
+
+    function setEventListeners() {
+        document.getElementById('yearSelect').addEventListener('change', function() {
+            drawTable()
+        });
+    }
 
     function drawTable() {
         drawTableLatestApproved();
@@ -77,7 +110,10 @@
     }
 
     function drawTableLatestApproved() {
-        fetch('/api/invoices/latest-approved')
+        const selectedYear = document.getElementById('yearSelect').value;
+        const url = `/api/dashboard/latest-approved` + (selectedYear ? `?year=${selectedYear}` : '');
+
+        fetch(url, {cache : "no-store"})
         .then(response => response.json())
         .then(data => {
             if(data.length === 0) {
@@ -126,7 +162,10 @@
     }
 
     function drawTableNeedRevision() {
-        fetch('/api/invoices/latest-need-revision')
+        const selectedYear = document.getElementById('yearSelect').value;
+        const url = `/api/dashboard/latest-need-revision` + (selectedYear ? `?year=${selectedYear}` : '');
+
+        fetch(url, {cache : "no-store"})
         .then(response => response.json())
         .then(data => {
             if (data.length === 0 ) {
@@ -171,7 +210,10 @@
     }
 
     function drawTableDue() {
-        fetch('/api/invoices/due-by-email')
+        const selectedYear = document.getElementById('yearSelect').value;
+        const url = `/api/dashboard/due-by-email` + (selectedYear ? `?year=${selectedYear}` : '');
+
+        fetch(url, {cache : "no-store"})
         .then(response => response.json())
         .then(data => {
             if (data.length === 0 ) {

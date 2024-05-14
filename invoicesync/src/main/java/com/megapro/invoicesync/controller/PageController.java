@@ -7,13 +7,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import com.megapro.invoicesync.dto.request.CreateUserAppRequestDTO;
 import com.megapro.invoicesync.repository.EmployeeDb;
 import com.megapro.invoicesync.repository.UserAppDb;
 import com.megapro.invoicesync.service.NotificationService;
 import com.megapro.invoicesync.service.DashboardService;
-
-import java.util.List;
 
 @Controller
 public class PageController {
@@ -29,13 +26,6 @@ public class PageController {
 
     @Autowired
     DashboardService dashboardService;
-
-    @GetMapping("/top-products")
-    public String topProducts(Model model) {
-        List<Object[]> topProducts = dashboardService.getTopProductsByQuantityOrdered();
-        model.addAttribute("topProducts", topProducts);
-        return "dashboard/finance-director/top-products.html";
-    }
 
     @GetMapping("/home")
     public String home(Model model){
@@ -81,10 +71,6 @@ public class PageController {
             } else {
                 model.addAttribute("showModal", "false");
             }
-            var countApproved  = dashboardService.totalInvoiceApproved(email);
-            var countWaitingApproval = dashboardService.totalInvoiceWaitingApproved(email);
-            model.addAttribute("countApproved", countApproved);
-            model.addAttribute("countWaitingApproval", countWaitingApproval);
             return "home/home-exc-non-finance.html";
 
         } else if (role.equals("Finance Director") ) {
@@ -93,14 +79,6 @@ public class PageController {
             } else {
                 model.addAttribute("showModal", "false");
             }
-            var invoicePaidAmount = dashboardService.getInvoicePaidAmount();
-            var invoiceUnpaidAmount = dashboardService.getInvoiceUnpaidAmount();
-            var invoiceOverdueAmount = dashboardService.getInvoiceOverdueAmount();
-
-            model.addAttribute("invoicePaidAmount", invoicePaidAmount);
-            model.addAttribute("invoiceUnpaidAmount", invoiceUnpaidAmount);
-            model.addAttribute("invoiceOverdueAmount", invoiceOverdueAmount);
-
             return "home/home-exc-finance.html";
             
         } else if (role.equals("Finance Manager")) {
@@ -109,14 +87,6 @@ public class PageController {
             } else {
                 model.addAttribute("showModal", "false");
             }
-            var invoicePaidAmount = dashboardService.getInvoicePaidAmount();
-            var invoiceUnpaidAmount = dashboardService.getInvoiceUnpaidAmount();
-            var invoiceOverdueAmount = dashboardService.getInvoiceOverdueAmount();
-
-            model.addAttribute("invoicePaidAmount", invoicePaidAmount);
-            model.addAttribute("invoiceUnpaidAmount", invoiceUnpaidAmount);
-            model.addAttribute("invoiceOverdueAmount", invoiceOverdueAmount);
-
             return "home/home-manager-finance.html";
             
         } else {

@@ -33,46 +33,54 @@
                 </div>
             </div>
         </div>
+        <div class="filter-container">
+            <label for="yearSelect">Select Year: </label>
+            <select id="yearSelect">
+            </select>
+        </div>
         <div class="row dashboard-row">
             <div class="col dashboard-col">
                 <div class="dashboard-content">
-                    <h4>Total Paid Amount</h4>
-                    <h5 id="formattedPaidAmount" th:text="${invoicePaidAmount}" class="theme-color"></h5>
+                    <h4 class="text-center">Total Paid Amount</h4>
+                    <p class="text-center">This figure represents the paid amount of invoices issued this year.</p>
+                    <h5 id="formattedPaidAmount" class="theme-color text-center"></h5>
                 </div>
             </div>
             <div class="col dashboard-col-middle">
                 <div class="dashboard-content">
-                    <h4>Total Unpaid Amount</h4>
-                    <h5 id="formattedUnpaidAmount" th:text="${invoiceUnpaidAmount}" class="theme-color"></h5>
+                    <h4 class="text-center">Total Unpaid Amount</h4>
+                    <p class="text-center">This figure represents the unpaid amount of invoices issued this year.</p>
+                    <h5 id="formattedUnpaidAmount" class="theme-color text-center"></h5>
                 </div>
             </div>
             <div class="col dashboard-col">
                 <div class="dashboard-content">
-                    <h4>Total Overdue Amount</h4>
-                    <h5 id="formattedOverdueAmount" th:text="${invoiceOverdueAmount}" class="theme-color"></h5>
+                    <h4 class="text-center">Total Overdue Amount</h4>
+                    <p class="text-center">This figure represents the overdue amount of invoices issued this year.</p>
+                    <h5 id="formattedOverdueAmount" class="theme-color text-center"></h5>
                 </div>
             </div>
         </div>
         <div class="row dashboard-row">
-            <!-- Number of Invoices per Month -->
             <div class="col dashboard-col">
                 <div class="dashboard-content">
                     <h4 class="text-center">Number of Invoices per Month</h4>
+                    <p class="text-center">This figure represents the number of invoice issued each month of this year.</p>
                     <div id="chart_invoice" style="width: 100%; height: 500px;"></div>
                 </div>
             </div>
-            <!-- Number of Invoices by Payment Status -->
             <div class="col dashboard-col-middle">
                 <div class="dashboard-content">
                     <h4 class="text-center">Total Tax Gain</h4>
+                    <p class="text-center">This figure represents the amount of taxes gained from paid invoices each month of this year.</p>
                     <div id="chart_tax" style="width: 100%; height: 500px;"></div>
                 </div>
             </div>
-            <!-- Total Tax Gain -->
             <div class="col dashboard-col">
                 <div class="dashboard-content">
                     <h4 class="text-center">Number of Invoices by Payment Status</h4>
-                    <div id="chart_status" style="width: 100%; height: 500px;"></div> <!-- Notice the corrected id 'chart_div3' -->
+                    <p class="text-center">This figure represents the number of paid and unpaid invoices each month of this year.</p>
+                    <div id="chart_status" style="width: 100%; height: 500px;"></div> 
                 </div>
             </div>
         </div>
@@ -94,7 +102,10 @@
 
     <script type="text/javascript">
         google.charts.load('current', {'packages':['corechart']});
-        google.charts.setOnLoadCallback(drawCharts);
+
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchYears();
+        });
 
         function drawCharts() {
             drawChartNumber();
@@ -102,8 +113,88 @@
             drawChartTax();
         }
 
+        function fetchYears() {
+            fetch('/api/dashboard/years')
+                .then(response => response.json())
+                .then(years => {
+                    const yearSelect = document.getElementById('yearSelect');
+                    years.forEach(year => {
+                        const option = document.createElement('option');
+                        option.value = year;
+                        option.textContent = year;
+                        yearSelect.appendChild(option);
+                    });
+                    fetchPaidAmount();
+                    fetchUnpaidAmount();
+                    fetchOverdueAmount();
+                    drawCharts();
+                    setEventListeners();
+                })
+                .catch(error => console.error('Error loading years:', error));
+        }
+
+        function setEventListeners() {
+            document.getElementById('yearSelect').addEventListener('change', function() {
+                fetchPaidAmount(); 
+                fetchUnpaidAmount();
+                fetchOverdueAmount();
+                drawCharts();
+            });
+        }
+
+        function fetchPaidAmount() {
+            const selectedYear = document.getElementById('yearSelect').value;
+            const url = `/api/dashboard/paid-amount` + (selectedYear ? `?year=${selectedYear}` : '');
+
+            fetch(url, { cache: "no-store" })
+                .then(response => response.json())
+                .then(data => {
+                    const formattedPaidAmount = document.getElementById('formattedPaidAmount');
+                    formattedPaidAmount.textContent = formatAmount(data);
+                })
+                .catch(error => {
+                    console.error('Failed to fetch paid amount', error);
+                    document.getElementById('formattedPaidAmount').textContent = 'Rp0,00';
+                });
+        }
+
+        function fetchUnpaidAmount() {
+            const selectedYear = document.getElementById('yearSelect').value;
+            const url = `/api/dashboard/unpaid-amount` + (selectedYear ? `?year=${selectedYear}` : '');
+
+            fetch(url, { cache: "no-store" })
+                .then(response => response.json())
+                .then(data => {
+                    const formattedUnpaidAmount = document.getElementById('formattedUnpaidAmount');
+                    formattedUnpaidAmount.textContent = formatAmount(data);
+                })
+                .catch(error => {
+                    console.error('Failed to fetch unpaid amount', error);
+                    document.getElementById('formattedUnpaidAmount').textContent = 'Rp0,00';
+                });
+        }
+
+        function fetchOverdueAmount() {
+            const selectedYear = document.getElementById('yearSelect').value;
+            const url = `/api/dashboard/overdue-amount` + (selectedYear ? `?year=${selectedYear}` : '');
+
+            fetch(url, { cache: "no-store" })
+                .then(response => response.json())
+                .then(data => {
+                    const formattedOverdueAmount = document.getElementById('formattedOverdueAmount');
+                    formattedOverdueAmount.textContent = formatAmount(data);
+                })
+                .catch(error => {
+                    console.error('Failed to fetch overdue amount', error);
+                    document.getElementById('formattedOverdueAmount').textContent = 'Rp0,00';
+                });
+        }
+
         function drawChartNumber() {
-            fetch('/api/dashboard/invoices-per-month')
+            const selectedYear = document.getElementById('yearSelect').value;
+            const url = `/api/dashboard/invoices-per-month` + (selectedYear ? `?year=${selectedYear}` : '');
+
+            fetch(url, { cache : "no-store"})
                 .then(response => response.json())
                 .then(data => {
                     if (data.length === 0) {
@@ -134,7 +225,10 @@
         }
 
         function drawChartStatus() {
-            fetch('/api/invoices/status-per-month')
+            const selectedYear = document.getElementById('yearSelect').value;
+            const url = `/api/invoices/status-per-month` + (selectedYear ? `?year=${selectedYear}` : '');
+            
+            fetch(url, { cache : "no-store" })
                 .then(response => response.json())
                 .then(data => {
                     if (data.length === 0) {
@@ -169,7 +263,10 @@
         }
 
         function drawChartTax() {
-            fetch('/api/tax-gain-chart') 
+            const selectedYear = document.getElementById('yearSelect').value;
+            const url = `/api/dashboard/tax-gain-chart` + (selectedYear ? `?year=${selectedYear}` : '');
+            
+            fetch(url, { cache : "no-store" }) 
                 .then(response => {
                     if (!response.ok) {
                         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -219,29 +316,17 @@
             var chart = new google.visualization.LineChart(document.getElementById('chart_tax'));
             chart.draw(data, options);
         }
-
-        document.addEventListener('DOMContentLoaded', function() {
-        formatAmount('formattedPaidAmount');
-        formatAmount('formattedUnpaidAmount');
-        formatAmount('formattedOverdueAmount');
         
-        });
-
-        function formatAmount(elementId) {
-            const element = document.getElementById(elementId);
-            const amount = parseFloat(element.textContent);
-            if (isNaN(amount)) {
-                element.textContent = 'Rp0,00';
-                return;
+        function formatAmount(value) {
+            if (isNaN(value)) {
+                return 'Rp0,00';
             }
-
             const formatter = new Intl.NumberFormat('id-ID', {
                 style: 'currency',
                 currency: 'IDR',
                 minimumFractionDigits: 2
             });
-
-            element.textContent = formatter.format(amount);
+            return formatter.format(value);
         }
     </script>
 

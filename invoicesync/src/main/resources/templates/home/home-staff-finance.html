@@ -33,17 +33,23 @@
           </div>
         </div>
     </div>
-
+    <div class="filter-container">
+        <label for="yearSelect">Select Year: </label>
+        <select id="yearSelect">
+        </select>
+    </div>
     <div class="row dashboard-row">
       <div class="col dashboard-col-left">
           <div class="dashboard-content">
               <h4 class="text-center">Latest Invoice Created</h4>
+              <p>This table shows 5 latest created invoices this year.</p>
               <div id="latest_invoice_table" style="height: 150px;"></div>
           </div>
       </div>
       <div class="col dashboard-col">
           <div class="dashboard-content">
               <h4 class="text-center">Invoice Due Soon</h4>
+              <p>This table shows 5 due soon invoices this year.</p>
               <div id="due_invoice_table" style="height: 150px;"></div>
           </div>
       </div>
@@ -53,6 +59,7 @@
       <div class="col dashboard-col">
           <div class="dashboard-content">
               <h4 class="text-center">Total Tax Gain</h4>
+              <p class="text-center">This figure represents the amount of taxes gained from paid invoices each month of this year.</p>
               <div id="line_chart"></div>
           </div>
       </div>
@@ -62,12 +69,14 @@
       <div class="col dashboard-col-left">
           <div class="dashboard-content">
               <h4 class="text-center">All Invoice Status</h4>
+              <p class="text-center">This figure represents the percentage of invoices status this year.</p>
               <div id="pie_chart" style="height: 250px;"></div>
           </div>
       </div>
       <div class="col dashboard-col">
           <div class="dashboard-content">
-              <h4 class="text-center">Invoices with Status Paid and Approved (Unpaid)</h4>
+              <h4 class="text-center">Invoices with Status Paid and Approved (not yet paid)</h4>
+              <p class="text-center">This figure represents the number of paid and unpaid invoices this year.</p>
               <div id="bar_chart" style="height: 250px;"></div>
           </div>
       </div>
@@ -88,7 +97,11 @@
     google.charts.load('current', {
         'packages':['corechart', 'line', 'table']
     });
-    google.charts.setOnLoadCallback(drawCharts);
+    // google.charts.setOnLoadCallback(drawCharts);
+
+    document.addEventListener('DOMContentLoaded', function() {
+        fetchYears();
+    });
 
     function drawCharts() {
         drawTaxLineChart();
@@ -98,12 +111,38 @@
         drawDueInvoiceTable();
     }
 
+    function fetchYears() {
+        fetch('/api/dashboard/years')
+            .then(response => response.json())
+            .then(years => {
+                const yearSelect = document.getElementById('yearSelect');
+                years.forEach(year => {
+                    const option = document.createElement('option');
+                    option.value = year;
+                    option.textContent = year;
+                    yearSelect.appendChild(option);
+                });
+                drawCharts();
+                setEventListeners();
+            })
+            .catch(error => console.error('Error loading years:', error));
+    }
+
+    function setEventListeners() {
+        document.getElementById('yearSelect').addEventListener('change', function() {
+            drawCharts();
+        });
+    }
+
     function formatCurrency(amount) {
         return 'Rp' + amount.toLocaleString('id-ID');
     }
 
     function drawInvoicePieChart() {
-        fetch('/api/invoice-status') // Fetch data from REST endpoint
+        const selectedYear = document.getElementById('yearSelect').value;
+        const url = `/api/dashboard/invoice-status` + (selectedYear ? `?year=${selectedYear}` : '');
+        
+        fetch(url, {cache : "no-store"}) // Fetch data from REST endpoint
             .then(response => response.json())
             .then(data => {
                 if (data.length === 0) {
@@ -141,7 +180,10 @@
     }
 
     function drawInvoiceBarChart() {
-        fetch('/api/invoice-status-bar') // Fetch data from the REST endpoint
+        const selectedYear = document.getElementById('yearSelect').value;
+        const url = `/api/dashboard/invoice-status-bar` + (selectedYear ? `?year=${selectedYear}` : '');
+
+        fetch(url, {cache : "no-store"}) // Fetch data from the REST endpoint
             .then(response => response.json())
             .then(data => {
                 if (data.length === 0) {
@@ -225,28 +267,28 @@
         chart.draw(data, options);
     }
 
-
-
-
     function drawTaxLineChart() {
-      fetch('/api/tax-gain-chart') // Fetch data from REST endpoint
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            return response.json(); // Convert to JSON
-        })
-        .then(taxData => {
-            if (taxData.length === 0) { // No data scenario
-                document.getElementById('line_chart').innerHTML = '<div class="text-center">No data available in the system</div>';  
-                return; // Exit early
-            }
+        const selectedYear = document.getElementById('yearSelect').value;
+        const url = `/api/dashboard/tax-gain-chart` + (selectedYear ? `?year=${selectedYear}` : '');
 
-            drawLineChart(taxData); // Draw the chart with data
-        })
-        .catch(error => {
-            console.error("Error fetching tax gain data:", error);
-        });
+        fetch(url, { cache : "no-store"}) // Fetch data from REST endpoint
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json(); // Convert to JSON
+            })
+            .then(taxData => {
+                if (taxData.length === 0) { // No data scenario
+                    document.getElementById('line_chart').innerHTML = '<div class="text-center">No data available in the system</div>';  
+                    return; // Exit early
+                }
+
+                drawLineChart(taxData); // Draw the chart with data
+            })
+            .catch(error => {
+                console.error("Error fetching tax gain data:", error);
+            });
     }
 
     function drawLineChart(taxData) {
@@ -301,7 +343,10 @@
     }
 
     function drawNewestInvoiceTable() {
-        fetch('/api/newest-five-invoices') // Fetch data from the REST endpoint
+        const selectedYear = document.getElementById('yearSelect').value;
+        const url = `/api/dashboard/newest-five-invoices` + (selectedYear ? `?year=${selectedYear}` : '');
+        
+        fetch(url, { cache : "no-store"}) // Fetch data from the REST endpoint
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
@@ -324,7 +369,7 @@
     function drawNewestTable(topFiveInvoices) {
         var data = new google.visualization.DataTable(); // Create DataTable
         data.addColumn('string', 'Invoice Number'); // Define columns
-        data.addColumn('string', 'Date');
+        data.addColumn('string', 'Invoice Date');
         data.addColumn('string', 'Customer');
         data.addColumn('string', 'Grand Total');
 
@@ -359,7 +404,10 @@
       }
 
       function drawDueInvoiceTable() {
-        fetch('/api/closest-due-five-invoices') // Fetch data from the REST endpoint
+        const selectedYear = document.getElementById('yearSelect').value;
+        const url = `/api/dashboard/closest-due-five-invoices` + (selectedYear ? `?year=${selectedYear}` : '');
+
+        fetch(url, { cache : "no-store"}) // Fetch data from the REST endpoint
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);

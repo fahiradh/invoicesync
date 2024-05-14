@@ -28,92 +28,113 @@ public interface InvoiceDb extends JpaRepository<Invoice, UUID>{
    List<Invoice> findByEmployeeRoleNameAndStatus(String roleName, String status);
    Optional<Invoice> findByInvoiceNumber(String invoiceNumber);
 
+   // Dashboard finance director
    @Query("SELECT EXTRACT(MONTH FROM i.paymentDate) as month, SUM(i.grandTotal - i.taxTotal) as netRevenue " +
       "FROM Invoice i " +
-      "WHERE i.status = 'Paid' " +
+      "WHERE i.status = 'Paid' AND EXTRACT(YEAR FROM i.paymentDate) = :year "  +
       "GROUP BY EXTRACT(MONTH FROM i.paymentDate) " +
       "ORDER BY month")
-   List<Object[]> findMonthlyRevenue();
+   List<Object[]> findMonthlyRevenue(@Param("year") int year);
 
    @Query("SELECT CASE WHEN i.status = 'Approved' THEN 'Unpaid' ELSE i.status END AS status, COUNT(i) " +
       "FROM Invoice i " +
-      "WHERE i.status IN ('Paid', 'Approved') " +
+      "WHERE i.status IN ('Paid', 'Approved') AND EXTRACT(YEAR FROM i.invoiceDate) = :year " +
       "GROUP BY CASE WHEN i.status = 'Approved' THEN 'Unpaid' ELSE i.status END")
-   List<Object[]> findInvoiceCountsByStatus();
+   List<Object[]> findInvoiceCountsByStatus(@Param("year") int year);
 
-    @Query("SELECT EXTRACT(YEAR FROM i.approvedDate) AS year, EXTRACT(MONTH FROM i.approvedDate) AS month, COUNT(i) AS invoiceCount " +
-       "FROM Invoice i " +
-       "WHERE i.status IN ('Approved', 'Paid') " +
-       "AND i.staffEmail <> 'dummy' " + // Exclude invoices with 'dummy' email
-       "GROUP BY EXTRACT(YEAR FROM i.approvedDate), EXTRACT(MONTH FROM i.approvedDate) " +
-       "ORDER BY year, month")
-    List<Object[]> findMonthlyInvoiceOutbound();
+   @Query("SELECT SUM(i.grandTotal) FROM Invoice i WHERE i.status = 'Paid' AND EXTRACT(YEAR FROM i.invoiceDate) = :year")
+   BigDecimal findTotalPaidAmount(@Param("year") int year);
 
-   @Query("SELECT SUM(i.grandTotal) FROM Invoice i WHERE i.status = 'Paid'")
-   BigDecimal findTotalPaidAmount();
+   @Query("SELECT SUM(i.grandTotal) FROM Invoice i WHERE i.status = 'Approved' AND EXTRACT(YEAR FROM i.invoiceDate) = :year")
+   BigDecimal findTotalUnpaidAmount(@Param("year") int year);
 
-   @Query("SELECT SUM(i.grandTotal) FROM Invoice i WHERE i.status = 'Approved'")
-   BigDecimal findTotalUnpaidAmount();
-
-   @Query("SELECT SUM(i.grandTotal) FROM Invoice i WHERE i.dueDate < :today AND i.status = 'Unpaid'")
-   BigDecimal findTotalOverdueAmount(@Param("today") LocalDate today);
+   @Query("SELECT SUM(i.grandTotal) FROM Invoice i WHERE i.dueDate < :today AND i.status = 'Approved' AND EXTRACT(YEAR FROM i.invoiceDate) = :year")
+   BigDecimal findTotalOverdueAmount(@Param("today") LocalDate today, @Param("year") int year);
 
    @Query("SELECT EXTRACT(MONTH FROM i.invoiceDate) AS month, COUNT(*) " +
          "FROM Invoice i " +
-         "WHERE i.staffEmail <> 'dummy'" +
+         "WHERE i.staffEmail <> 'dummy' AND EXTRACT(YEAR FROM i.invoiceDate) = :year " +
          "GROUP BY EXTRACT(MONTH FROM i.invoiceDate) " +
          "ORDER BY month")
-   List<Object[]> findMonthlyInvoiceCounts();
+   List<Object[]> findMonthlyInvoiceCounts(@Param("year") int year);
 
    @Query(value = "SELECT EXTRACT(MONTH FROM i.invoice_date) AS month, i.status, COUNT(i) " +
    "FROM Invoice i " +
-   "WHERE i.status IN ('Paid', 'Approved') " +
+   "WHERE i.status IN ('Paid', 'Approved') AND EXTRACT(YEAR FROM i.invoice_date) = :year " +
    "GROUP BY EXTRACT(MONTH FROM i.invoice_date), i.status " +
    "ORDER BY month", nativeQuery = true)
-   List<Object[]> findMonthlyInvoiceStatusCounts();
+   List<Object[]> findMonthlyInvoiceStatusCounts(@Param("year") int year);
 
+   @Query("SELECT EXTRACT(YEAR FROM i.approvedDate) AS year, EXTRACT(MONTH FROM i.approvedDate) AS month, COUNT(i) AS invoiceCount " +
+      "FROM Invoice i " +
+      "WHERE i.status IN ('Approved', 'Paid') AND EXTRACT(YEAR FROM i.approvedDate) = :year " +
+      "GROUP BY EXTRACT(YEAR FROM i.approvedDate), EXTRACT(MONTH FROM i.approvedDate) " +
+      "ORDER BY year, month")
+   List<Object[]> findMonthlyInvoiceOutbound(@Param("year") int year);
 
    @Query("SELECT i.status AS status, COUNT(i) AS count " +
       "FROM Invoice i " +
-      "WHERE i.staffEmail <> 'dummy' " + // Exclude records with 'dummy' email
+      "WHERE i.staffEmail <> 'dummy' AND EXTRACT(YEAR FROM i.invoiceDate) = :year " + // Exclude records with 'dummy' email
       "GROUP BY i.status " +
       "ORDER BY i.status")
-   List<Object[]> findInvoicesByStatus();
+   List<Object[]> findInvoicesByStatus(@Param("year") int year);
 
    @Query("SELECT i.status AS status, " +
        "SUM(CASE WHEN i.status = 'Paid' THEN 1 ELSE 0 END) AS paidCount, " +
        "SUM(CASE WHEN i.status = 'Approved' THEN 1 ELSE 0 END) AS unpaidCount " +
        "FROM Invoice i " +
-       "WHERE i.status IN ('Paid', 'Approved') " +
+       "WHERE i.status IN ('Paid', 'Approved') AND EXTRACT(YEAR FROM i.invoiceDate) = :year " +
        "GROUP BY i.status " +
        "ORDER BY i.status")
-   List<Object[]> findInvoiceCountsByPaidAndApproved();
+   List<Object[]> findInvoiceCountsByPaidAndApproved(@Param("year") int year);
 
    @Query("SELECT EXTRACT(MONTH FROM i.paymentDate) AS month, SUM(i.taxTotal) AS totalTax " +
       "FROM Invoice i " +
-      "WHERE i.status = 'Paid' " +
+      "WHERE i.status = 'Paid' AND EXTRACT(YEAR FROM i.paymentDate) = :year " +
       "GROUP BY EXTRACT(MONTH FROM i.paymentDate) " +
       "ORDER BY month")
-   List<Object[]> findTotalTaxByMonth();
+   List<Object[]> findTotalTaxByMonth(@Param("year") int year);
 
-   @Query("SELECT i FROM Invoice i WHERE i.staffEmail <> 'dummy' ORDER BY i.invoiceDate DESC")
-   List<Invoice> findTopFiveNewestInvoices();
+   @Query(value = "SELECT * FROM Invoice i WHERE i.staff_email <> 'dummy' AND EXTRACT(YEAR FROM i.invoice_date) = :year ORDER BY i.invoice_date DESC LIMIT 5", nativeQuery = true)
+   List<Invoice> findTopFiveNewestInvoices(@Param("year") int year);
 
-   @Query("SELECT i FROM Invoice i " +
-      "WHERE i.status <> 'Paid' " + // Exclude invoices with status 'Paid'
-      "ORDER BY ABS(i.dueDate - :today) ASC") // Order by closest due date
-   List<Invoice> findTopFiveClosestDueDate(@Param("today") LocalDate today);
+   @Query(value = "SELECT * FROM Invoice i " +
+           "WHERE i.status <> 'Paid' AND EXTRACT(YEAR FROM i.invoice_date) = :year " + // Exclude invoices with status 'Paid'
+           "ORDER BY ABS(i.due_date - :today) ASC LIMIT 5", nativeQuery = true) // Order by closest due date
+   List<Invoice> findTopFiveClosestDueDate(@Param("today") LocalDate today, @Param("year") int year);
 
-   @Query("SELECT i FROM Invoice i WHERE i.staffEmail = ?1 AND i.status = 'Approved' ORDER BY i.approvedDate DESC")
-   List<Invoice> findTop5ApprovedInvoicesByStaffEmail(String staffEmail);
+   @Query(value = "SELECT * FROM Invoice i " +
+               "WHERE i.staff_email = :staffEmail AND i.status = 'Approved' " +
+               "AND EXTRACT(YEAR FROM i.approved_date) = :year " +
+               "ORDER BY i.approved_date DESC LIMIT 5",
+       nativeQuery = true)
+   List<Invoice> findTop5ApprovedInvoicesByStaffEmail(@Param("staffEmail") String staffEmail, @Param("year") int year);
 
-   @Query("SELECT i FROM Invoice i WHERE i.staffEmail = ?1 AND i.status = 'Need Revision' ")
-   List<Invoice> findTop5NeedRevisionInvoicesByStaffEmail(String staffEmail);
+   @Query(value = "SELECT * FROM Invoice i " +
+               "WHERE i.staff_email = :staffEmail AND i.status = 'Need Revision' " +
+               "AND EXTRACT(YEAR FROM i.invoice_date) = :year " +
+               "LIMIT 5",
+       nativeQuery = true)
+   List<Invoice> findTop5NeedRevisionInvoicesByStaffEmail(@Param("staffEmail") String staffEmail, @Param("year") int year);
 
-   @Query("SELECT i FROM Invoice i " +
-           "WHERE i.staffEmail = :staffEmail " + 
-           "AND i.status <> 'Paid' " + 
-           "ORDER BY ABS(i.dueDate - :today) ASC") 
-   List<Invoice> findTopFiveClosestDueDateByStaffEmail(@Param("today") LocalDate today, @Param("staffEmail") String staffEmail);
+   @Query(value = "SELECT * FROM Invoice i " + 
+               "WHERE i.staff_email = :staffEmail AND EXTRACT(YEAR FROM i.invoice_date) = :year " + 
+               "AND i.status <> 'Paid' " + 
+               "ORDER BY ABS(i.due_date - :today) ASC LIMIT 5", 
+       nativeQuery = true)
+List<Invoice> findTopFiveClosestDueDateByStaffEmail(@Param("today") LocalDate today, @Param("staffEmail") String staffEmail, @Param("year") int year);
+
+   @Query("SELECT DISTINCT EXTRACT(YEAR FROM i.invoiceDate) FROM Invoice i ORDER BY EXTRACT(YEAR FROM i.invoiceDate)")
+   List<Integer> findDistinctYears();
+
+   @Query("SELECT COUNT(i) FROM Invoice i JOIN i.listApproval a " +
+           "WHERE a.employee.email = :email AND i.status = 'Approved' " +
+           "AND EXTRACT(YEAR FROM i.invoiceDate) = :year")
+    int countApprovedInvoicesByApproverEmailAndYear(@Param("email") String email, @Param("year") int year);
+
+    @Query("SELECT COUNT(i) FROM Invoice i JOIN i.listApproval a " +
+           "WHERE a.employee.email = :email AND i.status = 'Need Approval' " +
+           "AND EXTRACT(YEAR FROM i.invoiceDate) = :year")
+    int countInvoicesWaitingApprovalByApproverEmail(@Param("email") String email, @Param("year") int year);
 }  
 
