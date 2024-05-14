@@ -1,24 +1,15 @@
 package com.megapro.invoicesync.restcontroller;
 
-import java.math.BigDecimal;
-import java.time.Month;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Arrays;
-import java.time.format.DateTimeFormatter;
-import java.time.format.TextStyle;
-import java.util.Locale;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.stream.Collectors;
+import java.math.BigDecimal;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,10 +23,8 @@ import com.megapro.invoicesync.dto.response.InvoicesStatusChartDTO;
 import com.megapro.invoicesync.dto.response.MonthlyTaxDTO;
 import com.megapro.invoicesync.dto.response.NewestInvoiceDTO;
 import com.megapro.invoicesync.dto.response.OutboundInvoiceCountDTO;
-import com.megapro.invoicesync.model.Invoice;
+import com.megapro.invoicesync.dto.response.RevenueDTO;
 import com.megapro.invoicesync.service.DashboardService;
-import com.megapro.invoicesync.util.classes.Revenue;
-
 
 
 @RestController
@@ -44,287 +33,163 @@ public class DashboardRestController {
     @Autowired
     DashboardService dashboardService;
     
-    // Dashboard direktur //
+    // Dashboard finance director //
 
     @GetMapping("/api/dashboard/revenue")
     @ResponseBody
-    public ResponseEntity<List<Revenue>> getMonthlyRevenue() {
-        List<Object[]> revenueData = dashboardService.getMonthlyRevenue();
-        BigDecimal[] monthlyRevenue = new BigDecimal[12]; 
-        Arrays.fill(monthlyRevenue, BigDecimal.ZERO); 
-
-        for (Object[] data : revenueData) {
-            int monthIndex = (int) data[0] - 1;
-            monthlyRevenue[monthIndex] = (BigDecimal) data[1];
-        }
-
-        List<Revenue> revenues = new ArrayList<>();
-        for (int i = 0; i < 12; i++) {
-            String month = Month.of(i + 1).getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
-            revenues.add(new Revenue(month, monthlyRevenue[i]));
-        }
+    public ResponseEntity<List<RevenueDTO>> getMonthlyRevenue(@RequestParam(required = false) Integer year) {
+        List<RevenueDTO> revenues = dashboardService.getMonthlyRevenue(year);
         return new ResponseEntity<>(revenues, HttpStatus.OK);
     }
     
     @GetMapping("api/dashboard/top-customers")
     @ResponseBody
-    public ResponseEntity<List<TopCustomerDTO>> showTopCustomers(Model model) {
-        List<Object[]> topCustomersData = dashboardService.getTopCustomersByInvoiceCount();
-        List<TopCustomerDTO> topCustomers = new ArrayList<>();
-
-        for (Object[] data : topCustomersData) {
-            String customerName = (String) data[0];
-            Long invoiceCount = (Long) data[1];
-            topCustomers.add(new TopCustomerDTO(customerName, invoiceCount));
-        }
+    public ResponseEntity<List<TopCustomerDTO>> showTopCustomers(@RequestParam(required = false) Integer year) {
+        List<TopCustomerDTO> topCustomers = dashboardService.getTopCustomersByInvoiceCount(year);
         return new ResponseEntity<>(topCustomers, HttpStatus.OK);
     }
 
     @GetMapping("api/dashboard/top-products")
     @ResponseBody
-    public ResponseEntity<List<TopProductDTO>> showTopProducts(Model model) {
-        List<Object[]> topProductsData = dashboardService.getTopProductsByQuantityOrdered();
-        List<TopProductDTO> topProducts = new ArrayList<>();
-
-        for (Object[] data : topProductsData) {
-            String productName = (String) data[0];
-            BigDecimal invoiceCount = (BigDecimal) data[1];
-            topProducts.add(new TopProductDTO(productName, invoiceCount));
-        }
+    public ResponseEntity<List<TopProductDTO>> showTopProducts(@RequestParam(required = false) Integer year) {
+        List<TopProductDTO> topProducts = dashboardService.getTopProductsByQuantityOrdered(year);
         return new ResponseEntity<>(topProducts, HttpStatus.OK);
     }
 
     @GetMapping("api/dashboard/invoice-ratio")
     @ResponseBody
-    public ResponseEntity<List<InvoiceStatusCountDTO>> showInvoiceRatio(Model model) {
-        List<Object[]> invoiceStatusCountsData = dashboardService.getInvoiceCountsByStatus();
-        List<InvoiceStatusCountDTO> invoiceStatusCounts = new ArrayList<>();
-
-        for (Object[] data : invoiceStatusCountsData) {
-            String status = (String) data[0];
-            Long invoiceCount = (Long) data[1];
-            invoiceStatusCounts.add(new InvoiceStatusCountDTO(status, invoiceCount));
-        }
+    public ResponseEntity<List<InvoiceStatusCountDTO>> showInvoiceRatio(@RequestParam(required = false) Integer year) {
+        List<InvoiceStatusCountDTO> invoiceStatusCounts = dashboardService.getInvoiceCountsByStatus(year);
         return new ResponseEntity<>(invoiceStatusCounts, HttpStatus.OK);
     }
 
+    @GetMapping("api/dashboard/paid-amount")
+    public ResponseEntity<BigDecimal> showPaidAmount(@RequestParam(required = false) Integer year) {
+        var invoicePaidAmount = dashboardService.getInvoicePaidAmount(year);
+        return new ResponseEntity<>(invoicePaidAmount, HttpStatus.OK);
+    }
+
+    @GetMapping("api/dashboard/unpaid-amount")
+    public ResponseEntity<BigDecimal> showUnpaidAmount(@RequestParam(required = false) Integer year) {
+        var invoiceUnpaidAmount = dashboardService.getInvoiceUnpaidAmount(year);
+        return new ResponseEntity<>(invoiceUnpaidAmount, HttpStatus.OK);
+    }
+
+    @GetMapping("api/dashboard/overdue-amount")
+    public ResponseEntity<BigDecimal> showOverdueAmount(@RequestParam(required = false) Integer year) {
+        var invoiceOverdueAmount = dashboardService.getInvoiceOverdueAmount(year);
+        return new ResponseEntity<>(invoiceOverdueAmount, HttpStatus.OK);
+    }
 
     // Dashboard Manager Non Finance //
 
-    @GetMapping("/api/outbound-invoices") 
-    @ResponseBody
-    public ResponseEntity<List<OutboundInvoiceCountDTO>> showInvoiceOutboundAPI(Model model) {
-        List<Object[]> rawData = dashboardService.getOutboundInvoicePerMonth();
-        List<OutboundInvoiceCountDTO> response = new ArrayList<>();
-
-        // Convert raw data to DTO
-        final String[] monthNames = {
-            "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
-        };
-
-        for (Object[] item : rawData) {
-            int year = ((Number) item[0]).intValue();
-            int month = ((Number) item[1]).intValue();
-            int count = ((Number) item[2]).intValue();
-
-            String monthName = monthNames[month - 1] + " " + year;
-            response.add(new OutboundInvoiceCountDTO(monthName, count));
-        }
-
-        return new ResponseEntity<>(response, HttpStatus.OK); // Return the JSON data
+    @GetMapping("/api/dashboard/count-approved")
+    public ResponseEntity<Integer> showCountApproved(@RequestParam(required = false) Integer year) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();  
+        int count = dashboardService.totalInvoiceApproved(email, year);
+        return ResponseEntity.ok(count);
     }
 
-    // Dashboard Staff Finance //
-
-    @GetMapping("/api/invoice-status")
+    @GetMapping("/api/dashboard/waiting-approval")
+    public ResponseEntity<Integer> showCountWaitingApproval(@RequestParam(required = false) Integer year) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();  
+        int count = dashboardService.totalInvoiceWaitingApproved(email, year);
+        return ResponseEntity.ok(count);
+    }
+    
+    @GetMapping("/api/dashboard/outbound-invoices") 
     @ResponseBody
-    public ResponseEntity<List<InvoicesStatusChartDTO>> getInvoiceStatusData(Model model) {
-        List<Object[]> rawData = dashboardService.getInvoiceStatusCounts();
-        List<InvoicesStatusChartDTO> response = new ArrayList<>();
+    public ResponseEntity<List<OutboundInvoiceCountDTO>> showInvoiceOutboundAPI(@RequestParam(required = false) Integer year) {
+        List<OutboundInvoiceCountDTO> response = dashboardService.getOutboundInvoicePerMonth(year);
+        return new ResponseEntity<>(response, HttpStatus.OK); 
+    }
 
-        // Convert raw data to DTOs
-        for (Object[] item : rawData) {
-            String status = (String) item[0]; // Status of the invoice
-            int count = ((Number) item[1]).intValue(); // Count of invoices with this status
+    // Dashboard finance staff
 
-            response.add(new InvoicesStatusChartDTO(status, count));
-        }
-
+    @GetMapping("/api/dashboard/invoice-status")
+    @ResponseBody
+    public ResponseEntity<List<InvoicesStatusChartDTO>> getInvoiceStatusData(@RequestParam(required = false) Integer year) {
+        List<InvoicesStatusChartDTO> response = dashboardService.getInvoiceStatusCounts(year);
         return new ResponseEntity<>(response, HttpStatus.OK); // Return JSON data
     }
 
-    @GetMapping("/api/invoice-status-bar")
+    @GetMapping("/api/dashboard/invoice-status-bar")
     @ResponseBody
-    public ResponseEntity<List<InvoiceStatusPaymentDTO>> getInvoiceStatusCounts() {
-        List<Object[]> rawData = dashboardService.getInvoiceCountsByPaidAndApproved();
-        List<InvoiceStatusPaymentDTO> response = new ArrayList<>();
-
-        for (Object[] item : rawData) {
-            String status = (String) item[0];
-            int paidCount = ((Number) item[1]).intValue();
-            int unpaidCount = ((Number) item[2]).intValue();
-            response.add(new InvoiceStatusPaymentDTO(status, paidCount, unpaidCount));
-        }
-
+    public ResponseEntity<List<InvoiceStatusPaymentDTO>> getInvoiceStatusCounts(@RequestParam(required = false) Integer year) {
+        List<InvoiceStatusPaymentDTO> response = dashboardService.getInvoiceCountsByPaidAndApproved(year);
         return new ResponseEntity<>(response, HttpStatus.OK); // Return the JSON response
     }
 
-    @GetMapping("/api/tax-gain-chart")
+    @GetMapping("/api/dashboard/tax-gain-chart")
     @ResponseBody
-    public ResponseEntity<List<MonthlyTaxDTO>> getTaxGainData() {
-        List<Object[]> rawData = dashboardService.getMonthlyTaxGainFromPaidInvoices();
-        List<MonthlyTaxDTO> response = new ArrayList<>();
+    public ResponseEntity<List<MonthlyTaxDTO>> getTaxGainData(@RequestParam(required = false) Integer year) {
+        List<MonthlyTaxDTO> response = dashboardService.getMonthlyTaxGainFromPaidInvoices(year);
+        return new ResponseEntity<>(response, HttpStatus.OK); 
+    }
 
-        // Convert raw data to DTOs
-        for (Object[] item : rawData) {
-            int month = ((Number) item[0]).intValue();
-            double totalTax = ((Number) item[1]).doubleValue();
-            response.add(new MonthlyTaxDTO(month, totalTax));
-        }
-
+    @GetMapping("/api/dashboard/newest-five-invoices") // REST API endpoint
+    @ResponseBody
+    public ResponseEntity<List<NewestInvoiceDTO>> getFiveNewestInvoices(@RequestParam(required = false) Integer year) {
+        List<NewestInvoiceDTO> response = dashboardService.getFiveNewestInvoices(year); // Fetch data
         return new ResponseEntity<>(response, HttpStatus.OK); // Return JSON data
     }
 
-    @GetMapping("/api/newest-five-invoices") // REST API endpoint
-    @ResponseBody
-    public ResponseEntity<List<NewestInvoiceDTO>> getFiveNewestInvoices() {
-        List<Invoice> rawData = dashboardService.getFiveNewestInvoices(); // Fetch data
-        List<NewestInvoiceDTO> response = new ArrayList<>();
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd"); // For formatting dates
-
-        for (Invoice invoice : rawData) {
-            response.add(new NewestInvoiceDTO(
-                invoice.getInvoiceNumber(),
-                invoice.getInvoiceDate().format(formatter), // Format the date
-                invoice.getCustomer() != null ? invoice.getCustomer().getName() : "Unknown", // Handle null customers
-                invoice.getGrandTotal().doubleValue() // Convert BigDecimal to double
-            ));
-        }
-
-        return new ResponseEntity<>(response, HttpStatus.OK); // Return JSON data
-    }
-
-    @GetMapping("/api/closest-due-five-invoices")
-    public ResponseEntity<List<NewestInvoiceDTO>> getFiveDueClosestInvoices() {
-        List<Invoice> rawData = dashboardService.getFiveDueClosestInvoices(); // Fetch sorted data
-        List<NewestInvoiceDTO> response = new ArrayList<>();
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd"); // Format for dates
-
-        for (int i = 0; i < Math.min(5, rawData.size()); i++) { // Get top 5 closest due dates
-            Invoice invoice = rawData.get(i);
-            response.add(new NewestInvoiceDTO(
-                invoice.getInvoiceNumber(),
-                invoice.getDueDate().format(formatter), // Format date
-                invoice.getCustomer() != null ? invoice.getCustomer().getName() : "Unknown", // Handle null customers
-                invoice.getGrandTotal().doubleValue() // Convert BigDecimal to double
-            ));
-        }
-
+    @GetMapping("/api/dashboard/closest-due-five-invoices")
+    public ResponseEntity<List<NewestInvoiceDTO>> getFiveDueClosestInvoices(@RequestParam(required = false) Integer year) {
+        List<NewestInvoiceDTO> response = dashboardService.getFiveDueClosestInvoices(year); // Fetch sorted data
         return  new ResponseEntity<>(response, HttpStatus.OK); // Return JSON data
     }        
-    
-
-    
     
     // Dashboard manager finance //
 
     @GetMapping("/api/dashboard/invoices-per-month")
     @ResponseBody
-    public ResponseEntity<List<InvoicePerMonthDTO>> getInvoicesPerMonth() {
-        List<Object[]> invoiceData = dashboardService.getMonthlyInvoiceCounts();
-        List<InvoicePerMonthDTO> invoicesPerMonth = new ArrayList<>();
-
-        for (Month month : Month.values()) {
-            invoicesPerMonth.add(new InvoicePerMonthDTO(month.getDisplayName(TextStyle.SHORT, Locale.ENGLISH), 0));
-        }
-        for (Object[] data : invoiceData) {
-            int monthIndex = ((Number) data[0]).intValue() - 1; 
-            int count = ((Number) data[1]).intValue();
-            invoicesPerMonth.get(monthIndex).setCount(count);
-        }
+    public ResponseEntity<List<InvoicePerMonthDTO>> getInvoicesPerMonth(@RequestParam(required = false) Integer year) {
+        List<InvoicePerMonthDTO> invoicesPerMonth = dashboardService.getMonthlyInvoiceCounts(year);
         return new ResponseEntity<>(invoicesPerMonth, HttpStatus.OK);
     }
 
     @GetMapping("/api/invoices/status-per-month")
-    public ResponseEntity<List<MonthStatusDTO>> getInvoiceStatusPerMonth() {
-        List<Object[]> results = dashboardService.getMonthlyInvoiceStatusCounts();
-        Map<Integer, MonthStatusDTO> monthDataMap = new HashMap<>();
-        for (Month month : Month.values()) {
-            String monthName = month.getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
-            monthDataMap.put(month.getValue(), new MonthStatusDTO(monthName, 0, 0));
-        }
-
-        for (Object[] result : results) {
-            int month = ((Number) result[0]).intValue();
-            String status = (String) result[1];
-            int count = ((Number) result[2]).intValue();
-
-            MonthStatusDTO dto = monthDataMap.get(month);
-            if ("Paid".equals(status)) {
-                dto.setPaidInvoices(count);
-            } else if ("Approved".equals(status)) {
-                dto.setUnpaidInvoices(count);
-            }
-        }
-
-        return ResponseEntity.ok(new ArrayList<>(monthDataMap.values()));
+    public ResponseEntity<List<MonthStatusDTO>> getInvoiceStatusPerMonth(@RequestParam(required = false) Integer year) {
+        List<MonthStatusDTO> results = dashboardService.getMonthlyInvoiceStatusCounts(year);
+        return ResponseEntity.ok(results);
     }
 
     // Dashboard non-finance staff //
 
-    @GetMapping("/api/invoices/latest-approved")
+    @GetMapping("/api/dashboard/latest-approved")
     @ResponseBody
-    public ResponseEntity<List<NewestInvoiceDTO>> getLatestApprovedInvoices() {
+    public ResponseEntity<List<NewestInvoiceDTO>> getLatestApprovedInvoices(@RequestParam(required = false) Integer year) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userEmail = authentication.getName();
-
-        List<Invoice> invoices = dashboardService.getTop5ApprovedInvoicesByStaffEmail(userEmail);
-        List<NewestInvoiceDTO> invoicesDTO = invoices.stream()
-        .map(invoice -> new NewestInvoiceDTO(
-            invoice.getInvoiceNumber(),
-            invoice.getApprovedDate().toString(),
-            invoice.getCustomer().getName(),
-            invoice.getGrandTotal().doubleValue()))
-        .collect(Collectors.toList());
-
-        return new ResponseEntity<>(invoicesDTO, HttpStatus.OK);
+        String email = authentication.getName();
+        List<NewestInvoiceDTO> invoices = dashboardService.getTop5ApprovedInvoicesByStaffEmail(email, year);
+        return new ResponseEntity<>(invoices, HttpStatus.OK);
     }
 
-    @GetMapping("/api/invoices/latest-need-revision")
+    @GetMapping("/api/dashboard/latest-need-revision")
     @ResponseBody
-    public ResponseEntity<List<NewestInvoiceDTO>> getLatestNeedRevisionInvoices() {
+    public ResponseEntity<List<NewestInvoiceDTO>> getLatestNeedRevisionInvoices(@RequestParam(required = false) Integer year) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userEmail = authentication.getName();
-
-        List<Invoice> invoices = dashboardService.getTop5NeedRevisionInvoicesByStaffEmail(userEmail);
-        List<NewestInvoiceDTO> invoicesDTO = invoices.stream()
-        .map(invoice -> new NewestInvoiceDTO(
-            invoice.getInvoiceNumber(),
-            invoice.getInvoiceDate().toString(),
-            invoice.getCustomer().getName(),
-            invoice.getGrandTotal().doubleValue()))
-        .collect(Collectors.toList());
-
-        return new ResponseEntity<>(invoicesDTO, HttpStatus.OK);
+        String email = authentication.getName();
+        List<NewestInvoiceDTO> invoices = dashboardService.getTop5NeedRevisionInvoicesByStaffEmail(email, year);
+        return new ResponseEntity<>(invoices, HttpStatus.OK);
     }
 
-    @GetMapping("/api/invoices/due-by-email")
+    @GetMapping("/api/dashboard/due-by-email")
     @ResponseBody
-    public ResponseEntity<List<NewestInvoiceDTO>> getFiveDueSoonInvoiceByEmail() {
+    public ResponseEntity<List<NewestInvoiceDTO>> getFiveDueSoonInvoiceByEmail(@RequestParam(required = false) Integer year) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userEmail = authentication.getName();
+        String email = authentication.getName();
+        List<NewestInvoiceDTO> invoices = dashboardService.getFiveDueClosestInvoicesByStaffEmail(email, year);
+        return new ResponseEntity<>(invoices, HttpStatus.OK);
+    }
 
-        List<Invoice> invoices = dashboardService.getFiveDueClosestInvoicesByStaffEmail(userEmail);
-        List<NewestInvoiceDTO> invoicesDTO = invoices.stream()
-        .map(invoice -> new NewestInvoiceDTO(
-            invoice.getInvoiceNumber(),
-            invoice.getDueDate().toString(),
-            invoice.getCustomer().getName(),
-            invoice.getGrandTotal().doubleValue()))
-        .collect(Collectors.toList());
-
-        return new ResponseEntity<>(invoicesDTO, HttpStatus.OK);
+    @GetMapping("/api/dashboard/years")
+    @ResponseBody
+    public ResponseEntity<List<Integer>> getInvoiceYears() {
+        List<Integer> years = dashboardService.getDistinctInvoiceYears();
+        return new ResponseEntity<>(years, HttpStatus.OK);
     }
 }
