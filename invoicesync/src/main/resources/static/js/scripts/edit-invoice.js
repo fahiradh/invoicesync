@@ -259,7 +259,6 @@ function getAllProduct() {
 
 function updateProductDocument() {
     var invoiceId = document.getElementById("invoiceId").value; 
-    console.log(invoiceId);
     var fileInput = document.querySelector('input[name="productDocument"]');
     var formData = new FormData();
     formData.append('productDocument', fileInput.files[0]);
@@ -272,7 +271,6 @@ function updateProductDocument() {
         if (!response.ok) {
             throw new Error('Error creating product document: ' + response.status);
         }
-        console.log('Product document created successfully');
         return response.json();
     })
     .then(function(data) {
@@ -280,6 +278,10 @@ function updateProductDocument() {
         getAllProduct();
     })
     .catch(function(error) {
+        var modal = document.getElementById("errorReadProductList");
+        modal.classList.add('show');
+        modal.setAttribute('aria-hidden', 'false');
+        modal.style.display = 'block';
         console.error(error);
     });
 }
@@ -338,4 +340,11 @@ function updateProductList(listProduct){
             }
         });
     });
+}
+
+function hideErrorReadProductList() {
+    var modal = document.getElementById("errorReadProductList");
+    modal.classList.remove('show');
+    modal.setAttribute('aria-hidden', 'true');
+    modal.style.display = 'none';
 }

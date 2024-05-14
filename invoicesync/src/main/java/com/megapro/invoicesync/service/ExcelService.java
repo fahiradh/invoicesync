@@ -35,7 +35,12 @@ public class ExcelService {
     public List<Product> processExcel(MultipartFile file) throws IOException {
     	log.info("Processing Excel file...");
         List<Map<String, Object>> excelDataList = parseExcel(file);
+        System.out.println("LISSRR " + excelDataList.size());
         List<Product> listProduct = proceedToDatabase(excelDataList);
+        if (listProduct.size() == 0){
+            log.info("Excel data processed failed");
+            return new ArrayList<>();
+        }
         log.info("data saved into sql database");
         log.info("Excel file processed successfully.");
         return listProduct;
@@ -44,17 +49,13 @@ public class ExcelService {
     private List<Map<String, Object>> parseExcel(MultipartFile file) throws IOException {
         List<Map<String, Object>> excelDataList = new ArrayList<>();
         try (Workbook workbook = new XSSFWorkbook(file.getInputStream())) {
-            Sheet sheet = workbook.getSheetAt(0); // Assuming first sheet
+            Sheet sheet = workbook.getSheetAt(0);
             Row headerRow = sheet.getRow(0);
             int columnCount = headerRow.getPhysicalNumberOfCells();
 
             for (int i = 1; i <= sheet.getLastRowNum(); i++) {
                 Row currentRow = sheet.getRow(i);
                 Map<String, Object> rowData = new HashMap<>();
-                // rowData.put("description", currentRow.getCell(i).getStringCellValue());
-                // rowData.put("quantity", currentRow.getCell(i).getNumericCellValue());
-                // rowData.put("price", currentRow.getCell(i).getNumericCellValue());
-                // rowData.put("totalPrice", currentRow.getCell(i).getNumericCellValue());
 
                 if (currentRow != null) {
                     for (int j = 0; j < columnCount; j++) {
@@ -83,23 +84,26 @@ public class ExcelService {
 
     private List<Product> proceedToDatabase(List<Map<String, Object>> excelDataList){
         List<Product> listProduct = new ArrayList<>();
-        for (Map<String, Object> data : excelDataList){
-            CreateProductRequestDTO productDTO = new CreateProductRequestDTO();
-            productDTO.setDescription(data.get("description").toString());
-            productDTO.setPrice(data.get("price").toString());
-            productDTO.setQuantity(data.get("quantity").toString());
-            System.out.println("=====================");
-            System.out.println(data.get("total price").toString());
-            productDTO.setTotalPrice(data.get("total price").toString());
-            var product = productMapper.createProductRequestToProduct(productDTO);
-            product.setInvoice(invoiceService.getDummyInvoice());
-            if (product.getTotalPrice() == null){
-                var totalPrice = product.getPrice().doubleValue() * product.getQuantity().doubleValue();
-                BigDecimal fixedPrice = BigDecimal.valueOf(totalPrice);
-                product.setTotalPrice(fixedPrice);
+        try {
+            for (Map<String, Object> data : excelDataList){
+                CreateProductRequestDTO productDTO = new CreateProductRequestDTO();
+                productDTO.setDescription(data.get("description").toString());
+                productDTO.setPrice(data.get("price").toString());
+                productDTO.setQuantity(data.get("quantity").toString());
+                productDTO.setTotalPrice(data.get("total price").toString());
+                var product = productMapper.createProductRequestToProduct(productDTO);
+                product.setInvoice(invoiceService.getDummyInvoice());
+                if (product.getTotalPrice() == null){
+                    var totalPrice = product.getPrice().doubleValue() * product.getQuantity().doubleValue();
+                    BigDecimal fixedPrice = BigDecimal.valueOf(totalPrice);
+                    product.setTotalPrice(fixedPrice);
+                }
+                productService.createProduct(product);
+                listProduct.add(product);
             }
-            productService.createProduct(product);
-            listProduct.add(product);
+        }
+        catch (NumberFormatException e){
+            return new ArrayList<>();
         }
         return listProduct;
     }
