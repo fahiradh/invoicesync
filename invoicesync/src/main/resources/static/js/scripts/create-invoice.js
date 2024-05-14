@@ -169,7 +169,6 @@ document.getElementById("productDocument").addEventListener("change", function()
         if (!response.ok) {
             throw new Error('Error creating product document: ' + response.status);
         }
-        console.log('Product document created successfully');
         return response.json();
     })
     .then(function(data) {
@@ -177,6 +176,10 @@ document.getElementById("productDocument").addEventListener("change", function()
         getAllProduct();
     })
     .catch(function(error) {
+        var modal = document.getElementById("errorReadProductList");
+        modal.classList.add('show');
+        modal.setAttribute('aria-hidden', 'false');
+        modal.style.display = 'block';
         console.error(error);
     });
 });
@@ -354,6 +357,13 @@ function showGuidelinesModal() {
 
 function hideGuidelinesModal() {
     var modal = document.getElementById("guidelinesModal");
+    modal.classList.remove('show');
+    modal.setAttribute('aria-hidden', 'true');
+    modal.style.display = 'none';
+}
+
+function hideErrorReadProductList() {
+    var modal = document.getElementById("errorReadProductList");
     modal.classList.remove('show');
     modal.setAttribute('aria-hidden', 'true');
     modal.style.display = 'none';

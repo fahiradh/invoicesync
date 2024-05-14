@@ -15,6 +15,7 @@ import com.megapro.invoicesync.service.TaxService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -64,17 +65,20 @@ public class ProductRestController {
 
     // Create product by product document (.xlsx)
     @PostMapping("/create-product-document")
-    public ResponseEntity<List<ReadProductResponseDTO>> createProductByDocument(@RequestParam("productDocument") MultipartFile productDocument) throws IOException{
+    public ResponseEntity<?> createProductByDocument(@RequestParam("productDocument") MultipartFile productDocument) throws IOException{
         if (productDocument != null && !productDocument.isEmpty()) {
             List<Product> listProduct = excelService.processExcel(productDocument);
-            List<ReadProductResponseDTO> listProductDTO = new ArrayList<>();
-            for (Product p : listProduct) {
-                var productDTO = productMapper.readProductToProductDTO(p);
-                listProductDTO.add(productDTO);
+            if (listProduct.size() != 0){
+                List<ReadProductResponseDTO> listProductDTO = new ArrayList<>();
+                for (Product p : listProduct) {
+                    var productDTO = productMapper.readProductToProductDTO(p);
+                    listProductDTO.add(productDTO);
+                }
+                return ResponseEntity.status(HttpStatus.OK).body(listProductDTO);
             }
-            return ResponseEntity.ok(listProductDTO);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No products found.");
         } else {
-            return ResponseEntity.badRequest().body(Collections.emptyList());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Product document empty.");
         }
     }
 
@@ -95,22 +99,23 @@ public class ProductRestController {
 
     // Create product by product document for edit invoice
     @PostMapping("/add-product/{invoiceId}")
-    public ResponseEntity<List<ReadProductResponseDTO>> addProductByDocument(@RequestParam("productDocument") MultipartFile productDocument,
+    public ResponseEntity<?> addProductByDocument(@RequestParam("productDocument") MultipartFile productDocument,
                                                                             @PathVariable("invoiceId") String invoiceId) throws IOException{
-        System.out.println("Masuk kee sokin ea");
-        System.out.println(invoiceId);
         var invoice = invoiceService.getInvoiceById(UUID.fromString(invoiceId));
         if (productDocument != null && !productDocument.isEmpty()) {
             List<Product> listProduct = excelService.processExcel(productDocument);
-            List<ReadProductResponseDTO> listProductDTO = new ArrayList<>();
-            for (Product p : listProduct) {
-                p.setInvoice(invoice);
-                var productDTO = productMapper.readProductToProductDTO(p);
-                listProductDTO.add(productDTO);
+            if (listProduct.size() != 0){
+                List<ReadProductResponseDTO> listProductDTO = new ArrayList<>();
+                for (Product p : listProduct) {
+                    p.setInvoice(invoice);
+                    var productDTO = productMapper.readProductToProductDTO(p);
+                    listProductDTO.add(productDTO);
+                }
+                return ResponseEntity.status(HttpStatus.OK).body(listProductDTO);
             }
-            return ResponseEntity.ok(listProductDTO);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No products found.");
         } else {
-            return ResponseEntity.badRequest().body(Collections.emptyList());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Product document empty.");
         }
     }
 

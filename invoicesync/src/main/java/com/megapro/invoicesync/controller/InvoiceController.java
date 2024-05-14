@@ -2,7 +2,6 @@ package com.megapro.invoicesync.controller;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.config.Task;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.List;
@@ -566,7 +565,7 @@ public class InvoiceController {
         }
         return "redirect:/invoice/" + invoiceNumber.replace('/', '_');
     }
-    
+
     @PostMapping("/invoice/{invoiceNumber}/reassign-approver")
     public String reAddApprover(@PathVariable("invoiceNumber") String invoiceNumber,
                               @RequestParam Map<String, String> allParams,

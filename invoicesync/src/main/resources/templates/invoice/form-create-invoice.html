@@ -305,12 +305,35 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p>1. The document file format must be ".xlsx" for a better accuracy.</p>
-                    <p>2. The document must include a minimum of three cells titled "description", "quantity", and "price" all in lowercase format.</p>
-                    <p>3. Don't forget to review the product details after uploading the files to ensure accuracy and completeness.<p>
+                    <p>1. The document file format must be <b>.xlsx</b> for better accuracy.</p>
+                    <p>2. The product list must be in the <b>first sheet</b> of the document.</p>
+                    <p>3. The document must include a minimum of three cells titled <b>"description", "quantity", and "price" in lowercase format</b> with specific styles for each column as below:</p>
+                    <p>a) Description column will contain the product's description.</p>
+                    <p>b) Quantity column will contain the product's quantity. Make sure it only contains number.</p>
+                    <p>c) Price column will contain product's price. Make sure it only contains number (without any currency sign or punctuation).</p>
+                    <p>4. Please review the product details after uploading the file to ensure the accuracy and correctness of the data.</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="hideGuidelinesModal()">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="errorReadProductList" role="dialog" data-toggle="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="guidelinesModalTitle">Error</h5>
+                    <button type="button" class="close" data-dismiss="modal" onclick="hideErrorReadProductList()" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Error while reading the product data from the document. Please make sure the document's content follows the guidelines.</p> 
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="hideErrorReadProductList()">Close</button>
                 </div>
             </div>
         </div>
