@@ -21,19 +21,6 @@ import java.io.ByteArrayOutputStream;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
-import java.awt.image.WritableRaster;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Base64;
-
 @Service
 public class PrintService {
     @Autowired
@@ -70,18 +57,6 @@ public class PrintService {
                 documents.add(addedFileDTO);
             }
         }
-        Path source = Paths.get("/static/assets/krida-logo.png");
-        // From image to byte[]
-        BufferedImage bi = ImageIO.read(source.toFile());
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ImageIO.write(bi, "png", baos);
-        byte[] originByteArray = baos.toByteArray();
-        // From byte[] to base64
-        // byte[] encoded = Base64.getEncoder().encode(originByteArray);
-        String stringBase64 = Base64.getEncoder().encodeToString(originByteArray);
-        // System.out.println("byte[] Base64 encoded: " + encoded);
-        // System.out.println("String Base64 encoded: " + stringBase64);
-        // String logo = encodedImageToString("/assets/krida-logo.png");
         context.setVariable("invoiceNumber", invoice.getInvoiceNumber());
         context.setVariable("customerName", invoice.getCustomer().getName());
         context.setVariable("customerAddress", invoice.getCustomer().getAddress());
@@ -103,7 +78,6 @@ public class PrintService {
         context.setVariable("employeeName", employeeName);
         context.setVariable("listProduct", listProduct);
         context.setVariable("documents", documents);
-        context.setVariable("logo", stringBase64);
 
         String processedHtml = templateEngine.process("data/template", context);
 
