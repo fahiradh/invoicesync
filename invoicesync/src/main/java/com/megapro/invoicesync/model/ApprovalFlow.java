@@ -24,5 +24,4 @@ public class ApprovalFlow {
     private int approvalRank;
     private String approverRole;
     private Long nominalRange;
-    private int orderIndex;
 }
