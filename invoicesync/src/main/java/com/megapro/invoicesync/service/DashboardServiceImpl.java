@@ -27,6 +27,7 @@ import com.megapro.invoicesync.dto.response.OutboundInvoiceCountDTO;
 import com.megapro.invoicesync.dto.response.RevenueDTO;
 import com.megapro.invoicesync.dto.response.TopCustomerDTO;
 import com.megapro.invoicesync.dto.response.TopProductDTO;
+import com.megapro.invoicesync.model.Approval;
 import com.megapro.invoicesync.model.Invoice;
 import com.megapro.invoicesync.repository.CustomerDb;
 import com.megapro.invoicesync.repository.EmployeeDb;
@@ -185,12 +186,33 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Override
     public int totalInvoiceApproved(String email, Integer year) {
-        return invoiceDb.countApprovedInvoicesByApproverEmailAndYear(email, year);
+        var employee = employeeDb.findByEmail(email);
+        var approvalList = employee.getListApproval();
+        int count = 0;
+
+        for(Approval approval : approvalList){
+            if(approval.isShown() && approval.getApprovalStatus().equals("Approved")){
+                count++;
+            }
+        }
+
+        return count;
+
     } 
 
     @Override
     public int totalInvoiceWaitingApproved(String email, Integer year) {
-        return invoiceDb.countInvoicesWaitingApprovalByApproverEmail(email, year);
+        var employee = employeeDb.findByEmail(email);
+        var approvalList = employee.getListApproval();
+        int count = 0;
+
+        for(Approval approval : approvalList){
+            if(approval.isShown() && approval.getApprovalStatus().equals("Need Approval")){
+                count++;
+            }
+        }
+
+        return count;
     }
 
     @Override 
