@@ -28,7 +28,6 @@ public interface InvoiceService {
     List<Invoice> retrieveInvoicesByStatus(String status);
     Invoice getDummyInvoice();
     String translateByte(byte[] byteFile);
-    // void transferData(CreateInvoiceRequestDTO invoiceRequestDTO, Invoice invoice);
     Invoice getInvoiceByInvoiceNumber(String invoiceNumber);
     String parseDate(LocalDate localDate);
     String checkValidity(CreateInvoiceRequestDTO invoiceDTO, List<Integer> selectedTaskIds, String email);
