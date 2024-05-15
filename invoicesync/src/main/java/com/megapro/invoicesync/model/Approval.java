@@ -18,6 +18,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "approval")
@@ -33,7 +34,6 @@ public class Approval {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "approval_employee")
-    // @JoinColumn(name = "approval_user")
     private Employee employee;
 
     @ManyToOne(cascade = CascadeType.ALL)
@@ -55,8 +55,14 @@ public class Approval {
     @Column(name="comment")
     private String comment;
 
+    @Column(name="assign_time")
+    private LocalDateTime assignTime;
+
+    // @Column(name="approval_time")
+    // private LocalDate approvalTime;
+
     @Column(name="approval_time")
-    private LocalDate approvalTime;
+    private LocalDateTime approvalTime;
 
     @OneToMany(mappedBy = "approval")
     private List<FileModel> approvalFiles;

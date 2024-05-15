@@ -20,10 +20,11 @@ public interface InvoiceDb extends JpaRepository<Invoice, UUID>{
    Invoice getInvoiceByInvoiceNumber(String id);
    @Query("SELECT i FROM Invoice i WHERE i.staffEmail LIKE 'dummy'")
    Invoice findDummyInvoice();
+   List<Invoice> findByOrderByInvoiceNumberDesc();
    List<Invoice> findByStaffEmailIn(List<String> emails);
-   List<Invoice> findByStaffEmail(String email);
-   List<Invoice> findByStatus(String status);
-   List<Invoice> findByStaffEmailAndStatus(String email, String status);
+   List<Invoice> findByStaffEmailOrderByInvoiceNumberDesc(String email);
+   List<Invoice> findByStatusOrderByInvoiceNumberDesc(String status);
+   List<Invoice> findByStaffEmailAndStatusOrderByInvoiceNumberDesc(String email, String status);
    @Query("SELECT i FROM Invoice i JOIN Employee e ON i.staffEmail = e.email JOIN Role r ON e.role = r WHERE r.role LIKE %:roleName% AND i.status = :status")
    List<Invoice> findByEmployeeRoleNameAndStatus(String roleName, String status);
    Optional<Invoice> findByInvoiceNumber(String invoiceNumber);

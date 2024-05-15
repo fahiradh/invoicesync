@@ -17,7 +17,6 @@ public interface ApprovalDb extends JpaRepository<Approval, Integer>{
     List<Approval> findByInvoice(Invoice invoice);
     boolean existsByInvoiceAndEmployee(Invoice invoice, Employee employee);
     long countByInvoice(Invoice invoice);
-    
     Approval findByApprovalId(int approvalId);
-    // List<Invoice> findByApproval_id(int approval_id);
+    List<Approval> findByEmployeeAndShownAndApprovalStatus(Employee employee, Boolean shown, String approvalStatus);
 }
