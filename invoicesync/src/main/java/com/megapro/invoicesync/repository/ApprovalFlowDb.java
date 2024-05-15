@@ -15,6 +15,8 @@ public interface ApprovalFlowDb extends JpaRepository<ApprovalFlow, Integer> {
     Optional<ApprovalFlow> findTopByNominalRangeLessThanEqualOrderByNominalRangeDesc(BigDecimal amount);
     List<ApprovalFlow> findAllByOrderByNominalRangeDesc();
     List<ApprovalFlow> findAllByOrderByNominalRangeAsc();
+    List<ApprovalFlow> findByOrderByNominalRangeAsc();
+
 
 }
 

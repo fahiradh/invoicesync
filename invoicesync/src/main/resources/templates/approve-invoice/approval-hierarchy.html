@@ -37,14 +37,25 @@
       </div>
     </div>
     <div class="row mt-4">
-      <div th:each="flow, flowStat : ${listApproval}" class="col-md-4">
-        <div class="flow-box text-violet">
-          <strong th:text="'Flow ' + ${flowStat.count}">Flow 1</strong><br>
-          <span>Minimum Amount: </span><span th:text="${'Rp' + #numbers.formatDecimal(flow.nominalRange, 0, 'POINT', 2, 'COMMA')}"></span><br>
-          <span>Approver: </span><span th:text="${flow.approverRole}">Division Manager</span>
+      <div th:each="flow, flowStat : ${listApproval}" class="col-md-4 flow-box"
+          th:data-approval-rank="${flow.approvalRank}" 
+          th:data-approver-role="${flow.approverRole}" 
+          th:data-nominal-range="${flow.nominalRange}"
+          onclick="showUpdateModal(this.getAttribute('data-approval-rank'), this.getAttribute('data-approver-role'), this.getAttribute('data-nominal-range'))">
+          <div th:if="${not #lists.isEmpty(listApproval)}">
+            <!-- Display approval flows -->
+          <div class="card">
+          <div class="card-body">
+            <h5 th:text="'Flow ' + ${flowStat.count} + ': ' + ${flow.approverRole}"></h5>
+            <p th:text="'Minimum Amount: Rp' + ${#numbers.formatDecimal(flow.nominalRange, 0, 'POINT', 2, 'COMMA')}"></p>
+          </div>
         </div>
       </div>
+      <div th:if="${#lists.isEmpty(listApproval)}">
+        <p>No approval flows available.</p>
     </div>
+      </div>
+    </div>    
   </div>
 
   <!-- Modal untuk Pesan Sukses -->
@@ -107,6 +118,39 @@
       </div>
   </div>
 </div>
+<!-- Modal for Updating Approval Flow -->
+<div class="modal fade" id="updateApprovalModal" tabindex="-1" aria-labelledby="updateApprovalModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="updateApprovalModalLabel">Update Approval Flow</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form id="updateFlowForm" action="" method="post">
+        <div class="modal-body">
+          <input type="hidden" id="updateApprovalRank" name="approvalRank">
+          <div class="form-group">
+            <label for="updateApproverRole">Approver Role</label>
+            <select class="form-control" id="updateApproverRole" name="approverRole">
+              <option value="">Select Approver Role</option>
+              <option th:each="role : ${roles}" th:value="${role.role}" th:text="${role.role}"></option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="updateNominalRange">Minimum Amount</label>
+            <input type="number" class="form-control" id="updateNominalRange" name="nominalRange" min="1" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Update</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </form>      
+    </div>
+  </div>
+</div>
 
 
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -125,7 +169,26 @@
           $("#errorMessage").text(errorMessage); // Mengatur teks pesan error
           $("#errorModal").modal('show'); // Menampilkan modal error
       }
+
+      $('.flow-box').click(function() {
+      var approvalRank = $(this).attr('data-approval-rank');
+      var approverRole = $(this).attr('data-approver-role');
+      var nominalRange = $(this).attr('data-nominal-range');
+
+      $('#updateApprovalRank').val(approvalRank);
+      $('#updateApproverRole').val(approverRole);
+      $('#updateNominalRange').val(nominalRange);
+
+      $('#updateApprovalModal').modal('show');
     });
+    });
+    function showUpdateModal(approvalRank, approverRole, nominalRange) {
+    document.getElementById('updateApprovalRank').value = approvalRank;
+    document.getElementById('updateApproverRole').value = approverRole;
+    document.getElementById('updateNominalRange').value = nominalRange;
+    document.getElementById('updateFlowForm').action = '/update-approval-flow/' + approvalRank;
+    $('#updateApprovalModal').modal('show');
+}
     /*]]>*/
   </script>  
 <script th:inline="javascript">

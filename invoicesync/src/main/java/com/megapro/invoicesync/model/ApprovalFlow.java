@@ -24,4 +24,14 @@ public class ApprovalFlow {
     private int approvalRank;
     private String approverRole;
     private Long nominalRange;
+    private int orderIndex;
+
+    @Override
+    public String toString() {
+        return "ApprovalFlow{" +
+               "approvalRank=" + approvalRank +
+               ", approverRole='" + approverRole + '\'' +
+               ", nominalRange=" + nominalRange +
+               '}';
+    }
 }
