@@ -224,7 +224,6 @@ public class InvoiceController {
         }
 
         List<ApproverDisplay> approverDisplays = invoiceService.getApproverDisplaysForInvoice(invoice);
-        System.out.println("Ini approver displays ");
         System.out.println(approverDisplays);
         model.addAttribute("approverDisplays", approverDisplays);
         model.addAttribute("documents", documents);
@@ -471,7 +470,6 @@ public class InvoiceController {
         var date = invoice.getInvoiceDate();
         Employee employee = userService.findByEmail(email);
 
-        System.out.println("Ini isi edit tax saat ini ");
         for(ReadTaxResponseDTO taxDTO:invoiceDTO.getListTax()){
             System.out.printf("Tax id: %d", taxDTO.getTaxId());
         }
