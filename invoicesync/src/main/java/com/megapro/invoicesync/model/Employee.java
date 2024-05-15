@@ -60,6 +60,7 @@ public class Employee extends UserApp {
     private byte[] image;
 
     @OneToMany(mappedBy = "employee")
+    @OrderBy("assignTime DESC")
     private List<Approval> listApproval;
 
     @OneToMany(mappedBy = "employee")

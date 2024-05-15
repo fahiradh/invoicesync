@@ -2,6 +2,8 @@ package com.megapro.invoicesync.service;
 
 import java.io.IOException;
 import jakarta.transaction.Transactional;
+
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
@@ -11,12 +13,17 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.megapro.invoicesync.dto.InvoiceMapper;
 import com.megapro.invoicesync.dto.request.ChangePasswordRequestDTO;
 import com.megapro.invoicesync.dto.request.CreateEmployeeRequestDTO;
 import com.megapro.invoicesync.dto.request.CreateUserAppRequestDTO;
+import com.megapro.invoicesync.dto.response.ReadInvoiceResponse;
+import com.megapro.invoicesync.model.Approval;
 import com.megapro.invoicesync.model.Employee;
+import com.megapro.invoicesync.model.Notification;
 import com.megapro.invoicesync.model.UserApp;
 import com.megapro.invoicesync.repository.EmployeeDb;
+import com.megapro.invoicesync.repository.NotificationDb;
 import com.megapro.invoicesync.repository.UserAppDb;
 
 @Service
@@ -33,6 +40,9 @@ public class UserServiceImpl implements UserService{
 
     @Autowired
     BCryptPasswordEncoder encoder;
+
+    @Autowired
+    NotificationDb notificationDb;
 
     @Override
     public void createUserApp(UserApp user, CreateUserAppRequestDTO userDTO) {

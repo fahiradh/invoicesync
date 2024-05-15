@@ -271,7 +271,7 @@ public class InvoiceController {
     
     @GetMapping("/status/{status}")
     public String getInvoicesByStatus(@PathVariable String status, Model model) {
-        List<Invoice> filteredInvoices = invoiceDb.findByStatus(status);
+        List<Invoice> filteredInvoices = invoiceDb.findByStatusOrderByInvoiceNumberDesc(status);
         model.addAttribute("invoices", filteredInvoices);
         return ""; // isi halaman view all invoice
     }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -85,19 +86,12 @@ public class ApproveInvoiceController {
         model.addAttribute("role", role);
         model.addAttribute("email", email);
 
-        List<ReadInvoiceResponse> invoiceDTOList = new ArrayList<>();
-        var approvalList = employee.getListApproval();
-        for(Approval approval : approvalList){
-            if(approval.isShown()){
-                var invoice = approval.getInvoice();
-    
-                ReadInvoiceResponse invoiceDTO = invoiceMapper.readInvoiceToInvoiceResponse(invoice);
-                invoiceDTO.setApprovalId(approval.getApprovalId());
-                invoiceDTO.setApprovalStatus(approval.getApprovalStatus());;
-                invoiceDTOList.add(invoiceDTO);
-            }
-        }
-        model.addAttribute("invoices", invoiceDTOList);
+        // Content
+        var invoiceList = approvalService.getEmployeeApprovalInvoice(employee);
+        var needApproval = invoiceList.get(0);
+        var previousApproval = invoiceList.get(1);
+        model.addAttribute("needApproval", needApproval);
+        model.addAttribute("previousApproval", previousApproval);
 
         // Notification
         var notifications = notificationService.getEmployeeNotification(employee);
@@ -188,7 +182,7 @@ public class ApproveInvoiceController {
         
         var approval = approvalService.findApprovalByApprovalId(updateApprovalRequestDTO.getApprovalId());
         approval.setApprovalStatus("Approved");
-        approval.setApprovalTime(LocalDate.now());
+        approval.setApprovalTime(LocalDateTime.now());
         
         
         var invoice = approval.getInvoice();
@@ -207,6 +201,7 @@ public class ApproveInvoiceController {
             int currentApprovalIndex = approvalList.indexOf(approval);
             var nextApproval = approvalList.get(currentApprovalIndex + 1);
             nextApproval.setShown(true);
+            nextApproval.setAssignTime(LocalDateTime.now());
 
             // Notification
             var approverEmail = approval.getEmployee().getEmail();
@@ -228,7 +223,7 @@ public class ApproveInvoiceController {
         var approval = approvalService.findApprovalByApprovalId(updateApprovalDTO.getApprovalId());
         approval.setApprovalStatus("Need Revision");
         approval.setComment(updateApprovalDTO.getComment());
-        approval.setApprovalTime((LocalDate.now()));
+        approval.setApprovalTime((LocalDateTime.now()));
 
         fileService.save(files, updateApprovalDTO.getApprovalId());
 
@@ -251,7 +246,7 @@ public class ApproveInvoiceController {
     public String rejectInvoice(UpdateApprovalRequestDTO updateApprovalDTO) {
         var approval = approvalService.findApprovalByApprovalId(updateApprovalDTO.getApprovalId());
         approval.setApprovalStatus("Rejected");
-        approval.setApprovalTime((LocalDate.now()));
+        approval.setApprovalTime((LocalDateTime.now()));
         approvalService.saveApproval(approval);
 
         var invoice = approval.getInvoice();

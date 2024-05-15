@@ -34,6 +34,7 @@ import java.util.UUID;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Service
@@ -159,7 +160,7 @@ public class InvoiceServiceImpl implements InvoiceService{
 
     @Override
     public List<Invoice> retrieveAllInvoice() {
-        return invoiceDb.findAll();
+        return invoiceDb.findByOrderByInvoiceNumberDesc();
     }
 
     @Override
@@ -174,7 +175,7 @@ public class InvoiceServiceImpl implements InvoiceService{
 
     @Override
     public List<Invoice> getInvoiceByStaffEmail(String email) {
-        return invoiceDb.findByStaffEmail(email);
+        return invoiceDb.findByStaffEmailOrderByInvoiceNumberDesc(email);
     }
 
     @Override
@@ -201,7 +202,7 @@ public class InvoiceServiceImpl implements InvoiceService{
     @Override
     public List<Invoice> retrieveInvoicesByEmail(String email) {
         // Asumsi Anda memiliki metode di InvoiceRepository untuk mengambil invoice berdasarkan email staff
-        return invoiceDb.findByStaffEmail(email);
+        return invoiceDb.findByStaffEmailOrderByInvoiceNumberDesc(email);
     }
 
     @Override
@@ -224,9 +225,9 @@ public class InvoiceServiceImpl implements InvoiceService{
     
     public List<Invoice> retrieveInvoicesByEmailAndStatus(String email, String status) {
         if(status == null || status.equals("")){
-            return invoiceDb.findByStaffEmail(email);
+            return invoiceDb.findByStaffEmailOrderByInvoiceNumberDesc(email);
         }
-        return invoiceDb.findByStaffEmailAndStatus(email, status);
+        return invoiceDb.findByStaffEmailAndStatusOrderByInvoiceNumberDesc(email, status);
     }
 
     @Override
@@ -240,7 +241,7 @@ public class InvoiceServiceImpl implements InvoiceService{
             return invoiceDb.findAll();
         } else {
 
-            return invoiceDb.findByStatus(status);
+            return invoiceDb.findByStatusOrderByInvoiceNumberDesc(status);
         }
     }
 
@@ -304,7 +305,7 @@ public void addApproverToInvoice(UUID invoiceId, String approverEmail) {
     approval.setEmployee(employee);
     approval.setInvoice(invoice);
     approval.setApprovalStatus("Need Approval");
-    approval.setApprovalTime(LocalDate.now());
+    approval.setApprovalTime(LocalDateTime.now());
     approval.setRank(existingApprovals.size() + 1); // Set the next rank based on existing approvals
     approval.setShown(approval.getRank() == 1); // Show only the first rank initially
 
@@ -332,7 +333,7 @@ public Approval readdApproverToInvoice(UUID invoiceId, String approverEmail, int
     approval.setEmployee(employee);
     approval.setInvoice(invoice);
     approval.setApprovalStatus("Need Approval");
-    approval.setApprovalTime(LocalDate.now());
+    approval.setApprovalTime(LocalDateTime.now());
     // approval.setRank(existingApprovals.size() + 1);
     // approval.setShown(approval.getRank() == 1);
 
