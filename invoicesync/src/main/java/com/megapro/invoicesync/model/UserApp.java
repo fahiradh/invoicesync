@@ -41,4 +41,6 @@ public class UserApp {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     private Role role;
+
+    
 }
