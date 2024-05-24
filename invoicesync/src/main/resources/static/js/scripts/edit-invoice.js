@@ -117,8 +117,8 @@ document.getElementById("addRowInvoice").addEventListener("click", function() {
     cellQuantity.innerHTML = '<input class="form-control quantity" type="number" name="productQuantity" value="1">';
     cellPrice.innerHTML = '<input class="form-control price" type="number" name="productPrice">';
     cellTotalPrice.innerHTML = '<input class="form-control subtotal" type="number" name="productSubtotal" readonly>';
-    cellAction.innerHTML = '<i class="fa fa-trash delete-icon" style="color:#dc3545; cursor: pointer; margin:4px;"></i>' +
-                           '<i class="fa fa-check check-icon" style="color:green; cursor: pointer; margin:4px;"></i>';
+    cellAction.innerHTML = '<button class="btn btn-primary delete-icon mb-2" type="button">Delete</button>' +
+                            '<button class="btn btn-primary check-icon" type="button">Save</button>';
 
     var quantityInput = cellQuantity.querySelector('input');
     var priceInput = cellPrice.querySelector('input');
@@ -327,7 +327,7 @@ function updateProductList(listProduct){
         totalPrice.textContent = product.totalPrice;
 
         var action = newRow.insertCell(5);
-        action.innerHTML = '<i class="fa fa-trash delete-icon" style="color:#dc3545; cursor: pointer; margin:4px;"></i>'
+        action.innerHTML = '<button class="btn btn-primary delete-icon mb-2" type="button">Delete</button>'
 
         var deleteIcon = action.querySelector('.delete-icon');
         deleteIcon.addEventListener('click', function() {
