@@ -6,7 +6,7 @@ deploy-railway:
   image: ubuntu
   only:
     - pushes
-    - main
+    - development
   script:
     - ls
     - apt-get update && apt-get install -y curl
