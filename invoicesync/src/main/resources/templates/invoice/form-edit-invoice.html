@@ -91,8 +91,8 @@
                                     <td th:text="${product.quantity}"></td>
                                     <td th:text="${product.price}"></td>
                                     <td th:text="${product.totalPrice}"></td>
-                                    <td>
-                                        <i class="fa fa-trash update-delete-icon" style="color:#dc3545; cursor: pointer; margin:4px;"></i>
+                                    <td style="text-align:center">
+                                        <button class="btn btn-primary update-delete-icon" type="button">Delete</button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -231,7 +231,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalLabel">Success</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeModalButton">
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" id="closeModalButton">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -239,7 +239,7 @@
                     <p id="successMessage"></p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -251,7 +251,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalLabel">Error</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeModalButton">
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" id="closeModalButton">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -259,7 +259,7 @@
                     <p id="errorMessage"></p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -269,7 +269,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="guidelinesModalTitle">Document Guidelines</h5>
-                    <button type="button" class="close" data-dismiss="modal" onclick="hideGuidelinesModal()" aria-label="Close">
+                    <button type="button" class="close" data-bs-dismiss="modal" onclick="hideGuidelinesModal()" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -294,7 +294,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="guidelinesModalTitle">Error</h5>
-                    <button type="button" class="close" data-dismiss="modal" onclick="hideErrorReadProductList()" aria-label="Close">
+                    <button type="button" class="close" data-bs-dismiss="modal" onclick="hideErrorReadProductList()" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
