@@ -179,7 +179,10 @@ public class EmployeeController {
 
         // Notification
         var notifications = notificationService.getEmployeeNotification(employee);
-        model.addAttribute("notifications", notifications);
+        model.addAttribute("notifications0", notifications.get(0));
+        model.addAttribute("notifications1", notifications.get(1));
+        model.addAttribute("notifications7", notifications.get(2));
+        model.addAttribute("notifications30", notifications.get(3));
 
         return "home/profile-page.html";
     }
@@ -214,7 +217,10 @@ public class EmployeeController {
 
         // Notification
         var notifications = notificationService.getEmployeeNotification(employee);
-        model.addAttribute("notifications", notifications);
+        model.addAttribute("notifications0", notifications.get(0));
+        model.addAttribute("notifications1", notifications.get(1));
+        model.addAttribute("notifications7", notifications.get(2));
+        model.addAttribute("notifications30", notifications.get(3));
 
         return "home/edit-profile-page.html";
     }
@@ -305,7 +311,10 @@ public class EmployeeController {
         // Notification
         var employee = employeeDb.findByEmail(email);
         var notifications = notificationService.getEmployeeNotification(employee);
-        model.addAttribute("notifications", notifications);
+        model.addAttribute("notifications0", notifications.get(0));
+        model.addAttribute("notifications1", notifications.get(1));
+        model.addAttribute("notifications7", notifications.get(2));
+        model.addAttribute("notifications30", notifications.get(3));
 
         return "account/form-change-password";
     }

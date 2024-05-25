@@ -27,7 +27,7 @@ public class PageController {
     @Autowired
     DashboardService dashboardService;
 
-    @GetMapping("/home")
+    @GetMapping(value = {"/home"})
     public String home(Model model){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
@@ -46,7 +46,10 @@ public class PageController {
         if(!role.equals("Admin")){
             // Notification
             var notifications = notificationService.getEmployeeNotification(employee);
-            model.addAttribute("notifications", notifications);
+            model.addAttribute("notifications0", notifications.get(0));
+            model.addAttribute("notifications1", notifications.get(1));
+            model.addAttribute("notifications7", notifications.get(2));
+            model.addAttribute("notifications30", notifications.get(3));
         }
 
         if (role.equals("Non-Finance Staff")) {

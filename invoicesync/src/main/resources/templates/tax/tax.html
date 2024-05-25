@@ -21,26 +21,26 @@
               <button type="button" class="btn btn-primary" style="padding-left: 0.5rem; padding-right: 0.5rem;" data-toggle="modal" data-target="#exampleModal">Add</button>
             </div>
           </div>
-    <table class="table table-custom">
-      <thead>
-        <tr>
-          <th scope="col">Tax Name</th>
-          <th scope="col">Tax Type</th>
-          <th scope="col">Percentage</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Iterate over taxes and populate table rows -->
-        <tr th:if="${#lists.size(taxes) == 0}">
-          <td colspan="6" class="text-center">There are no saved tax records.</td>
-        </tr>     
-        <tr th:each="tax : ${taxes}">
-          <td th:text="${tax.taxName}"></td>
-          <td th:text="${tax.taxType}"></td>
-          <td th:text="${tax.taxPercentage}"></td>
-        </tr>
-      </tbody>
-    </table>
+          <div class="nav-link">
+            <table class="table table-custom" style="width: 75%;">
+              <thead>
+                <tr>
+                  <th scope="col">Tax Name</th>
+                  <th scope="col">Percentage</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Iterate over taxes and populate table rows -->
+                <tr th:if="${#lists.size(taxes) == 0}">
+                  <td colspan="6" class="text-center">There are no saved tax records.</td>
+                </tr>     
+                <tr th:each="tax : ${taxes}">
+                  <td th:text="${tax.taxName}"></td>
+                  <td th:text="${tax.taxPercentage}"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
@@ -60,13 +60,6 @@
             <div class="form-group">
               <label for="namaPajak">Tax Name</label>
               <input required type="text" th:field="*{taxName}" class="form-control" id="namaPajak" placeholder="Enter tax name"/>
-            </div>
-            <div class="form-group">
-              <label for="tipePajak">Tax Type</label>
-              <select required class="form-control" id="tipePajak" th:field="*{taxType}">
-                <option value="include">Include</option>
-                <option value="exclude">Exclude</option>
-              </select>
             </div>
             <div class="form-group">
               <label for="persentase">Percentage</label>

@@ -28,7 +28,7 @@ public interface InvoiceMapper {
         List<ReadTaxResponseDTO> listTax = new ArrayList<>();
         readInvoiceResponse.setListTax(listTax);
         for(Tax tax : invoice.getListTax()){
-            var taxDTO = new ReadTaxResponseDTO(tax.getTaxId(), tax.getTaxName(), tax.getTaxType(), tax.getTaxPercentage());
+            var taxDTO = new ReadTaxResponseDTO(tax.getTaxId(), tax.getTaxName(), tax.getTaxPercentage());
             readInvoiceResponse.getListTax().add(taxDTO);
         }
     }

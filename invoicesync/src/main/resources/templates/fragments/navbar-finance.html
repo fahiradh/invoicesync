@@ -51,11 +51,57 @@
                             <img th:src="@{/assets/icon/notification.svg}" alt="notification-01"/>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-notification">
-                            <h6 class="dropdown-header" style="text-align: center;">Notifications</h6>
+                            <h5 style="text-align: center;">Notifications</h5>
                             <li>
                                 <li>
-                                    <div th:each="notif: ${notifications}">
-                                        <a th:href="@{/invoice/{invoiceNumber}(invoiceNumber=${notif.invoiceNumber.replace('/', '_')})}">
+                                    <!-- Notification hari ini -->
+                                    <div class="dropdown-header" th:if="${not #lists.isEmpty(notifications0)}" style="text-align: center;">
+                                        <span style="text-align: center;">Today</span>
+                                    </div>
+                                    <div th:each="notif: ${notifications0}">
+                                        <a th:href="@{/approval/{invoiceNumber}(invoiceNumber=${notif.invoiceNumber.replace('/', '_')}, approvalId=${notif.approvalId})}">
+                                            <div class="notifications-item">
+                                                <div class="text">
+                                                    <p th:text="${notif.content}"></p>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+
+                                    <!-- Notification kemarin -->
+                                    <div class="dropdown-header" th:if="${not #lists.isEmpty(notifications1)}" style="text-align: center;">
+                                        <span style="text-align: center;">Yesterday</span>
+                                    </div>
+                                    <div th:each="notif: ${notifications1}">
+                                        <a th:href="@{/approval/{invoiceNumber}(invoiceNumber=${notif.invoiceNumber.replace('/', '_')}, approvalId=${notif.approvalId})}">
+                                            <div class="notifications-item">
+                                                <div class="text">
+                                                    <p th:text="${notif.content}"></p>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+
+                                    <!-- Notification seminggu ke belakang -->
+                                    <div class="dropdown-header" th:if="${not #lists.isEmpty(notifications7)}" style="text-align: center;">
+                                        <span style="text-align: center;">The last 7 days</span>
+                                    </div>
+                                    <div th:each="notif: ${notifications7}">
+                                        <a th:href="@{/approval/{invoiceNumber}(invoiceNumber=${notif.invoiceNumber.replace('/', '_')}, approvalId=${notif.approvalId})}">
+                                            <div class="notifications-item">
+                                                <div class="text">
+                                                    <p th:text="${notif.content}"></p>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+
+                                    <!-- Notification sebulan ke belakang -->
+                                    <div class="dropdown-header" th:if="${not #lists.isEmpty(notifications30)}" style="text-align: center;">
+                                        <span style="text-align: center;">The last 30 days</span>
+                                    </div>
+                                    <div th:each="notif: ${notifications30}">
+                                        <a th:href="@{/approval/{invoiceNumber}(invoiceNumber=${notif.invoiceNumber.replace('/', '_')}, approvalId=${notif.approvalId})}">
                                             <div class="notifications-item">
                                                 <div class="text">
                                                     <p th:text="${notif.content}"></p>
@@ -123,11 +169,57 @@
                             <img th:src="@{/assets/icon/notification.svg}" alt="notification-01"/>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-notification">
-                            <h6 class="dropdown-header" style="text-align: center;">Notifications</h6>
+                            <h5 style="text-align: center;">Notifications</h5>
                             <li>
                                 <li>
-                                    <div th:each="notif: ${notifications}">
-                                        <a th:href="@{/invoice/{invoiceNumber}(invoiceNumber=${notif.invoiceNumber.replace('/', '_')})}">
+                                    <!-- Notification hari ini -->
+                                    <div class="dropdown-header" th:if="${not #lists.isEmpty(notifications0)}" style="text-align: center;">
+                                        <span style="text-align: center;">Today</span>
+                                    </div>
+                                    <div th:each="notif: ${notifications0}">
+                                        <a th:href="@{/approval/{invoiceNumber}(invoiceNumber=${notif.invoiceNumber.replace('/', '_')}, approvalId=${notif.approvalId})}">
+                                            <div class="notifications-item">
+                                                <div class="text">
+                                                    <p th:text="${notif.content}"></p>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+
+                                    <!-- Notification kemarin -->
+                                    <div class="dropdown-header" th:if="${not #lists.isEmpty(notifications1)}" style="text-align: center;">
+                                        <span style="text-align: center;">Yesterday</span>
+                                    </div>
+                                    <div th:each="notif: ${notifications1}">
+                                        <a th:href="@{/approval/{invoiceNumber}(invoiceNumber=${notif.invoiceNumber.replace('/', '_')}, approvalId=${notif.approvalId})}">
+                                            <div class="notifications-item">
+                                                <div class="text">
+                                                    <p th:text="${notif.content}"></p>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+
+                                    <!-- Notification seminggu ke belakang -->
+                                    <div class="dropdown-header" th:if="${not #lists.isEmpty(notifications7)}" style="text-align: center;">
+                                        <span style="text-align: center;">The last 7 days</span>
+                                    </div>
+                                    <div th:each="notif: ${notifications7}">
+                                        <a th:href="@{/approval/{invoiceNumber}(invoiceNumber=${notif.invoiceNumber.replace('/', '_')}, approvalId=${notif.approvalId})}">
+                                            <div class="notifications-item">
+                                                <div class="text">
+                                                    <p th:text="${notif.content}"></p>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+
+                                    <!-- Notification sebulan ke belakang -->
+                                    <div class="dropdown-header" th:if="${not #lists.isEmpty(notifications30)}" style="text-align: center;">
+                                        <span style="text-align: center;">The last 30 days</span>
+                                    </div>
+                                    <div th:each="notif: ${notifications30}">
+                                        <a th:href="@{/approval/{invoiceNumber}(invoiceNumber=${notif.invoiceNumber.replace('/', '_')}, approvalId=${notif.approvalId})}">
                                             <div class="notifications-item">
                                                 <div class="text">
                                                     <p th:text="${notif.content}"></p>

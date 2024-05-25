@@ -42,6 +42,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.megapro.invoicesync.dto.response.ApproverDisplay;
+import com.megapro.invoicesync.dto.response.NotificationResponseDTO;
 import com.megapro.invoicesync.dto.response.ReadApprovalResponseDTO;
 import com.megapro.invoicesync.dto.response.ReadFileResponseDTO;
 import com.megapro.invoicesync.dto.response.ReadInvoiceResponse;
@@ -132,7 +133,10 @@ public class InvoiceController {
 
         // Notification
         var notifications = notificationService.getEmployeeNotification(employee);
-        model.addAttribute("notifications", notifications);
+        model.addAttribute("notifications0", notifications.get(0));
+        model.addAttribute("notifications1", notifications.get(1));
+        model.addAttribute("notifications7", notifications.get(2));
+        model.addAttribute("notifications30", notifications.get(3));
 
         model.addAttribute("email", email);
         model.addAttribute("role", role);
@@ -261,7 +265,10 @@ public class InvoiceController {
 
         // Notification
         var notifications = notificationService.getEmployeeNotification(employee);
-        model.addAttribute("notifications", notifications);
+        model.addAttribute("notifications0", notifications.get(0));
+        model.addAttribute("notifications1", notifications.get(1));
+        model.addAttribute("notifications7", notifications.get(2));
+        model.addAttribute("notifications30", notifications.get(3));
 
         model.addAttribute("approvalLogs", approvalLogs);
 
@@ -302,7 +309,10 @@ public class InvoiceController {
         // Notification
         var employee = userService.findByEmail(email);
         var notifications = notificationService.getEmployeeNotification(employee);
-        model.addAttribute("notifications", notifications);
+        model.addAttribute("notifications0", notifications.get(0));
+        model.addAttribute("notifications1", notifications.get(1));
+        model.addAttribute("notifications7", notifications.get(2));
+        model.addAttribute("notifications30", notifications.get(3));
 
         model.addAttribute("invoices", invoiceDTOList);
         return "invoice/viewall-invoices";
@@ -337,7 +347,10 @@ public class InvoiceController {
         // Notification
         var employee = userService.findByEmail(email);
         var notifications = notificationService.getEmployeeNotification(employee);
-        model.addAttribute("notifications", notifications);
+        model.addAttribute("notifications0", notifications.get(0));
+        model.addAttribute("notifications1", notifications.get(1));
+        model.addAttribute("notifications7", notifications.get(2));
+        model.addAttribute("notifications30", notifications.get(3));
 
         model.addAttribute("invoices", invoiceDTOList);
         return "invoice/viewall-invoices";
@@ -364,7 +377,10 @@ public class InvoiceController {
         // Notification
         var employee = userService.findByEmail(email);
         var notifications = notificationService.getEmployeeNotification(employee);
-        model.addAttribute("notifications", notifications);
+        model.addAttribute("notifications0", notifications.get(0));
+        model.addAttribute("notifications1", notifications.get(1));
+        model.addAttribute("notifications7", notifications.get(2));
+        model.addAttribute("notifications30", notifications.get(3));
 
         model.addAttribute("invoices", invoices);
         return "invoice/my-invoices-view"; // Ganti dengan nama view Thymeleaf Anda
@@ -391,7 +407,10 @@ public class InvoiceController {
         // Notification
         var employee = userService.findByEmail(email);
         var notifications = notificationService.getEmployeeNotification(employee);
-        model.addAttribute("notifications", notifications);
+        model.addAttribute("notifications0", notifications.get(0));
+        model.addAttribute("notifications1", notifications.get(1));
+        model.addAttribute("notifications7", notifications.get(2));
+        model.addAttribute("notifications30", notifications.get(3));
 
         model.addAttribute("invoices", myInvoiceDTOs);
         return "invoice/my-invoices-view";
@@ -420,7 +439,10 @@ public class InvoiceController {
         // Notification
         var employee = userService.findByEmail(email);
         var notifications = notificationService.getEmployeeNotification(employee);
-        model.addAttribute("notifications", notifications);
+        model.addAttribute("notifications0", notifications.get(0));
+        model.addAttribute("notifications1", notifications.get(1));
+        model.addAttribute("notifications7", notifications.get(2));
+        model.addAttribute("notifications30", notifications.get(3));
         
         return "invoice/viewall-invoices-division";
     }
@@ -450,7 +472,10 @@ public class InvoiceController {
         // Notification
         var employee = userService.findByEmail(email);
         var notifications = notificationService.getEmployeeNotification(employee);
-        model.addAttribute("notifications", notifications);
+        model.addAttribute("notifications0", notifications.get(0));
+        model.addAttribute("notifications1", notifications.get(1));
+        model.addAttribute("notifications7", notifications.get(2));
+        model.addAttribute("notifications30", notifications.get(3));
         
         return "invoice/viewall-invoices-division";
     }
@@ -491,7 +516,10 @@ public class InvoiceController {
 
         // Notification
         var notifications = notificationService.getEmployeeNotification(employee);
-        model.addAttribute("notifications", notifications);
+        model.addAttribute("notifications0", notifications.get(0));
+        model.addAttribute("notifications1", notifications.get(1));
+        model.addAttribute("notifications7", notifications.get(2));
+        model.addAttribute("notifications30", notifications.get(3));
 
         return "invoice/form-edit-invoice";
     }
@@ -550,8 +578,9 @@ public class InvoiceController {
             invoiceDb.save(invoice);
 
             // Generate Notifications
-            var firstApprover = invoice.getListApproval().get(0).getEmployee();
-            notificationService.generateInvoiceApproverNotification(firstApprover.getEmail(), invoice.getInvoiceId());
+            var firstApproval = invoice.getListApproval().get(0);
+            var firstApprover = firstApproval.getEmployee();
+            notificationService.generateInvoiceApproverNotification(firstApprover.getEmail(), invoice.getInvoiceId(), firstApproval.getApprovalId());
     
             redirectAttributes.addFlashAttribute("success", "Approvers successfully added.");
         } catch (IllegalStateException | IllegalArgumentException e) {
@@ -594,8 +623,9 @@ public class InvoiceController {
         invoiceDb.save(invoice);
 
         // Generate notification
-        var firstApprover = invoice.getListApproval().get(oldSize).getEmployee();
-        notificationService.generateInvoiceApproverNotification(firstApprover.getEmail(), invoice.getInvoiceId());
+        var firstApproval = invoice.getListApproval().get(0);
+        var firstApprover = firstApproval.getEmployee();
+        notificationService.generateInvoiceApproverNotification(firstApprover.getEmail(), invoice.getInvoiceId(), firstApproval.getApprovalId());
 
         redirectAttributes.addFlashAttribute("success", "Approvers successfully added.");
         return "redirect:/invoice/" + invoiceNumber.replace('/', '_');
@@ -677,7 +707,10 @@ public class InvoiceController {
 
         // Notification
         var notifications = notificationService.getEmployeeNotification(employee);
-        model.addAttribute("notifications", notifications);
+        model.addAttribute("notifications0", notifications.get(0));
+        model.addAttribute("notifications1", notifications.get(1));
+        model.addAttribute("notifications7", notifications.get(2));
+        model.addAttribute("notifications30", notifications.get(3));
 
         return "invoice/view-detail-invoice";
 
