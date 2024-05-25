@@ -95,7 +95,10 @@ public class ApproveInvoiceController {
 
         // Notification
         var notifications = notificationService.getEmployeeNotification(employee);
-        model.addAttribute("notifications", notifications);
+        model.addAttribute("notifications0", notifications.get(0));
+        model.addAttribute("notifications1", notifications.get(1));
+        model.addAttribute("notifications7", notifications.get(2));
+        model.addAttribute("notifications30", notifications.get(3));
 
         return "approve-invoice/list-approval.html";
     }
@@ -104,7 +107,7 @@ public class ApproveInvoiceController {
     @GetMapping("/approval/{invoiceNumber}")
     public String getApprovalDetail(
                             @PathVariable("invoiceNumber") String encodedInvoiceNumber, 
-                            int approvalId,
+                            @RequestParam("approvalId") int approvalId,
                             Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
@@ -136,12 +139,10 @@ public class ApproveInvoiceController {
         var approvalDTO = new UpdateApprovalRequestDTO();
         for(Approval approval:approvals){
             if(approval.getApprovalStatus().equals("Need Approval")){
-                System.out.println("Nama approval pertama " + approval.getEmployee().getEmail());
                 approvalDTO = approvalMapper.approvalToUpdateApprovalRequestDTO(approval);
                 break;
             }
             var filesLog = approval.getApprovalFiles();
-            System.out.println("Ini approval " + approval.getEmployee().getEmail() + " punya file? " + filesLog.isEmpty());
             List<ReadFileResponseDTO> filesDTO = new ArrayList<>();
             if(filesLog != null || filesLog.size()!=0){
                 for(FileModel fileModel : filesLog){
@@ -172,7 +173,10 @@ public class ApproveInvoiceController {
 
         // Notification
         var notifications = notificationService.getEmployeeNotification(employee);
-        model.addAttribute("notifications", notifications);
+        model.addAttribute("notifications0", notifications.get(0));
+        model.addAttribute("notifications1", notifications.get(1));
+        model.addAttribute("notifications7", notifications.get(2));
+        model.addAttribute("notifications30", notifications.get(3));
 
         return "approve-invoice/approval-page.html";
     }
@@ -205,7 +209,7 @@ public class ApproveInvoiceController {
 
             // Notification
             var approverEmail = approval.getEmployee().getEmail();
-            notificationService.generateInvoiceApproverNotification(approverEmail,invoice.getInvoiceId());
+            notificationService.generateInvoiceApproverNotification(approverEmail,invoice.getInvoiceId(), nextApproval.getApprovalId());
         }
 
         approvalService.saveApproval(approval);

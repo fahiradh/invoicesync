@@ -8,6 +8,6 @@ import com.megapro.invoicesync.model.Employee;
 
 public interface NotificationService {
     void generateInvoiceMakerNotification(String employeeEmail, UUID invoiceId);
-    void generateInvoiceApproverNotification(String employeeEmail, UUID invoiceId);
-    List<NotificationResponseDTO> getEmployeeNotification(Employee employee);
+    void generateInvoiceApproverNotification(String employeeEmail, UUID invoiceId, int approvalId);
+    List<List<NotificationResponseDTO>> getEmployeeNotification(Employee employee);
 }

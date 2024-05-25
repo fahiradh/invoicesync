@@ -27,10 +27,6 @@ public class Tax {
     private String taxName;
 
     @NotNull
-    @Column(name = "tax_type")
-    private String taxType;
-
-    @NotNull
     @Column(name = "tax_percentage")
     private int taxPercentage;
 

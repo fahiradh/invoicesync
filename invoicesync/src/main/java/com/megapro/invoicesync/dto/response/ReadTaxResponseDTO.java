@@ -8,6 +8,5 @@ import lombok.Data;
 public class ReadTaxResponseDTO {
     private int taxId;
     private String taxName;
-    private String taxType;
     private int taxPercentage;
 }

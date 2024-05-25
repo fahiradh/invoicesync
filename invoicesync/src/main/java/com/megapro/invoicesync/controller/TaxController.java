@@ -53,7 +53,10 @@ public class TaxController {
         // Notification
         var employee = employeeDb.findByEmail(email);
         var notifications = notificationService.getEmployeeNotification(employee);
-        model.addAttribute("notifications", notifications);
+        model.addAttribute("notifications0", notifications.get(0));
+        model.addAttribute("notifications1", notifications.get(1));
+        model.addAttribute("notifications7", notifications.get(2));
+        model.addAttribute("notifications30", notifications.get(3));
 
         return "tax/tax";
     }

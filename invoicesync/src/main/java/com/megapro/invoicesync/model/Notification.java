@@ -41,6 +41,9 @@ public class Notification {
     @Column(name="invoice_number")
     private String invoiceNumber;
 
+    @Column(name="approval_id", nullable = true)
+    private int approvalId;
+
     @Column(name="is_read")
     private boolean isRead = false;
 

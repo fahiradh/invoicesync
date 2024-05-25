@@ -11,4 +11,6 @@ public class NotificationResponseDTO {
     private UUID invoiceId;
     private String invoiceNumber;
     private boolean isRead;
+    private long age;
+    private int approvalId;
 }

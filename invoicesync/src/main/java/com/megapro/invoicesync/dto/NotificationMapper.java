@@ -10,6 +10,9 @@ import com.megapro.invoicesync.model.Notification;
 
 @Mapper(componentModel = "spring")
 public interface NotificationMapper {
-    @Mapping(target = "employee", ignore = true)
+    @Mapping(target = "age", ignore = true)
     List<NotificationResponseDTO> listNotificationToListNotificationResponseDTO(List<Notification> listNotification);
+
+    @Mapping(target = "age", ignore = true)
+    NotificationResponseDTO notificationToNotificationResponseDTO(Notification listNotification);
 }
