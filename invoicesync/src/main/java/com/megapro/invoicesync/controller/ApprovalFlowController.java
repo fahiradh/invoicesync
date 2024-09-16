@@ -30,7 +30,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class ApprovalFlowController {
-
     @Autowired
     ApprovalFlowService approvalFlowService;
 
@@ -43,8 +42,9 @@ public class ApprovalFlowController {
     @Autowired
     RoleService roleService;
 
-    @PostMapping(value="/add-approval-flow")
-    public String createFlow(@Valid CreateApprovalFlowRequest approvalFlowDTO, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
+    @PostMapping("/add-approval-flow")
+    public String createFlow(@Valid CreateApprovalFlowRequest approvalFlowDTO,
+                            BindingResult result, Model model, RedirectAttributes redirectAttributes) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         var user = userAppDb.findByEmail(email);
@@ -53,7 +53,7 @@ public class ApprovalFlowController {
         model.addAttribute("email", email);
 
         if (result.hasErrors()) {
-            // Ekstrak pesan error dari hasil validasi
+            // Extract error message after validation
             String errorMessage = result.getFieldError().getDefaultMessage();
             redirectAttributes.addFlashAttribute("errorMessage", errorMessage);
             return "redirect:/approval-flows";
@@ -73,7 +73,7 @@ public class ApprovalFlowController {
     
     @GetMapping("/approval-flows")
     public String getAllFlow(Model model, @ModelAttribute("successMessage") String successMessage,
-                                @ModelAttribute("errorMessage") String errorMessage) {
+                            @ModelAttribute("errorMessage") String errorMessage) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         var user = userAppDb.findByEmail(email);
@@ -82,8 +82,8 @@ public class ApprovalFlowController {
         model.addAttribute("email", email);                         
         List<Role> roles = roleService.getAllRole();
         roles = roles.stream()
-        .filter(r -> !r.getRole().equalsIgnoreCase("Admin"))
-        .collect(Collectors.toList());
+                .filter(r -> !r.getRole().equalsIgnoreCase("Admin"))
+                .collect(Collectors.toList());
         List<ApprovalFlow> listApproval = approvalFlowService.getAllApprovalFlows();
         listApproval.sort(Comparator.comparingLong(ApprovalFlow::getNominalRange));
         model.addAttribute("approvalFlow", new CreateApprovalFlowRequest());        
@@ -91,14 +91,14 @@ public class ApprovalFlowController {
         model.addAttribute("roles", roles);
         model.addAttribute("successMessage", successMessage);
         model.addAttribute("errorMessage", errorMessage);
-         // Sorting by nominal range for consistent display order
+        // Sorting by nominal range for consistent display order
         return "approve-invoice/approval-hierarchy";
     }
 
     @GetMapping("/reset-approval-flows")
     public String resetApprovalFlows(RedirectAttributes redirectAttributes) {
         try {
-            approvalFlowService.resetAllApprovalFlows(); // Metode untuk menghapus seluruh approval flow
+            approvalFlowService.resetAllApprovalFlows();
             redirectAttributes.addFlashAttribute("successMessage", "All flows deleted successfully");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "There is an error while deleting the flow");
@@ -124,7 +124,5 @@ public class ApprovalFlowController {
         }
         return "redirect:/approval-flows";
     }
-
-
 
 }

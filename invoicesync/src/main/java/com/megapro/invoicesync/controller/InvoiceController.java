@@ -42,7 +42,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.megapro.invoicesync.dto.response.ApproverDisplay;
-import com.megapro.invoicesync.dto.response.NotificationResponseDTO;
 import com.megapro.invoicesync.dto.response.ReadApprovalResponseDTO;
 import com.megapro.invoicesync.dto.response.ReadFileResponseDTO;
 import com.megapro.invoicesync.dto.response.ReadInvoiceResponse;
@@ -115,7 +114,7 @@ public class InvoiceController {
     @Autowired
     NotificationService notificationService;
 
-    @GetMapping(value="/create-invoice")
+    @GetMapping("/create-invoice")
     public String formCreateInvoice(Model model, @ModelAttribute("successMessage") String successMessage, 
                                     @ModelAttribute("errorMessage") String errorMessage){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -153,7 +152,7 @@ public class InvoiceController {
         return "invoice/form-create-invoice";
     }
 
-    @PostMapping(value = "/create-invoice")
+    @PostMapping("/create-invoice")
     public String createInvoice(@Valid CreateInvoiceRequestDTO invoiceDTO, Model model,
                                 RedirectAttributes redirectAttributes,
                                 @RequestParam(value = "taxOption", required = false) List<Integer> selectedTaxIds,
@@ -252,7 +251,7 @@ public class InvoiceController {
             }
             var filesLog = approval.getApprovalFiles();
             List<ReadFileResponseDTO> filesDTO = new ArrayList<>();
-            if(filesLog != null || filesLog.size()!=0){
+            if(filesLog != null){
                 for(FileModel fileModel : filesLog){
                     var fileDTO = fileMapper.fileModelToReadFileResponseDTO(fileModel);
                     filesDTO.add(fileDTO);
@@ -540,20 +539,11 @@ public class InvoiceController {
             invoiceDTO.setSignature(bytesToString);
         }
 
-        // var check = invoiceService.checkValidityUpdate(invoiceDTO);
-        // var message = check.split(",");
-
-        // if (message[0].equals("errorMessage")){
-        //     redirectAttributes.addFlashAttribute(message[0], message[1]);
-        // } else{
         var invoiceFromDTO = invoiceMapper.updateInvoiceDTOToInvoice(invoiceDTO);
         var invoice = invoiceService.updateInvoice(invoiceFromDTO, selectedTaxIds);
-        // redirectAttributes.addFlashAttribute(message[0], message[1]); 
-        // }
-
+        
         String encodedInvoiceNumber = invoice.getInvoiceNumber().replace("/", "_");
-        // model.addAttribute("successMessage", successMessage);
-        // model.addAttribute("errorMessage", errorMessage);
+        
         model.addAttribute("email", email);
         model.addAttribute("role", role);
         model.addAttribute("image", invoice.getSignature());
@@ -683,7 +673,7 @@ public class InvoiceController {
         model.addAttribute("approverDisplays", approverDisplays);
         model.addAttribute("emailPermission", emailPermission);
 
-        // Bagian logs
+        // Logs
         var approvals = invoice.getListApproval();
         List<ReadApprovalResponseDTO> approvalLogs = new ArrayList<>();
         for(Approval approval:approvals){

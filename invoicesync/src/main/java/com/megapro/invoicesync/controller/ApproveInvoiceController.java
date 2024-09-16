@@ -103,19 +103,18 @@ public class ApproveInvoiceController {
         return "approve-invoice/list-approval.html";
     }
     
-    // Detail invoice untuk diapprove
+    // Invoice detail for approval
     @GetMapping("/approval/{invoiceNumber}")
-    public String getApprovalDetail(
-                            @PathVariable("invoiceNumber") String encodedInvoiceNumber, 
-                            @RequestParam("approvalId") int approvalId,
-                            Model model) {
+    public String getApprovalDetail(@PathVariable("invoiceNumber") String encodedInvoiceNumber, 
+                                    @RequestParam("approvalId") int approvalId,
+                                    Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         var user = userAppDb.findByEmail(email);
         String role = user.getRole().getRole();
         String invoiceNumber = encodedInvoiceNumber.replace('_', '/');
 
-        // Bagian detail invoice
+        // Invoice detail
         var invoice = invoiceService.getInvoiceByInvoiceNumber(invoiceNumber);
         List<Product> listProduct = invoiceService.getListProductInvoice(invoice);
         List<Tax> taxList = taxService.findAllTaxes();
@@ -133,7 +132,7 @@ public class ApproveInvoiceController {
         model.addAttribute("invoice", invoiceDTO);
         model.addAttribute("dateInvoice", invoiceService.parseDate(invoiceDTO.getInvoiceDate()));
 
-        // Bagian logs
+        // Logs
         var approvals = invoice.getListApproval();
         List<ReadApprovalResponseDTO> approvalLogs = new ArrayList<>();
         var approvalDTO = new UpdateApprovalRequestDTO();
@@ -144,7 +143,7 @@ public class ApproveInvoiceController {
             }
             var filesLog = approval.getApprovalFiles();
             List<ReadFileResponseDTO> filesDTO = new ArrayList<>();
-            if(filesLog != null || filesLog.size()!=0){
+            if(filesLog != null){
                 for(FileModel fileModel : filesLog){
                     var fileDTO = fileMapper.fileModelToReadFileResponseDTO(fileModel);
                     filesDTO.add(fileDTO);

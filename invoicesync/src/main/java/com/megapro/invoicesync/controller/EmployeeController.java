@@ -148,7 +148,6 @@ public class EmployeeController {
     public String deleteEmployee(@PathVariable("id") UUID id, Model model) {
         var employee = userService.getEmployeeById(id);
         userService.deleteEmployee(employee);
-        // model.addAttribute("id", id);
         return "redirect:/employees";
     }
 
